@@ -50,3 +50,7 @@ The `milestone-1` branch adds NextAuth credentials sessions, React Hook Form/Zod
 ## Milestone 2
 
 The `milestone-2` branch includes `/machinery` search/category filtering/pagination and `/machinery/[slug]` details, backed by the server public catalogue API. Start the matching backend branch and apply its migration before browsing. Only published machines appear; an empty catalogue shows an empty state. Prices are on request. Admin catalogue editing and online quote submission are scheduled for M3 and M5 respectively. No new frontend environment variables are required.
+
+## Milestone 3
+
+The `milestone-3` branch adds `/dashboard/admin/catalogue`, linked from administrator accounts. Manage categories, create/edit machinery, reorder image URLs/specifications, publish/unpublish, filter the catalogue and confirm deletions. Use the matching backend branch. Image upload/storage integration is deferred; this editor accepts validated HTTPS URLs. Existing M0/M1 setup applies, with no new environment variables.

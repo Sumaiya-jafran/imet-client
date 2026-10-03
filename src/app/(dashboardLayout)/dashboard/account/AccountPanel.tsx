@@ -107,6 +107,14 @@ export default function AccountPanel() {
             Manage users
           </Link>
         )}
+        {user?.roles.includes('ADMIN') && (
+          <Link
+            href="/dashboard/admin/catalogue"
+            className="block my-4 text-orange-dark"
+          >
+            Manage catalogue
+          </Link>
+        )}
         <div className="flex flex-wrap gap-3">
           <Button disabled={busy} onClick={() => void logout(false)}>
             Sign out
