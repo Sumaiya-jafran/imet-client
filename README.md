@@ -42,3 +42,7 @@ Building generates Next.js route types. Verify the status page shows connected s
 ## Reference baseline
 
 AloSkill frontend `aeed61f`, backend `fc05dbc`. Core versions follow its lockfiles; Next.js ESLint configuration is aligned to Next.js 16. Reference code is unchanged. Detailed M0 scope and verification are recorded in `../imet-server/docs/milestone-0.md`.
+
+## Milestone 1
+
+The `milestone-1` branch adds NextAuth credentials sessions, React Hook Form/Zod authentication forms, a protected account page, profile/password management, and administrator-only user management. Detailed scope/configuration and pending signup-policy/email requirements are in `../imet-server/docs/milestone-1.md`. NextAuth is patched to 4.24.15. Initialize missing local signing secrets with `node ../imet-server/scripts/init-local-env.mjs`, preserve `NEXTAUTH_URL`, and start the API, PostgreSQL and Redis first. Verification/reset URLs contain single-use tokens; live email delivery requires the separately configured Resend worker.

@@ -6,7 +6,14 @@ export default function Header() {
         <Link href="/" className="text-xl font-bold text-navy">
           iMet Machinery
         </Link>
-        <span className="text-sm text-slate-500">Development foundation</span>
+        <nav aria-label="Account" className="flex flex-wrap gap-3 text-sm">
+          <Link href="/auth/signup">Create account</Link>
+          <Link href="/auth/signin">Sign in</Link>
+          <Link href="/dashboard/account">Account</Link>
+        </nav>
+        <span className="hidden text-sm text-slate-500">
+          Development foundation
+        </span>
       </div>
     </header>
   );

@@ -1,3 +1,4 @@
+import SessionContext from './contexts/SessionContext';
 import type { Metadata } from 'next';
 import './globals.css';
 export const metadata: Metadata = {
@@ -9,7 +10,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className="bg-slate-50 text-slate-900 antialiased">{children}</body>
+      <body className="bg-slate-50 text-slate-900 antialiased">
+        <SessionContext>{children}</SessionContext>
+      </body>
     </html>
   );
 }
