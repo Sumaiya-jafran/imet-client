@@ -46,3 +46,7 @@ AloSkill frontend `aeed61f`, backend `fc05dbc`. Core versions follow its lockfil
 ## Milestone 1
 
 The `milestone-1` branch adds NextAuth credentials sessions, React Hook Form/Zod authentication forms, a protected account page, profile/password management, and administrator-only user management. Detailed scope/configuration and pending signup-policy/email requirements are in `../imet-server/docs/milestone-1.md`. NextAuth is patched to 4.24.15. Initialize missing local signing secrets with `node ../imet-server/scripts/init-local-env.mjs`, preserve `NEXTAUTH_URL`, and start the API, PostgreSQL and Redis first. Verification/reset URLs contain single-use tokens; live email delivery requires the separately configured Resend worker.
+
+## Milestone 2
+
+The `milestone-2` branch includes `/machinery` search/category filtering/pagination and `/machinery/[slug]` details, backed by the server public catalogue API. Start the matching backend branch and apply its migration before browsing. Only published machines appear; an empty catalogue shows an empty state. Prices are on request. Admin catalogue editing and online quote submission are scheduled for M3 and M5 respectively. No new frontend environment variables are required.
