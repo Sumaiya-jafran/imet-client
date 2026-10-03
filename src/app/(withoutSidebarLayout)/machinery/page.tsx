@@ -9,6 +9,7 @@ export const metadata = {
 };
 const filters = z.object({
   q: z.string().trim().max(100).default(''),
+  supplier: z.uuid().optional(),
   category: z
     .string()
     .max(120)
@@ -25,6 +26,7 @@ export default async function CataloguePage({
   const parsed = filters.safeParse({
     q: raw.q,
     category: raw.category || undefined,
+    supplier: raw.supplier,
     page: raw.page,
   });
   if (!parsed.success)
@@ -39,8 +41,9 @@ export default async function CataloguePage({
         </Link>
       </section>
     );
-  const { q, category, page } = parsed.data;
+  const { q, category, supplier, page } = parsed.data;
   const query = new URLSearchParams({ page: String(page), limit: '12' });
+  if (supplier) query.set('supplier', supplier);
   if (q) query.set('q', q);
   if (category) query.set('category', category);
   const [result, categories] = await Promise.all([
@@ -67,6 +70,7 @@ export default async function CataloguePage({
         action="/machinery"
         className="my-8 grid gap-4 rounded-xl bg-slate-100 p-5 sm:grid-cols-[1fr_1fr_auto]"
       >
+        {supplier && <input type="hidden" name="supplier" value={supplier} />}
         <label className="min-w-0 text-sm font-medium">
           Search machinery
           <input

@@ -1,17 +1,23 @@
 'use client';
+import { supplierCatalogueApi } from '@/lib/api/supplier.service';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Button from '@/components/buttons/Button';
 import {
-  catalogueAdminApi as api,
+  catalogueAdminApi as adminApi,
   type AdminCategory,
   type AdminCatalogueResult,
   type AdminMachine,
 } from '@/lib/api/catalogue-admin.service';
 import MachineForm from './MachineForm';
 import CategoryManagement from './CategoryManagement';
-export default function CatalogueManagement() {
+export default function CatalogueManagement({
+  supplierMode = false,
+}: {
+  supplierMode?: boolean;
+}) {
+  const api = supplierMode ? supplierCatalogueApi : adminApi;
   const { data: session } = useSession();
   const token = session?.accessToken;
   const [categories, setCategories] = useState<AdminCategory[]>([]);
@@ -57,7 +63,7 @@ export default function CatalogueManagement() {
         }
       });
     return () => controller.abort();
-  }, [token, session?.error, filters, revision]);
+  }, [token, session?.error, filters, revision, api]);
   const reload = () => {
     setLoading(true);
     setRevision((value) => value + 1);
@@ -107,7 +113,9 @@ export default function CatalogueManagement() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-navy">Manage catalogue</h1>
+        <h1 className="text-3xl font-bold text-navy">
+          {supplierMode ? 'Your machinery' : 'Manage catalogue'}
+        </h1>
         <Link href="/machinery" className="mt-3 inline-block underline">
           View public catalogue
         </Link>
@@ -127,6 +135,7 @@ export default function CatalogueManagement() {
           categories={categories}
           onSave={saved}
           onCancel={() => setEditor(undefined)}
+          supplierMode={supplierMode}
         />
       ) : (
         <section className="rounded-xl border bg-white p-5">
@@ -278,7 +287,7 @@ export default function CatalogueManagement() {
           )}
         </section>
       )}
-      {!editor && !loading && (
+      {!supplierMode && !editor && !loading && (
         <CategoryManagement
           token={token}
           categories={categories}

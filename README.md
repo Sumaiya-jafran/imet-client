@@ -54,3 +54,7 @@ The `milestone-2` branch includes `/machinery` search/category filtering/paginat
 ## Milestone 3
 
 The `milestone-3` branch adds `/dashboard/admin/catalogue`, linked from administrator accounts. Manage categories, create/edit machinery, reorder image URLs/specifications, publish/unpublish, filter the catalogue and confirm deletions. Use the matching backend branch. Image upload/storage integration is deferred; this editor accepts validated HTTPS URLs. Existing M0/M1 setup applies, with no new environment variables.
+
+## Milestone 4
+
+The `milestone-4` branch adds supplier applications/accounts at `/dashboard/supplier`, owned machinery editing, admin supplier review at `/dashboard/admin/suppliers`, plan management at `/dashboard/admin/subscriptions` and public `/suppliers` profiles. Use the matching backend branch and apply its additive Prisma migration. Plans and subscription dates are admin-defined; activation/renewal is manual. The backend enforces approval, ownership, active terms and listing/media limits. Buyers browse without subscriptions; private supplier contacts are excluded from public pages/APIs. Logos/documents use HTTPS URLs rather than an upload service. See `../imet-server/docs/milestone-4.md` for setup and validation. No new frontend environment variables or payment integration are required.

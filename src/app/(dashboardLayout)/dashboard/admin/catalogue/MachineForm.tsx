@@ -1,5 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { supplierApi, supplierCatalogueApi } from '@/lib/api/supplier.service';
+import type { SupplierProfile } from '@/types/supplier';
+import { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '@/components/buttons/Button';
@@ -18,14 +20,50 @@ export default function MachineForm({
   categories,
   onSave,
   onCancel,
+  supplierMode = false,
 }: {
   token: string;
   machine?: AdminMachine;
   categories: AdminCategory[];
   onSave: () => void;
   onCancel: () => void;
+  supplierMode?: boolean;
 }) {
   const [error, setError] = useState('');
+  const [supplierId, setSupplierId] = useState(machine?.supplierId ?? '');
+  const [supplierQuery, setSupplierQuery] = useState('');
+  const [suppliers, setSuppliers] = useState<SupplierProfile[]>([]);
+  const [supplierError, setSupplierError] = useState('');
+  useEffect(() => {
+    if (supplierMode) return;
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      supplierApi
+        .adminList(
+          token,
+          new URLSearchParams({
+            status: 'APPROVED',
+            q: supplierQuery,
+            limit: '100',
+          }),
+          controller.signal,
+        )
+        .then((response) => {
+          if (!controller.signal.aborted) {
+            setSuppliers(response.data?.suppliers ?? []);
+            setSupplierError('');
+          }
+        })
+        .catch(() => {
+          if (!controller.signal.aborted)
+            setSupplierError('Unable to load suppliers. Try another search.');
+        });
+    }, 250);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [token, supplierQuery, supplierMode]);
   const {
     register,
     control,
@@ -62,7 +100,9 @@ export default function MachineForm({
   const save = async (data: MachineInput) => {
     setError('');
     try {
-      await catalogueAdminApi.save(token, data, machine);
+      if (supplierMode) await supplierCatalogueApi.save(token, data, machine);
+      else
+        await catalogueAdminApi.save(token, data, machine, supplierId || null);
       onSave();
     } catch (error) {
       setError(
@@ -90,6 +130,48 @@ export default function MachineForm({
       )}
       <form onSubmit={handleSubmit(save)} noValidate className="space-y-4">
         <fieldset disabled={isSubmitting} className="space-y-4">
+          {!supplierMode && (
+            <section>
+              <label className="block">
+                Find supplier company
+                <input
+                  value={supplierQuery}
+                  onChange={(event) => setSupplierQuery(event.target.value)}
+                  maxLength={100}
+                  className="mt-1 w-full rounded border p-2"
+                />
+              </label>
+              <label className="mt-3 block">
+                Listing owner
+                <select
+                  value={supplierId}
+                  onChange={(event) => setSupplierId(event.target.value)}
+                  className="mt-1 w-full rounded border p-2"
+                >
+                  <option value="">
+                    iMet curated catalogue (no supplier owner)
+                  </option>
+                  {machine?.supplier &&
+                    !suppliers.some((s) => s.id === machine.supplierId) && (
+                      <option value={machine.supplier.id}>
+                        {machine.supplier.companyName}
+                      </option>
+                    )}
+                  {suppliers.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.companyName}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <p className="mt-2 text-sm text-slate-600">
+                Supplier-owned listings require applicable active subscription
+                entitlements. Search by company name to select a supplier.
+              </p>
+              {supplierError && <p role="alert">{supplierError}</p>}
+            </section>
+          )}
+
           {(['name', 'slug', 'manufacturer', 'model'] as const).map((field) => (
             <div key={field}>
               <label htmlFor={`machine-${field}`} className="block font-medium">

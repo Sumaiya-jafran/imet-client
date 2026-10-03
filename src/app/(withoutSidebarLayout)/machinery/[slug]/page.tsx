@@ -47,6 +47,18 @@ export default async function MachinePage({
           )}
         </section>
         <section className="min-w-0">
+          {machine.supplier && (
+            <p className="mb-3">
+              Supplier:{' '}
+              <Link
+                className="underline"
+                href={`/suppliers/${machine.supplier.id}`}
+              >
+                {machine.supplier.companyName}
+              </Link>
+            </p>
+          )}
+
           <Link
             className="text-sm text-orange-dark underline"
             href={`/machinery?category=${machine.category.slug}`}

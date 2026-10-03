@@ -11,6 +11,7 @@ export default function Header() {
           className="flex flex-wrap gap-3 text-sm"
         >
           <Link href="/machinery">Machinery</Link>
+          <Link href="/suppliers">Suppliers</Link>
           <Link href="/auth/signup">Create account</Link>
           <Link href="/auth/signin">Sign in</Link>
           <Link href="/dashboard/account">Account</Link>

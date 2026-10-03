@@ -115,6 +115,19 @@ export default function AccountPanel() {
             Manage catalogue
           </Link>
         )}
+        <Link href="/dashboard/supplier" className="block my-4 underline">
+          Supplier application / account
+        </Link>
+        {user?.roles.includes('ADMIN') && (
+          <div className="my-4 flex flex-wrap gap-4">
+            <Link href="/dashboard/admin/suppliers" className="underline">
+              Manage suppliers
+            </Link>
+            <Link href="/dashboard/admin/subscriptions" className="underline">
+              Manage subscription plans
+            </Link>
+          </div>
+        )}
         <div className="flex flex-wrap gap-3">
           <Button disabled={busy} onClick={() => void logout(false)}>
             Sign out

@@ -7,6 +7,8 @@ export interface AdminCategory {
   _count?: { machines: number };
 }
 export interface AdminMachine extends MachineInput {
+  supplierId: string | null;
+  supplier?: { id: string; companyName: string } | null;
   id: string;
   updatedAt: string;
 }
@@ -42,7 +44,12 @@ export const catalogueAdminApi = {
     apiClient.get<AdminMachine>(`/admin/catalogue/machines/${id}`, {
       headers: headers(token),
     }),
-  save: (token: string, data: MachineInput, machine?: AdminMachine) =>
+  save: (
+    token: string,
+    data: MachineInput,
+    machine?: AdminMachine,
+    supplierId?: string | null,
+  ) =>
     apiClient.request<AdminMachine>(
       `/admin/catalogue/machines${machine ? `/${machine.id}` : ''}`,
       {
@@ -50,6 +57,7 @@ export const catalogueAdminApi = {
         headers: headers(token),
         body: JSON.stringify({
           ...data,
+          ...(supplierId !== undefined ? { supplierId } : {}),
           ...(machine ? { updatedAt: machine.updatedAt } : {}),
         }),
       },
