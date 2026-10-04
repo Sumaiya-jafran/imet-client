@@ -1,3 +1,4 @@
+import TranslatedText from '@/components/shared/TranslatedText';
 import Link from 'next/link';
 import { ArrowUpRight, BadgeCheck, Settings2, Check } from 'lucide-react';
 import { catalogueApi } from '@/lib/api/catalogue.service';
@@ -252,7 +253,14 @@ export async function HomeSuppliers() {
                 </p>
               )}
               <p className="mt-3 line-clamp-3 break-words text-sm leading-6 text-slate-600">
-                {s.description}
+                <TranslatedText
+                  resource={{
+                    type: 'SUPPLIER',
+                    id: s.id,
+                    field: 'DESCRIPTION',
+                  }}
+                  original={s.description}
+                />
               </p>
               <Link className="secondary-link mt-4" href={`/suppliers/${s.id}`}>
                 View company
@@ -291,7 +299,10 @@ export async function HomeReviews() {
             <article key={r.id} className="surface min-w-0 p-5">
               <RatingStars rating={r.rating} />
               <p className="mt-4 line-clamp-5 whitespace-pre-wrap break-words text-sm leading-6">
-                {r.body}
+                <TranslatedText
+                  resource={{ type: 'REVIEW', id: r.id, field: 'BODY' }}
+                  original={r.body}
+                />
               </p>
               <p className="mt-5 break-words text-sm font-semibold">
                 {r.author.displayName}
@@ -304,7 +315,18 @@ export async function HomeReviews() {
                     : `/suppliers/${r.supplier!.id}`
                 }
               >
-                {r.machine?.name ?? r.supplier?.companyName}
+                {r.machine ? (
+                  <TranslatedText
+                    resource={{
+                      type: 'MACHINERY',
+                      id: r.machine.id,
+                      field: 'NAME',
+                    }}
+                    original={r.machine.name}
+                  />
+                ) : (
+                  r.supplier?.companyName
+                )}
               </Link>
             </article>
           ))}

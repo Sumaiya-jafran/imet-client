@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import LanguageSelector from './LanguageSelector';
 import { usePathname } from 'next/navigation';
 import {
   Factory,
@@ -31,6 +32,15 @@ export default function DashboardShell({
   const drawer = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const links = [
+    ...(user.roles.includes('ADMIN')
+      ? [
+          {
+            href: '/dashboard/admin/translations',
+            label: 'AI translations',
+            icon: FileText,
+          },
+        ]
+      : []),
     {
       href: '/dashboard/account',
       label: 'Account overview',
@@ -215,7 +225,7 @@ export default function DashboardShell({
         </button>
       </aside>
       <div className="min-w-0 flex-1">
-        <header className="flex min-h-18 items-center gap-3 border-b border-slate-200 bg-white px-4 sm:px-6 lg:px-8">
+        <header className="flex min-h-18 flex-wrap items-center gap-3 border-b border-slate-200 bg-white px-4 sm:px-6 lg:px-8">
           <button
             ref={trigger}
             type="button"
@@ -234,7 +244,8 @@ export default function DashboardShell({
               {active?.label ?? 'Dashboard'}
             </p>
           </div>
-          <div className="ml-auto flex min-w-0 items-center gap-3">
+          <div className="ml-auto flex min-w-0 flex-wrap items-center gap-3 py-2">
+            <LanguageSelector />
             <span className="hidden max-w-48 truncate text-xs text-slate-600 sm:block">
               {user.displayName}
             </span>

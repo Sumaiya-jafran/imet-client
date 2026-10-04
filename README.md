@@ -70,3 +70,7 @@ Recipient pipelines, private opportunity details, sales history, admin oversight
 ## Milestone 7
 
 See [Reviews & Ratings and Dynamic Homepage](docs/milestone-7.md) for buyer/admin workflows, live homepage data, setup and validation.
+
+## Milestone 8
+
+See [AI Translation](docs/milestone-8.md) for English/Bangla/Chinese public content, admin generation, original/fallback controls, backend OpenAI requirements and validation.

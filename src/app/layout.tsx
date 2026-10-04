@@ -1,3 +1,4 @@
+import LanguageContext from './contexts/LanguageContext';
 import SessionContext from './contexts/SessionContext';
 import type { Metadata } from 'next';
 import './globals.css';
@@ -11,7 +12,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-slate-50 text-slate-900 antialiased">
-        <SessionContext>{children}</SessionContext>
+        <SessionContext>
+          <LanguageContext>{children}</LanguageContext>
+        </SessionContext>
       </body>
     </html>
   );

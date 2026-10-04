@@ -1,3 +1,4 @@
+import TranslatedText from '@/components/shared/TranslatedText';
 import Link from 'next/link';
 import { ArrowUpRight, BadgeCheck } from 'lucide-react';
 import type { MachineSummary } from '@/types/catalogue';
@@ -8,7 +9,7 @@ export default function MachineCard({ machine }: { machine: MachineSummary }) {
     <article className="surface group min-w-0 overflow-hidden p-3 transition hover:border-slate-300 hover:shadow-md">
       <Link
         href={`/machinery/${machine.slug}`}
-        aria-label={`View ${machine.name}`}
+        aria-label={`View $<TranslatedText resource={{ type: 'MACHINERY', id: machine.id, field: 'NAME' }} original={machine.name} />`}
         className="block rounded-lg"
       >
         <MachineImage image={machine.images[0]} />
@@ -20,7 +21,10 @@ export default function MachineCard({ machine }: { machine: MachineSummary }) {
             className="hover:text-orange-dark"
             href={`/machinery/${machine.slug}`}
           >
-            {machine.name}
+            <TranslatedText
+              resource={{ type: 'MACHINERY', id: machine.id, field: 'NAME' }}
+              original={machine.name}
+            />
           </Link>
         </h2>
         <p className="mt-2 break-words text-xs text-slate-500">
@@ -49,7 +53,7 @@ export default function MachineCard({ machine }: { machine: MachineSummary }) {
           </span>
           <Link
             href={`/machinery/${machine.slug}`}
-            aria-label={`View details for ${machine.name}`}
+            aria-label={`View details for $<TranslatedText resource={{ type: 'MACHINERY', id: machine.id, field: 'NAME' }} original={machine.name} />`}
             className="flex size-8 items-center justify-center rounded-md bg-slate-100 text-slate-600 group-hover:bg-navy group-hover:text-white"
           >
             <ArrowUpRight size={16} aria-hidden="true" />

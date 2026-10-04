@@ -1,3 +1,4 @@
+import TranslatedText from '@/components/shared/TranslatedText';
 import PublicReviews from '@/components/shared/PublicReviews';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -48,7 +49,15 @@ export default async function Page({
             {supplier.visibility === 'FEATURED' ? ' · Featured' : ''}
           </p>
           <p className="mt-6 whitespace-pre-wrap break-words leading-7">
-            {supplier.description}
+            <TranslatedText
+              resource={{
+                type: 'SUPPLIER',
+                id: supplier.id,
+                field: 'DESCRIPTION',
+              }}
+              original={supplier.description}
+              showStatus
+            />
           </p>
           {supplier.website && (
             <a
