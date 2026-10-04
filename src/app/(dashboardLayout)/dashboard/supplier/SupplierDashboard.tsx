@@ -154,6 +154,14 @@ export default function SupplierDashboard() {
                   key={term.id}
                   className="my-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4 text-sm"
                 >
+                  <p className="text-xs text-slate-500">
+                    RFQ leads: {term.rfqEnabled ? 'Enabled' : 'Disabled'} ·
+                    Monthly cap: {term.leadLimitPerMonth ?? 'Unlimited'} ·
+                    Contact reveal:{' '}
+                    {term.canRevealContacts
+                      ? 'Allowed after acceptance'
+                      : 'Disabled'}
+                  </p>
                   <h3 className="font-semibold">
                     {term.planName} ·{' '}
                     {term.isCurrent ? 'Current term' : 'Previous term'}

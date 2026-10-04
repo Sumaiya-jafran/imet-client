@@ -58,3 +58,7 @@ The `milestone-3` branch adds `/dashboard/admin/catalogue`, linked from administ
 ## Milestone 4
 
 The `milestone-4` branch adds supplier applications/accounts at `/dashboard/supplier`, owned machinery editing, admin supplier review at `/dashboard/admin/suppliers`, plan management at `/dashboard/admin/subscriptions` and public `/suppliers` profiles. Use the matching backend branch and apply its additive Prisma migration. Plans and subscription dates are admin-defined; activation/renewal is manual. The backend enforces approval, ownership, active terms and listing/media limits. Buyers browse without subscriptions; private supplier contacts are excluded from public pages/APIs. Logos/documents use HTTPS URLs rather than an upload service. See `../imet-server/docs/milestone-4.md` for setup and validation. No new frontend environment variables or payment integration are required.
+
+## Milestone 5
+
+Buyer RFQs, recipient leads/private quotes, admin review and subscription RFQ permissions retain the existing design and NextAuth/API patterns. See [docs/milestone-5.md](docs/milestone-5.md); provider credentials and workers are configured on the backend only.

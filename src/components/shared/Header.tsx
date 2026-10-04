@@ -34,6 +34,7 @@ export default function Header() {
           {[
             ['/machinery', 'Machinery'],
             ['/suppliers', 'Suppliers'],
+            ['/dashboard/rfqs/new', 'Request quote'],
           ].map(([href, label]) => (
             <Link
               key={href}

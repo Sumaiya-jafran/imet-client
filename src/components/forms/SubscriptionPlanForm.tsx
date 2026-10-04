@@ -35,6 +35,9 @@ export default function SubscriptionPlanForm({
           imageLimit: plan.imageLimit,
           specificationLimit: plan.specificationLimit,
           canPublishMachinery: plan.canPublishMachinery,
+          rfqEnabled: plan.rfqEnabled,
+          leadLimitPerMonth: plan.leadLimitPerMonth,
+          canRevealContacts: plan.canRevealContacts,
           visibility: plan.visibility,
           isActive: plan.isActive,
         }
@@ -44,6 +47,9 @@ export default function SubscriptionPlanForm({
           price: '',
           currency: '',
           canPublishMachinery: false,
+          rfqEnabled: false,
+          leadLimitPerMonth: 0,
+          canRevealContacts: false,
           visibility: 'HIDDEN',
           isActive: false,
         },
@@ -143,6 +149,31 @@ export default function SubscriptionPlanForm({
           <input type="checkbox" {...register('canPublishMachinery')} /> Allow
           machinery publication
         </label>
+        <label className="block">
+          <input type="checkbox" {...register('rfqEnabled')} /> Enable RFQ leads
+        </label>
+        <label className="block">
+          <input type="checkbox" {...register('canRevealContacts')} /> Allow
+          contact reveal after quote acceptance
+        </label>
+        <div>
+          <label htmlFor="plan-lead-cap" className="block font-medium">
+            Monthly RFQ lead limit (blank = unlimited)
+          </label>
+          <input
+            id="plan-lead-cap"
+            type="number"
+            min="0"
+            step="1"
+            {...register('leadLimitPerMonth', {
+              setValueAs: (v) => (v === '' ? null : Number(v)),
+            })}
+            className="mt-1 w-full"
+          />
+          {errors.leadLimitPerMonth && (
+            <p className="text-red-700">{errors.leadLimitPerMonth.message}</p>
+          )}
+        </div>
         <label className="block">
           <input type="checkbox" {...register('isActive')} /> Active plan
           (available for assignments)

@@ -26,6 +26,9 @@ export interface PlanInput {
   imageLimit: number;
   specificationLimit: number;
   canPublishMachinery: boolean;
+  rfqEnabled: boolean;
+  leadLimitPerMonth: number | null;
+  canRevealContacts: boolean;
   visibility: 'HIDDEN' | 'STANDARD' | 'FEATURED';
   isActive: boolean;
 }
@@ -49,6 +52,9 @@ export interface SupplierSubscription {
   imageLimit: number;
   specificationLimit: number;
   canPublishMachinery: boolean;
+  rfqEnabled: boolean;
+  leadLimitPerMonth: number | null;
+  canRevealContacts: boolean;
   visibility: 'HIDDEN' | 'STANDARD' | 'FEATURED';
 }
 export interface SupplierProfile extends SupplierProfileInput {

@@ -105,6 +105,11 @@ export default function SupplierSubscriptionForm({
           key={term.id}
           className="my-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4"
         >
+          <p className="text-xs text-slate-500">
+            RFQ leads: {term.rfqEnabled ? 'Enabled' : 'Disabled'} · Monthly cap:{' '}
+            {term.leadLimitPerMonth ?? 'Unlimited'} · Contact reveal:{' '}
+            {term.canRevealContacts ? 'Allowed after acceptance' : 'Disabled'}
+          </p>
           <p className="font-semibold">
             {term.planName} · {term.isCurrent ? 'Current' : 'Previous'} ·{' '}
             {term.effectiveStatus}
