@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Factory,
+  FileText,
   LayoutDashboard,
   Building2,
   Package,
@@ -47,8 +48,34 @@ export default function DashboardShell({
           },
         ]
       : []),
+    ...(user.roles.includes('BUYER')
+      ? [{ href: '/dashboard/rfqs', label: 'My RFQs', icon: FileText }]
+      : []),
+    ...(user.roles.some((r) =>
+      [
+        'LOCAL_SUPPLIER',
+        'INTERNATIONAL_MANUFACTURER',
+        'INDEPENDENT_SELLER',
+        'SALES_PERSON',
+      ].includes(r),
+    )
+      ? [
+          { href: '/dashboard/leads', label: 'My leads', icon: FileText },
+          { href: '/dashboard/quotes', label: 'My quotes', icon: FileText },
+        ]
+      : []),
     ...(user.roles.includes('ADMIN')
       ? [
+          {
+            href: '/dashboard/admin/rfqs',
+            label: 'RFQ management',
+            icon: FileText,
+          },
+          {
+            href: '/dashboard/admin/leads',
+            label: 'Lead overview',
+            icon: FileText,
+          },
           {
             href: '/dashboard/admin/users',
             label: 'Users & access',

@@ -83,9 +83,14 @@ export default async function MachinePage({
           <div className="mt-6 rounded-lg border border-orange/15 bg-orange/5 p-4">
             <h2 className="text-lg font-semibold">Price on request</h2>
             <p className="mt-2 text-slate-600">
-              Request a quote for pricing. Online quote requests will be
-              available in a future update.
+              Send your requirements to receive private supplier quotes.
             </p>
+            <Link
+              className="action-link mt-4 inline-flex"
+              href={`/dashboard/rfqs/new?machine=${machine.slug}`}
+            >
+              Request a quote
+            </Link>
           </div>
         </section>
       </div>

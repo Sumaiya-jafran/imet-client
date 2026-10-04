@@ -114,6 +114,14 @@ export default function PlanManagement() {
                       </dd>
                     </div>
                   </dl>
+                  <p className="mb-3 text-xs text-slate-500">
+                    RFQ leads: {plan.rfqEnabled ? 'Enabled' : 'Disabled'} ·
+                    Monthly cap: {plan.leadLimitPerMonth ?? 'Unlimited'} ·
+                    Contact reveal:{' '}
+                    {plan.canRevealContacts
+                      ? 'Allowed after acceptance'
+                      : 'Disabled'}
+                  </p>
                   <p className="text-xs text-slate-500">
                     Eligibility:{' '}
                     {plan.eligibleTypes

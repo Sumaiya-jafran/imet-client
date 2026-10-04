@@ -46,6 +46,9 @@ export const planSchema = z.object({
   imageLimit: z.number().int().min(0).max(20),
   specificationLimit: z.number().int().min(0).max(100),
   canPublishMachinery: z.boolean(),
+  rfqEnabled: z.boolean(),
+  leadLimitPerMonth: z.number().int().min(0).max(1000000).nullable(),
+  canRevealContacts: z.boolean(),
   visibility: z.enum(['HIDDEN', 'STANDARD', 'FEATURED']),
   isActive: z.boolean(),
 });
