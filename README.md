@@ -62,3 +62,7 @@ The `milestone-4` branch adds supplier applications/accounts at `/dashboard/supp
 ## Milestone 5
 
 Buyer RFQs, recipient leads/private quotes, admin review and subscription RFQ permissions retain the existing design and NextAuth/API patterns. See [docs/milestone-5.md](docs/milestone-5.md); provider credentials and workers are configured on the backend only.
+
+## Milestone 6
+
+Recipient pipelines, private opportunity details, sales history, admin oversight and buyer read-only purchases reuse the current dashboard and M5 workflows. See [docs/milestone-6.md](docs/milestone-6.md). Use the matching backend branch and apply its additive migration. No new frontend dependency, environment variable or payment integration is required.

@@ -49,7 +49,14 @@ export default function DashboardShell({
         ]
       : []),
     ...(user.roles.includes('BUYER')
-      ? [{ href: '/dashboard/rfqs', label: 'My RFQs', icon: FileText }]
+      ? [
+          { href: '/dashboard/rfqs', label: 'My RFQs', icon: FileText },
+          {
+            href: '/dashboard/purchases',
+            label: 'My purchases',
+            icon: Package,
+          },
+        ]
       : []),
     ...(user.roles.some((r) =>
       [
@@ -60,12 +67,23 @@ export default function DashboardShell({
       ].includes(r),
     )
       ? [
+          { href: '/dashboard/sales', label: 'Sales pipeline', icon: Layers3 },
+          {
+            href: '/dashboard/sales/history',
+            label: 'Sales history',
+            icon: Package,
+          },
           { href: '/dashboard/leads', label: 'My leads', icon: FileText },
           { href: '/dashboard/quotes', label: 'My quotes', icon: FileText },
         ]
       : []),
     ...(user.roles.includes('ADMIN')
       ? [
+          {
+            href: '/dashboard/admin/sales',
+            label: 'Sales oversight',
+            icon: Layers3,
+          },
           {
             href: '/dashboard/admin/rfqs',
             label: 'RFQ management',
