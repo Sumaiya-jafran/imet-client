@@ -1,3 +1,12 @@
+import { Suspense } from 'react';
+import {
+  HomeCategories,
+  HomeMachinery,
+  HomePlans,
+  HomeSuppliers,
+  HomeReviews,
+} from '@/components/shared/HomeMarketplace';
+import LoadingState from '@/components/shared/LoadingState';
 import Link from 'next/link';
 import {
   ArrowUpRight,
@@ -9,7 +18,7 @@ import {
 } from 'lucide-react';
 export default function HomePage() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-10 sm:space-y-14">
       <section className="relative grid overflow-hidden rounded-2xl border border-slate-200 bg-white lg:grid-cols-[1.25fr_1fr]">
         <div className="px-6 py-10 sm:px-10 sm:py-14 lg:py-18">
           <p className="eyebrow">Built for industry</p>
@@ -26,6 +35,9 @@ export default function HomePage() {
             <Link href="/machinery" className="action-link">
               Explore machinery
               <ArrowUpRight size={16} aria-hidden="true" />
+            </Link>
+            <Link href="#supplier-plans" className="secondary-link">
+              View supplier plans
             </Link>
             <Link href="/suppliers" className="secondary-link">
               Find suppliers
@@ -71,6 +83,16 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <Suspense
+        fallback={<LoadingState label="Loading machinery categories…" />}
+      >
+        <HomeCategories />
+      </Suspense>
+      <Suspense
+        fallback={<LoadingState label="Loading current machinery…" cards />}
+      >
+        <HomeMachinery />
+      </Suspense>
       <section
         aria-label="Explore the marketplace"
         className="grid gap-4 md:grid-cols-3"
@@ -121,6 +143,23 @@ export default function HomePage() {
           </article>
         ))}
       </section>
+      <Suspense
+        fallback={<LoadingState label="Loading supplier plans…" cards />}
+      >
+        <HomePlans />
+      </Suspense>
+      <Suspense
+        fallback={<LoadingState label="Loading active suppliers…" cards />}
+      >
+        <HomeSuppliers />
+      </Suspense>
+      <Suspense
+        fallback={
+          <LoadingState label="Loading published buyer feedback…" cards />
+        }
+      >
+        <HomeReviews />
+      </Suspense>
     </div>
   );
 }
