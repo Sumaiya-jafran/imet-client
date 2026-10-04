@@ -127,8 +127,18 @@ export default function AuthForm({
   };
   const invalidLink = mode === 'reset-password' && !token;
   return (
-    <section className="mx-auto max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+    <section className="surface mx-auto max-w-md p-6 sm:p-8">
+      <p className="eyebrow mb-3">iMet account</p>
       <h1 className="text-2xl font-bold text-navy">{titles[mode]}</h1>
+      <p className="mt-2 text-sm leading-6 text-slate-500">
+        {mode === 'signin'
+          ? 'Welcome back. Sign in to your workspace.'
+          : mode === 'signup'
+            ? 'Start exploring machinery and building your company profile.'
+            : mode === 'reset-password'
+              ? 'Choose a secure password for your account.'
+              : 'Enter your account email and we’ll help you get back on track.'}
+      </p>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="mt-6 space-y-4"
@@ -203,7 +213,7 @@ export default function AuthForm({
         </Button>
       </form>
       <nav
-        className="mt-6 flex flex-wrap gap-4 text-sm text-orange-dark"
+        className="mt-6 flex flex-wrap gap-x-4 gap-y-2 border-t border-slate-100 pt-5 text-xs font-medium text-orange-dark"
         aria-label="Authentication"
       >
         <Link href="/auth/signin">Sign in</Link>

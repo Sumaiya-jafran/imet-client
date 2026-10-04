@@ -7,6 +7,7 @@ export interface MachineImage {
   alt: string;
 }
 export interface MachineSummary {
+  supplier?: { id: string; companyName: string; isVerified: boolean } | null;
   id: string;
   name: string;
   slug: string;

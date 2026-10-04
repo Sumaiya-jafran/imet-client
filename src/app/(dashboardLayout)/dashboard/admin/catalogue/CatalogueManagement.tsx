@@ -1,17 +1,27 @@
 'use client';
+import LoadingState from '@/components/shared/LoadingState';
+import PageHeader from '@/components/shared/PageHeader';
+import EmptyState from '@/components/shared/EmptyState';
+import Badge from '@/components/shared/Badge';
+import { supplierCatalogueApi } from '@/lib/api/supplier.service';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Button from '@/components/buttons/Button';
 import {
-  catalogueAdminApi as api,
+  catalogueAdminApi as adminApi,
   type AdminCategory,
   type AdminCatalogueResult,
   type AdminMachine,
 } from '@/lib/api/catalogue-admin.service';
 import MachineForm from './MachineForm';
 import CategoryManagement from './CategoryManagement';
-export default function CatalogueManagement() {
+export default function CatalogueManagement({
+  supplierMode = false,
+}: {
+  supplierMode?: boolean;
+}) {
+  const api = supplierMode ? supplierCatalogueApi : adminApi;
   const { data: session } = useSession();
   const token = session?.accessToken;
   const [categories, setCategories] = useState<AdminCategory[]>([]);
@@ -57,7 +67,7 @@ export default function CatalogueManagement() {
         }
       });
     return () => controller.abort();
-  }, [token, session?.error, filters, revision]);
+  }, [token, session?.error, filters, revision, api]);
   const reload = () => {
     setLoading(true);
     setRevision((value) => value + 1);
@@ -105,17 +115,23 @@ export default function CatalogueManagement() {
   if (!token || session?.error)
     return <p role="alert">Your session expired. Sign in again.</p>;
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-navy">Manage catalogue</h1>
-        <Link href="/machinery" className="mt-3 inline-block underline">
-          View public catalogue
-        </Link>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow={supplierMode ? 'Company workspace' : 'Administration'}
+        title={supplierMode ? 'Your machinery' : 'Manage catalogue'}
+        description="Organize machinery, update technical details and manage publication."
+        actions={
+          <Link href="/machinery" className="secondary-link">
+            View public catalogue
+          </Link>
+        }
+      />
       {error && (
         <div role="alert" className="text-red-700">
           <p>{error}</p>
-          <Button onClick={reload}>Reload catalogue</Button>
+          <Button variant="secondary" onClick={reload}>
+            Reload catalogue
+          </Button>
         </div>
       )}
       {notice && <p role="status">{notice}</p>}
@@ -127,9 +143,10 @@ export default function CatalogueManagement() {
           categories={categories}
           onSave={saved}
           onCancel={() => setEditor(undefined)}
+          supplierMode={supplierMode}
         />
       ) : (
-        <section className="rounded-xl border bg-white p-5">
+        <section className="surface p-5">
           <div className="flex flex-wrap justify-between gap-4">
             <h2 className="text-2xl font-semibold">Machines</h2>
             <Button
@@ -143,7 +160,7 @@ export default function CatalogueManagement() {
             </Button>
           </div>
           <form
-            className="my-5 grid gap-3 sm:grid-cols-2"
+            className="my-5 grid items-end gap-3 rounded-lg bg-slate-50 p-4 sm:grid-cols-2 xl:grid-cols-4"
             onSubmit={(event) => {
               event.preventDefault();
               const form = new FormData(event.currentTarget);
@@ -197,7 +214,7 @@ export default function CatalogueManagement() {
             </Button>
           </form>
           {loading ? (
-            <p role="status">Loading catalogue…</p>
+            <LoadingState label="Loading catalogue…" />
           ) : (
             result && (
               <>
@@ -206,14 +223,23 @@ export default function CatalogueManagement() {
                   {result.machines.map((machine) => (
                     <li
                       key={machine.id}
-                      className="flex flex-wrap justify-between gap-3 py-4"
+                      className="flex flex-wrap items-center justify-between gap-3 py-4"
                     >
                       <div className="min-w-0">
                         <h3 className="break-words font-semibold">
                           {machine.name}
                         </h3>
                         <p className="break-words text-sm text-slate-600">
-                          {machine.category.name} · {machine.status}
+                          {machine.category.name} ·{' '}
+                          <Badge
+                            tone={
+                              machine.status === 'PUBLISHED'
+                                ? 'success'
+                                : 'neutral'
+                            }
+                          >
+                            {machine.status}
+                          </Badge>
                         </p>
                         {machine.status === 'PUBLISHED' && (
                           <Link
@@ -224,14 +250,16 @@ export default function CatalogueManagement() {
                           </Link>
                         )}
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <Button
+                          variant="secondary"
                           disabled={busy}
                           onClick={() => void edit(machine.id)}
                         >
                           Edit machine
                         </Button>
                         <Button
+                          variant="danger"
                           disabled={busy}
                           onClick={() => void remove(machine)}
                         >
@@ -242,13 +270,17 @@ export default function CatalogueManagement() {
                   ))}
                 </ul>
                 {!result.machines.length && (
-                  <p className="mt-4">No machines match these filters.</p>
+                  <EmptyState
+                    title="No matching machines"
+                    description="Adjust your filters or create a machine to get started."
+                  />
                 )}
                 <nav
                   aria-label="Admin catalogue pagination"
                   className="mt-5 flex flex-wrap items-center gap-4"
                 >
                   <Button
+                    variant="secondary"
                     disabled={loading || filters.page <= 1}
                     onClick={() => {
                       setLoading(true);
@@ -262,6 +294,7 @@ export default function CatalogueManagement() {
                     {Math.max(1, result.pagination.totalPages)}
                   </span>
                   <Button
+                    variant="secondary"
                     disabled={
                       loading || filters.page >= result.pagination.totalPages
                     }
@@ -278,7 +311,7 @@ export default function CatalogueManagement() {
           )}
         </section>
       )}
-      {!editor && !loading && (
+      {!supplierMode && !editor && !loading && (
         <CategoryManagement
           token={token}
           categories={categories}

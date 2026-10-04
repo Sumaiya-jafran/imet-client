@@ -1,4 +1,8 @@
 'use client';
+import LoadingState from '@/components/shared/LoadingState';
+import Badge from '@/components/shared/Badge';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
 import { useCallback, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import type { CurrentUser, UserRole } from '@/types/auth';
@@ -85,7 +89,11 @@ export default function UserManagement() {
   };
   return (
     <section>
-      <h1 className="text-2xl font-bold">User management</h1>
+      <PageHeader
+        title="User management"
+        eyebrow="Administration"
+        description="Manage account status and role access."
+      />
       {error && (
         <p role="alert" className="my-4 text-red-700">
           {error}
@@ -97,21 +105,26 @@ export default function UserManagement() {
         </p>
       )}
       {loading ? (
-        <p role="status">Loading users…</p>
+        <LoadingState label="Loading users…" />
       ) : users.length === 0 ? (
-        <p>No accounts found.</p>
+        <EmptyState
+          title="No accounts found"
+          description="Registered accounts will appear here for access management."
+        />
       ) : (
-        <div className="mt-6 space-y-5">
+        <div className="mt-6 grid items-start gap-4 xl:grid-cols-2">
           {users.map((user) => (
             <form
               key={user.id}
               onSubmit={(event) => void save(event, user)}
-              className="rounded-xl border bg-white p-5"
+              className="surface p-5"
             >
               <h2 className="font-semibold">{user.displayName}</h2>
               <p className="break-all text-sm">{user.email}</p>
-              <p className="my-2 text-sm">
-                Email {user.isEmailVerified ? 'verified' : 'not verified'}
+              <p className="my-3 text-xs text-slate-500">
+                <Badge tone={user.isEmailVerified ? 'success' : 'neutral'}>
+                  Email {user.isEmailVerified ? 'verified' : 'not verified'}
+                </Badge>
               </p>
               <fieldset
                 disabled={busy || user.id === session?.account?.id}
@@ -138,7 +151,7 @@ export default function UserManagement() {
                 </label>
                 <fieldset>
                   <legend className="font-medium">Roles</legend>
-                  <div className="grid gap-2 sm:grid-cols-2">
+                  <div className="mt-2 grid gap-2 rounded-lg bg-slate-50 p-3 sm:grid-cols-2">
                     {roles.map((role) => (
                       <label key={role} className="flex gap-2 text-sm">
                         <input
@@ -163,8 +176,9 @@ export default function UserManagement() {
           ))}
         </div>
       )}
-      <div className="mt-6 flex items-center gap-4">
+      <div className="mt-6 flex flex-wrap items-center gap-3">
         <Button
+          variant="secondary"
           disabled={page === 1 || loading}
           onClick={() => {
             setLoading(true);
@@ -175,6 +189,7 @@ export default function UserManagement() {
         </Button>
         <span>Page {page}</span>
         <Button
+          variant="secondary"
           disabled={page * 20 >= total || loading}
           onClick={() => {
             setLoading(true);
@@ -184,6 +199,7 @@ export default function UserManagement() {
           Next
         </Button>
         <Button
+          variant="secondary"
           disabled={loading}
           onClick={() => {
             setLoading(true);

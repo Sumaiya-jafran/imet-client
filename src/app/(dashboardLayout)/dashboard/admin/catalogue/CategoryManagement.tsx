@@ -64,7 +64,7 @@ export default function CategoryManagement({
     }
   };
   return (
-    <section className="rounded-xl border bg-white p-5">
+    <section className="surface p-5">
       <h2 className="text-2xl font-semibold">Categories</h2>
       <p className="my-3 text-sm text-slate-600">
         Categories have one level. Categories containing machines cannot be
@@ -99,7 +99,7 @@ export default function CategoryManagement({
           {errors.slug && (
             <p className="text-sm text-red-700">{errors.slug.message}</p>
           )}
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <Button type="submit">
               {isSubmitting
                 ? 'Saving…'
@@ -107,7 +107,11 @@ export default function CategoryManagement({
                   ? 'Save category'
                   : 'Create category'}
             </Button>
-            {editing && <Button onClick={cancel}>Cancel category edit</Button>}
+            {editing && (
+              <Button variant="secondary" onClick={cancel}>
+                Cancel category edit
+              </Button>
+            )}
           </div>
         </fieldset>
       </form>
@@ -123,8 +127,9 @@ export default function CategoryManagement({
                 {category.slug} · {category._count?.machines ?? 0} machines
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button
+                variant="secondary"
                 disabled={isSubmitting || deleting}
                 onClick={() => {
                   setEditing(category.id);
@@ -135,6 +140,7 @@ export default function CategoryManagement({
                 Edit category
               </Button>
               <Button
+                variant="danger"
                 disabled={
                   isSubmitting || deleting || !!category._count?.machines
                 }

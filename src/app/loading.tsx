@@ -1,7 +1,4 @@
+import LoadingState from '@/components/shared/LoadingState';
 export default function Loading() {
-  return (
-    <p role="status" className="p-8">
-      Loading…
-    </p>
-  );
+  return <LoadingState label="Loading your workspace…" cards={false} />;
 }
