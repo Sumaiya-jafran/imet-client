@@ -1,4 +1,5 @@
 'use client';
+import TranslatedText from '@/components/shared/TranslatedText';
 import { useEffect, useState } from 'react';
 import { reviewApi } from '@/lib/api/review.service';
 import type { ReviewTarget, PublicReviewsResult } from '@/types/review';
@@ -131,7 +132,11 @@ export default function PublicReviews({
                   <RatingStars rating={r.rating} />
                 </div>
                 <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6">
-                  {r.body}
+                  <TranslatedText
+                    resource={{ type: 'REVIEW', id: r.id, field: 'BODY' }}
+                    original={r.body}
+                    showStatus
+                  />
                 </p>
               </article>
             ))}

@@ -199,3 +199,9 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Bengali conjuncts and CJK glyphs need their natural character spacing. */
+:lang(bn),
+:lang(zh) {
+  letter-spacing: normal;
+}

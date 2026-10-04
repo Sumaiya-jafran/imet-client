@@ -18,7 +18,7 @@ export interface MachineSummary {
   images: MachineImage[];
 }
 export interface MachineDetail extends MachineSummary {
-  specifications: { label: string; value: string }[];
+  specifications: { id: string; label: string; value: string }[];
 }
 export interface CatalogueResult {
   machines: MachineSummary[];

@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import LanguageSelector from './LanguageSelector';
 import { usePathname } from 'next/navigation';
 import { Factory, ArrowUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -57,6 +58,9 @@ export default function Header() {
             Account
           </Link>
         </nav>
+        <div className="order-4 flex w-full border-t border-slate-100 pt-2 sm:order-3 sm:justify-end lg:order-none lg:w-auto lg:border-0 lg:pt-0">
+          <LanguageSelector />
+        </div>
         <div className="ml-auto flex items-center gap-3 text-[13px] font-semibold">
           <Link
             href="/auth/signin"

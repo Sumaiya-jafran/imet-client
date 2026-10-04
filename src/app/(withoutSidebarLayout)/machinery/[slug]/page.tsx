@@ -1,3 +1,4 @@
+import TranslatedText from '@/components/shared/TranslatedText';
 import PublicReviews from '@/components/shared/PublicReviews';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -21,7 +22,7 @@ export async function generateMetadata({
 }) {
   const machine = await getMachine((await params).slug);
   return {
-    title: `${machine.name} | iMet Machinery`,
+    title: `$<TranslatedText resource={{ type: 'MACHINERY', id: machine.id, field: 'NAME' }} original={machine.name} /> | iMet Machinery`,
     description: machine.description.slice(0, 160),
   };
 }
@@ -67,7 +68,10 @@ export default async function MachinePage({
             {machine.category.name}
           </Link>
           <h1 className="mt-3 break-words text-3xl font-bold sm:text-4xl text-navy">
-            {machine.name}
+            <TranslatedText
+              resource={{ type: 'MACHINERY', id: machine.id, field: 'NAME' }}
+              original={machine.name}
+            />
           </h1>
           <dl className="mt-6 grid grid-cols-2 gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
             <div>
@@ -98,7 +102,15 @@ export default async function MachinePage({
       <section className="surface mt-6 p-5 sm:p-7">
         <h2 className="text-lg font-semibold text-navy">About this machine</h2>
         <p className="mt-4 whitespace-pre-wrap break-words leading-7 text-slate-600">
-          {machine.description}
+          <TranslatedText
+            resource={{
+              type: 'MACHINERY',
+              id: machine.id,
+              field: 'DESCRIPTION',
+            }}
+            original={machine.description}
+            showStatus
+          />
         </p>
       </section>
       <section className="surface mt-6 p-5 sm:p-7">
@@ -112,7 +124,16 @@ export default async function MachinePage({
                 key={index}
                 className="grid gap-2 bg-white px-4 py-3 odd:bg-slate-50 sm:grid-cols-2"
               >
-                <dt className="break-words font-medium">{spec.label}</dt>
+                <dt className="break-words font-medium">
+                  <TranslatedText
+                    resource={{
+                      type: 'SPECIFICATION',
+                      id: spec.id,
+                      field: 'LABEL',
+                    }}
+                    original={spec.label}
+                  />
+                </dt>
                 <dd className="break-words text-slate-600">{spec.value}</dd>
               </div>
             ))}
