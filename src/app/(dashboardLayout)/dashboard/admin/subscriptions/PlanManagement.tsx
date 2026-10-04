@@ -1,4 +1,8 @@
 'use client';
+import LoadingState from '@/components/shared/LoadingState';
+import Badge from '@/components/shared/Badge';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Button from '@/components/buttons/Button';
@@ -43,18 +47,24 @@ export default function PlanManagement() {
   if (!token || session?.error) return <p role="alert">Sign in again.</p>;
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Subscription plans</h1>
+      <PageHeader
+        title="Subscription plans"
+        eyebrow="Administration"
+        description="Define supplier eligibility, terms and marketplace entitlements."
+      />
       <Link href="/dashboard/admin/suppliers" className="underline">
         Manage suppliers and subscriptions
       </Link>
       {error && (
         <div role="alert">
           <p>{error}</p>
-          <Button onClick={reload}>Reload plans</Button>
+          <Button variant="secondary" onClick={reload}>
+            Reload plans
+          </Button>
         </div>
       )}
       {editor ? (
-        <section className="rounded-xl border bg-white p-5">
+        <section className="surface p-5">
           <SubscriptionPlanForm
             key={editor.plan?.updatedAt ?? 'new'}
             token={token}
@@ -70,28 +80,67 @@ export default function PlanManagement() {
         <>
           <Button onClick={() => setEditor({})}>Create plan</Button>
           {loading ? (
-            <p role="status">Loading plans…</p>
+            <LoadingState label="Loading plans…" />
           ) : (
-            plans.map((plan) => (
-              <article key={plan.id} className="rounded-xl border bg-white p-5">
-                <h2 className="text-xl font-semibold">
-                  {plan.name} · {plan.isActive ? 'Active' : 'Inactive'}
-                </h2>
-                <p>
-                  {plan.price} {plan.currency} · {plan.durationDays} days ·{' '}
-                  {plan.listingLimit} listings
-                </p>
-                <p>
-                  Eligibility: {plan.eligibleTypes.join(', ')} ·{' '}
-                  {plan.visibility}
-                </p>
-                <Button className="mt-4" onClick={() => setEditor({ plan })}>
-                  Edit plan
-                </Button>
-              </article>
-            ))
+            <div className="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {plans.map((plan) => (
+                <article key={plan.id} className="surface min-w-0 p-5">
+                  <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                    <span className="eyebrow">Supplier plan</span>
+                    <Badge tone={plan.isActive ? 'success' : 'neutral'}>
+                      {plan.isActive ? 'Active' : 'Inactive'}
+                    </Badge>
+                  </div>
+                  <h2 className="break-words text-lg font-semibold">
+                    {plan.name}
+                  </h2>
+                  <p className="mt-4 break-words text-2xl font-bold tracking-tight text-navy">
+                    {plan.price}{' '}
+                    <span className="text-xs font-medium tracking-normal text-slate-500">
+                      {plan.currency} / {plan.durationDays} days
+                    </span>
+                  </p>
+                  <dl className="my-5 grid grid-cols-2 gap-3 border-y border-slate-100 py-4">
+                    <div>
+                      <dt>Listing capacity</dt>
+                      <dd className="mt-1 font-semibold">
+                        {plan.listingLimit} machines
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Visibility</dt>
+                      <dd className="mt-1 text-xs font-semibold">
+                        {plan.visibility}
+                      </dd>
+                    </div>
+                  </dl>
+                  <p className="text-xs text-slate-500">
+                    Eligibility:{' '}
+                    {plan.eligibleTypes
+                      .map((type) =>
+                        type === 'LOCAL'
+                          ? 'Local suppliers'
+                          : 'International manufacturers',
+                      )
+                      .join(', ')}
+                  </p>
+                  <Button
+                    variant="secondary"
+                    className="mt-4 w-full"
+                    onClick={() => setEditor({ plan })}
+                  >
+                    Edit plan
+                  </Button>
+                </article>
+              ))}
+            </div>
           )}
-          {!loading && !plans.length && <p>No plans defined yet.</p>}
+          {!loading && !plans.length && (
+            <EmptyState
+              title="No plans defined yet"
+              description="Create a plan to define supplier subscription terms and listing limits."
+            />
+          )}
         </>
       )}
     </div>

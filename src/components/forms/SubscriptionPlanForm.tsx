@@ -87,7 +87,7 @@ export default function SubscriptionPlanForm({
           {error}
         </p>
       )}
-      <fieldset disabled={isSubmitting} className="space-y-4">
+      <fieldset disabled={isSubmitting} className="grid gap-4 sm:grid-cols-2">
         {Object.entries(labels).map(([key, label]) => {
           const field = key as keyof typeof labels;
           return (
@@ -97,6 +97,10 @@ export default function SubscriptionPlanForm({
               </label>
               <input
                 id={`plan-${field}`}
+                aria-invalid={!!errors[field]}
+                aria-describedby={
+                  errors[field] ? `plan-${field}-error` : undefined
+                }
                 type={numeric.includes(field) ? 'number' : 'text'}
                 step={numeric.includes(field) ? '1' : undefined}
                 {...register(
@@ -106,12 +110,14 @@ export default function SubscriptionPlanForm({
                 className="mt-1 w-full rounded border bg-white p-2"
               />
               {errors[field] && (
-                <p className="text-red-700">{errors[field]?.message}</p>
+                <p id={`plan-${field}-error`} className="text-red-700">
+                  {errors[field]?.message}
+                </p>
               )}
             </div>
           );
         })}
-        <fieldset>
+        <fieldset className="rounded-lg border border-slate-200 bg-slate-50 p-4 sm:col-span-2">
           <legend className="font-medium">Eligible supplier types</legend>
           <label className="mt-2 block">
             <input
@@ -155,11 +161,13 @@ export default function SubscriptionPlanForm({
             <option value="FEATURED">Featured badge</option>
           </select>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3 border-t border-slate-200 pt-4 sm:col-span-2">
           <Button type="submit">
             {isSubmitting ? 'Saving…' : 'Save plan'}
           </Button>
-          <Button onClick={onCancel}>Cancel plan edit</Button>
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel plan edit
+          </Button>
         </div>
       </fieldset>
     </form>

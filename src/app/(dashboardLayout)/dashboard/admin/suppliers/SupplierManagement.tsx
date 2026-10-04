@@ -1,4 +1,8 @@
 'use client';
+import LoadingState from '@/components/shared/LoadingState';
+import Badge from '@/components/shared/Badge';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
@@ -55,7 +59,7 @@ function ReviewForm({
           );
         }
       })}
-      className="space-y-4 rounded-xl border bg-white p-5"
+      className="space-y-4 surface p-5"
     >
       <h2 className="text-2xl font-semibold">Application review</h2>
       {error && (
@@ -167,14 +171,20 @@ export default function SupplierManagement() {
   if (!token || session?.error) return <p role="alert">Sign in again.</p>;
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Supplier management</h1>
+      <PageHeader
+        title="Supplier management"
+        eyebrow="Administration"
+        description="Review company applications and manage marketplace access."
+      />
       <Link href="/dashboard/admin/subscriptions" className="underline">
         Manage subscription plans
       </Link>
       {error && (
         <div role="alert">
           <p className="text-red-700">{error}</p>
-          <Button onClick={reload}>Reload suppliers</Button>
+          <Button variant="secondary" onClick={reload}>
+            Reload suppliers
+          </Button>
         </div>
       )}
       {selected ? (
@@ -187,11 +197,11 @@ export default function SupplierManagement() {
           >
             Back to suppliers
           </Button>
-          <section className="rounded-xl border bg-white p-5">
+          <section className="surface p-5">
             <h2 className="break-words text-2xl font-semibold">
               {selected.companyName}
             </h2>
-            <dl className="my-4 space-y-2">
+            <dl className="my-4 grid gap-4 rounded-lg bg-slate-50 p-4 sm:grid-cols-2">
               <div>
                 <dt className="font-semibold">Supplier type</dt>
                 <dd>{selected.type}</dd>
@@ -233,6 +243,7 @@ export default function SupplierManagement() {
             ))}
             {!selected.documents.length && <p>None provided.</p>}
             <Button
+              variant="secondary"
               className="mt-4"
               onClick={() => setProfileEdit(!profileEdit)}
             >
@@ -240,7 +251,7 @@ export default function SupplierManagement() {
             </Button>
           </section>
           {profileEdit && (
-            <section className="rounded-xl border bg-white p-5">
+            <section className="surface p-5">
               <p className="mb-3 text-sm text-slate-600">
                 Administrative profile edits reset verification. Review and
                 verify the updated information afterwards.
@@ -255,19 +266,21 @@ export default function SupplierManagement() {
               />
             </section>
           )}
-          <ReviewForm
-            key={selected.updatedAt}
-            token={token}
-            supplier={selected}
-            onSave={saved}
-          />
-          <SupplierSubscriptionForm
-            key={`${selected.updatedAt}-${selected.subscriptions.map((term) => term.updatedAt).join('-')}`}
-            token={token}
-            supplier={selected}
-            plans={plans}
-            onSave={saved}
-          />
+          <div className="grid items-start gap-5 xl:grid-cols-2">
+            <ReviewForm
+              key={selected.updatedAt}
+              token={token}
+              supplier={selected}
+              onSave={saved}
+            />
+            <SupplierSubscriptionForm
+              key={`${selected.updatedAt}-${selected.subscriptions.map((term) => term.updatedAt).join('-')}`}
+              token={token}
+              supplier={selected}
+              plans={plans}
+              onSave={saved}
+            />
+          </div>
         </>
       ) : (
         <>
@@ -282,7 +295,7 @@ export default function SupplierManagement() {
                 page: 1,
               });
             }}
-            className="grid gap-3 rounded-xl border bg-white p-5 sm:grid-cols-2"
+            className="grid gap-3 surface p-5 sm:grid-cols-2"
           >
             <label className="block">
               Search suppliers
@@ -317,7 +330,7 @@ export default function SupplierManagement() {
             </Button>
           </form>
           {loading ? (
-            <p role="status">Loading suppliers…</p>
+            <LoadingState label="Loading suppliers…" />
           ) : (
             result && (
               <>
@@ -325,16 +338,34 @@ export default function SupplierManagement() {
                 {result.suppliers.map((supplier) => (
                   <article
                     key={supplier.id}
-                    className="rounded-xl border bg-white p-5"
+                    className="surface flex flex-wrap items-center justify-between gap-4 p-5"
                   >
-                    <h2 className="break-words text-xl font-semibold">
-                      {supplier.companyName}
-                    </h2>
-                    <p>
-                      {supplier.type} · {supplier.status} · Subscription{' '}
-                      {supplier.subscriptions.find((term) => term.isCurrent)
-                        ?.effectiveStatus ?? 'None'}
-                    </p>
+                    <div className="min-w-0">
+                      <h2 className="break-words text-base font-semibold">
+                        {supplier.companyName}
+                      </h2>
+                      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                        <span>
+                          {supplier.type === 'LOCAL'
+                            ? 'Local supplier'
+                            : 'International manufacturer'}
+                        </span>
+                        <Badge
+                          tone={
+                            supplier.status === 'APPROVED'
+                              ? 'success'
+                              : 'neutral'
+                          }
+                        >
+                          {supplier.status}
+                        </Badge>
+                        <span>
+                          Subscription:{' '}
+                          {supplier.subscriptions.find((term) => term.isCurrent)
+                            ?.effectiveStatus ?? 'None'}
+                        </span>
+                      </div>
+                    </div>
                     <Button
                       disabled={busy}
                       className="mt-3"
@@ -344,12 +375,18 @@ export default function SupplierManagement() {
                     </Button>
                   </article>
                 ))}
-                {!result.suppliers.length && <p>No matching suppliers.</p>}
+                {!result.suppliers.length && (
+                  <EmptyState
+                    title="No matching suppliers"
+                    description="Adjust your search or status filter to find an application."
+                  />
+                )}
                 <nav
                   aria-label="Supplier management pagination"
                   className="flex flex-wrap gap-3"
                 >
                   <Button
+                    variant="secondary"
                     disabled={filters.page <= 1}
                     onClick={() => {
                       setLoading(true);
@@ -363,6 +400,7 @@ export default function SupplierManagement() {
                     {Math.max(1, result.pagination.totalPages)}
                   </span>
                   <Button
+                    variant="secondary"
                     disabled={filters.page >= result.pagination.totalPages}
                     onClick={() => {
                       setLoading(true);

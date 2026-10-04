@@ -24,7 +24,7 @@ export default async function Page({
       <Link href="/suppliers" className="underline">
         Back to suppliers
       </Link>
-      <div className="mt-6 grid gap-8 md:grid-cols-2">
+      <div className="surface mt-6 grid gap-6 p-5 sm:p-8 md:grid-cols-[.8fr_1.2fr]">
         <MachineImage
           image={
             supplier.logoUrl
@@ -32,8 +32,8 @@ export default async function Page({
               : undefined
           }
         />
-        <section>
-          <h1 className="break-words text-4xl font-bold text-navy">
+        <section className="min-w-0">
+          <h1 className="break-words text-3xl font-bold sm:text-4xl text-navy">
             {supplier.companyName}
           </h1>
           <p className="mt-4">
@@ -61,7 +61,7 @@ export default async function Page({
           )}
           <Link
             href={`/machinery?supplier=${supplier.id}`}
-            className="mt-6 inline-block rounded bg-navy px-5 py-3 text-white"
+            className="action-link mt-6"
           >
             Browse this supplier’s machinery
           </Link>

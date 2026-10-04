@@ -1,4 +1,7 @@
 'use client';
+import LoadingState from '@/components/shared/LoadingState';
+import Badge from '@/components/shared/Badge';
+import PageHeader from '@/components/shared/PageHeader';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -48,17 +51,23 @@ export default function SupplierDashboard() {
     return <p role="alert">Sign in again to manage your supplier account.</p>;
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Supplier account</h1>
+      <PageHeader
+        title="Supplier account"
+        eyebrow="Company workspace"
+        description="Manage your company profile, application and subscription terms."
+      />
       {error && (
         <div role="alert">
           <p className="text-red-700">{error}</p>
-          <Button onClick={reload}>Reload supplier account</Button>
+          <Button variant="secondary" onClick={reload}>
+            Reload supplier account
+          </Button>
         </div>
       )}
       {loading ? (
-        <p role="status">Loading supplier account…</p>
+        <LoadingState label="Loading supplier account…" />
       ) : !supplier || supplier.status === 'REJECTED' ? (
-        <section className="rounded-xl border bg-white p-5">
+        <section className="surface p-5">
           {supplier?.reviewNote && (
             <p role="status" className="mb-4">
               Application rejected: {supplier.reviewNote}. Update your
@@ -75,10 +84,15 @@ export default function SupplierDashboard() {
         </section>
       ) : (
         <>
-          <section className="rounded-xl border bg-white p-5">
-            <h2 className="text-2xl font-semibold">{supplier.companyName}</h2>
+          <section className="surface p-5">
+            <h2 className="text-lg font-semibold">{supplier.companyName}</h2>
             <p className="mt-3">
-              Application status: <strong>{supplier.status}</strong>
+              Application status:{' '}
+              <Badge
+                tone={supplier.status === 'APPROVED' ? 'success' : 'neutral'}
+              >
+                {supplier.status}
+              </Badge>
             </p>
             <p>
               Verification: {supplier.isVerified ? 'Verified' : 'Not verified'}
@@ -100,7 +114,10 @@ export default function SupplierDashboard() {
             )}
             {supplier.status === 'APPROVED' && (
               <div className="mt-4 flex flex-wrap gap-4">
-                <Button onClick={() => setEditing(!editing)}>
+                <Button
+                  variant="secondary"
+                  onClick={() => setEditing(!editing)}
+                >
                   Edit company profile
                 </Button>
                 <Link
@@ -113,7 +130,7 @@ export default function SupplierDashboard() {
             )}
           </section>
           {editing && (
-            <section className="rounded-xl border bg-white p-5">
+            <section className="surface p-5">
               <SupplierProfileForm
                 key={supplier.updatedAt}
                 token={token}
@@ -124,8 +141,8 @@ export default function SupplierDashboard() {
               />
             </section>
           )}
-          <section className="rounded-xl border bg-white p-5">
-            <h2 className="text-2xl font-semibold">Subscriptions</h2>
+          <section className="surface p-5">
+            <h2 className="text-lg font-semibold">Subscriptions</h2>
             <p className="my-3 text-sm text-slate-600">
               An approved account and applicable active subscription are
               required for supplier listings. Activation and renewal are handled
@@ -133,7 +150,10 @@ export default function SupplierDashboard() {
             </p>
             {supplier.subscriptions.length ? (
               supplier.subscriptions.map((term) => (
-                <div key={term.id} className="my-3 rounded border p-4">
+                <div
+                  key={term.id}
+                  className="my-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4 text-sm"
+                >
                   <h3 className="font-semibold">
                     {term.planName} ·{' '}
                     {term.isCurrent ? 'Current term' : 'Previous term'}
@@ -160,14 +180,17 @@ export default function SupplierDashboard() {
           </section>
         </>
       )}
-      <section className="rounded-xl border bg-white p-5">
-        <h2 className="text-2xl font-semibold">Available plans</h2>
+      <section className="surface p-5">
+        <h2 className="text-lg font-semibold">Available plans</h2>
         <p className="my-3 text-sm text-slate-600">
           Plan prices are supplier subscription fees. No online payments are
           collected.
         </p>
         {plans.map((plan) => (
-          <article key={plan.id} className="my-3 rounded border p-4">
+          <article
+            key={plan.id}
+            className="my-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4 text-sm"
+          >
             <h3 className="font-semibold">{plan.name}</h3>
             <p>
               {plan.price} {plan.currency} · {plan.durationDays} days ·{' '}

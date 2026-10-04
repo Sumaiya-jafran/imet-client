@@ -93,7 +93,7 @@ export default function SupplierSubscriptionForm({
     }
   };
   return (
-    <section className="rounded-xl border bg-white p-5">
+    <section className="surface p-5">
       <h2 className="text-2xl font-semibold">Manual subscription management</h2>
       <p className="my-3 text-sm text-slate-600">
         No payment is processed. Assign or renew using current plan terms, or
@@ -101,7 +101,10 @@ export default function SupplierSubscriptionForm({
         limits. Dates use your local timezone; the backend stores UTC.
       </p>
       {supplier.subscriptions.map((term) => (
-        <div key={term.id} className="my-3 rounded border p-3">
+        <div
+          key={term.id}
+          className="my-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4"
+        >
           <p className="font-semibold">
             {term.planName} · {term.isCurrent ? 'Current' : 'Previous'} ·{' '}
             {term.effectiveStatus}
@@ -132,6 +135,7 @@ export default function SupplierSubscriptionForm({
         </Button>
         {current && (
           <Button
+            variant="secondary"
             disabled={busy}
             onClick={() => {
               setMode('edit');
@@ -155,10 +159,10 @@ export default function SupplierSubscriptionForm({
           disabled={
             busy || (mode === 'assign' && supplier.status !== 'APPROVED')
           }
-          className="space-y-4"
+          className="grid gap-4 sm:grid-cols-2"
         >
           {mode === 'assign' && (
-            <div>
+            <div className="sm:col-span-2">
               <label htmlFor="term-plan" className="block font-medium">
                 Assign plan
               </label>

@@ -9,7 +9,7 @@ export default function MachineImage({ image }: { image?: ImageData }) {
     safe = !!image && new URL(image.url).protocol === 'https:';
   } catch {}
   return (
-    <div className="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-lg bg-slate-100">
+    <div className="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-lg border border-slate-200/70 bg-slate-100">
       {image && safe && !failed ? (
         // Catalogue images use arbitrary HTTPS hosts; avoid proxying untrusted URLs through the server.
         // eslint-disable-next-line @next/next/no-img-element
@@ -22,8 +22,8 @@ export default function MachineImage({ image }: { image?: ImageData }) {
           onError={() => setFailed(true)}
         />
       ) : (
-        <div className="flex flex-col items-center gap-2 text-slate-500">
-          <Factory aria-hidden="true" size={40} />
+        <div className="flex flex-col items-center gap-3 text-xs text-slate-500">
+          <Factory aria-hidden="true" size={36} strokeWidth={1.25} />
           <span>Image unavailable</span>
         </div>
       )}

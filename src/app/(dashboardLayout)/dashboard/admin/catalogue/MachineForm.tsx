@@ -112,7 +112,7 @@ export default function MachineForm({
   };
   const input = 'mt-1 w-full rounded border border-slate-300 bg-white p-2';
   return (
-    <section className="rounded-xl border bg-white p-5">
+    <section className="surface p-5">
       <h2 className="text-2xl font-semibold">
         {machine ? 'Edit machine' : 'Create machine'}
       </h2>
@@ -129,9 +129,9 @@ export default function MachineForm({
         </p>
       )}
       <form onSubmit={handleSubmit(save)} noValidate className="space-y-4">
-        <fieldset disabled={isSubmitting} className="space-y-4">
+        <fieldset disabled={isSubmitting} className="grid gap-4 md:grid-cols-2">
           {!supplierMode && (
-            <section>
+            <section className="rounded-lg border border-slate-200 bg-slate-50 p-4 md:col-span-2">
               <label className="block">
                 Find supplier company
                 <input
@@ -203,7 +203,7 @@ export default function MachineForm({
               )}
             </div>
           ))}
-          <div>
+          <div className="md:col-span-2">
             <label htmlFor="machine-description" className="block font-medium">
               Description
             </label>
@@ -255,10 +255,16 @@ export default function MachineForm({
               <option value="PUBLISHED">Published</option>
             </select>
           </div>
-          <section aria-label="Machine images">
+          <section
+            aria-label="Machine images"
+            className="border-t border-slate-200 pt-5 md:col-span-2"
+          >
             <h3 className="font-semibold">Images</h3>
             {images.fields.map((field, index) => (
-              <div key={field.id} className="my-3 rounded border p-3">
+              <div
+                key={field.id}
+                className="my-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4"
+              >
                 <label className="block">
                   Image URL {index + 1}
                   <input
@@ -286,34 +292,43 @@ export default function MachineForm({
                 )}
                 <div className="mt-3 flex flex-wrap gap-3">
                   <Button
+                    variant="secondary"
                     disabled={index === 0}
                     onClick={() => images.move(index, index - 1)}
                   >
                     Move image up
                   </Button>
                   <Button
+                    variant="secondary"
                     disabled={index === images.fields.length - 1}
                     onClick={() => images.move(index, index + 1)}
                   >
                     Move image down
                   </Button>
-                  <Button onClick={() => images.remove(index)}>
+                  <Button variant="danger" onClick={() => images.remove(index)}>
                     Remove image
                   </Button>
                 </div>
               </div>
             ))}
             <Button
+              variant="secondary"
               disabled={images.fields.length >= 20}
               onClick={() => images.append({ url: '', alt: '' })}
             >
               Add image
             </Button>
           </section>
-          <section aria-label="Technical specifications">
+          <section
+            aria-label="Technical specifications"
+            className="border-t border-slate-200 pt-5 md:col-span-2"
+          >
             <h3 className="font-semibold">Technical specifications</h3>
             {specs.fields.map((field, index) => (
-              <div key={field.id} className="my-3 rounded border p-3">
+              <div
+                key={field.id}
+                className="my-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4"
+              >
                 <label className="block">
                   Specification label {index + 1}
                   <input
@@ -340,35 +355,40 @@ export default function MachineForm({
                 )}
                 <div className="mt-3 flex flex-wrap gap-3">
                   <Button
+                    variant="secondary"
                     disabled={index === 0}
                     onClick={() => specs.move(index, index - 1)}
                   >
                     Move specification up
                   </Button>
                   <Button
+                    variant="secondary"
                     disabled={index === specs.fields.length - 1}
                     onClick={() => specs.move(index, index + 1)}
                   >
                     Move specification down
                   </Button>
-                  <Button onClick={() => specs.remove(index)}>
+                  <Button variant="danger" onClick={() => specs.remove(index)}>
                     Remove specification
                   </Button>
                 </div>
               </div>
             ))}
             <Button
+              variant="secondary"
               disabled={specs.fields.length >= 100}
               onClick={() => specs.append({ label: '', value: '' })}
             >
               Add specification
             </Button>
           </section>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3 md:col-span-2">
             <Button type="submit" disabled={isSubmitting || !categories.length}>
               {isSubmitting ? 'Saving…' : 'Save machine'}
             </Button>
-            <Button onClick={onCancel}>Cancel</Button>
+            <Button variant="secondary" onClick={onCancel}>
+              Cancel
+            </Button>
           </div>
         </fieldset>
       </form>

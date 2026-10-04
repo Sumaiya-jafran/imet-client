@@ -1,3 +1,4 @@
+import LoadingState from '@/components/shared/LoadingState';
 export default function Loading() {
-  return <p role="status">Loading suppliers…</p>;
+  return <LoadingState label="Loading suppliers…" cards={true} />;
 }

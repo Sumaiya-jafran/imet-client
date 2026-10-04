@@ -111,11 +111,14 @@ export default function SupplierProfileForm({
           {error} Reload the profile if it changed.
         </p>
       )}
-      <fieldset disabled={isSubmitting} className="space-y-4">
+      <fieldset disabled={isSubmitting} className="grid gap-4 md:grid-cols-2">
         {Object.entries(labels).map(([field, label]) => {
           const key = field as keyof typeof labels;
           return (
-            <div key={key}>
+            <div
+              key={key}
+              className={key === 'description' ? 'md:col-span-2' : 'min-w-0'}
+            >
               <label htmlFor={`supplier-${key}`} className="block font-medium">
                 {label}
                 {['registrationNumber', 'website', 'logoUrl'].includes(key)
@@ -125,6 +128,10 @@ export default function SupplierProfileForm({
               {key === 'description' ? (
                 <textarea
                   id={`supplier-${key}`}
+                  aria-invalid={!!errors[key]}
+                  aria-describedby={
+                    errors[key] ? `supplier-${key}-error` : undefined
+                  }
                   rows={5}
                   {...register(key)}
                   className="mt-1 w-full rounded border bg-white p-2"
@@ -132,6 +139,10 @@ export default function SupplierProfileForm({
               ) : (
                 <input
                   id={`supplier-${key}`}
+                  aria-invalid={!!errors[key]}
+                  aria-describedby={
+                    errors[key] ? `supplier-${key}-error` : undefined
+                  }
                   readOnly={readonly(key)}
                   {...register(key, {
                     ...(['registrationNumber', 'website', 'logoUrl'].includes(
@@ -144,7 +155,12 @@ export default function SupplierProfileForm({
                 />
               )}
               {errors[key] && (
-                <p className="text-sm text-red-700">{errors[key]?.message}</p>
+                <p
+                  id={`supplier-${key}-error`}
+                  className="text-sm text-red-700"
+                >
+                  {errors[key]?.message}
+                </p>
               )}
             </div>
           );
@@ -178,14 +194,17 @@ export default function SupplierProfileForm({
             </select>
           )}
         </div>
-        <section>
+        <section className="mt-2 border-t border-slate-200 pt-5 md:col-span-2">
           <h3 className="font-semibold">Verification documents</h3>
           <p className="my-2 text-sm text-slate-600">
             Use HTTPS document links. These links are private to your account
             and administrators; protect access at your document host as well.
           </p>
           {documents.fields.map((field, index) => (
-            <div key={field.id} className="my-3 rounded border p-3">
+            <div
+              key={field.id}
+              className="my-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4"
+            >
               <label className="block">
                 Document name {index + 1}
                 <input
@@ -214,6 +233,7 @@ export default function SupplierProfileForm({
               )}
               {mode !== 'owner' && (
                 <Button
+                  variant="danger"
                   className="mt-3"
                   onClick={() => documents.remove(index)}
                 >
@@ -224,6 +244,7 @@ export default function SupplierProfileForm({
           ))}
           {mode !== 'owner' && (
             <Button
+              variant="secondary"
               disabled={documents.fields.length >= 20}
               onClick={() => documents.append({ name: '', url: '' })}
             >
@@ -232,12 +253,12 @@ export default function SupplierProfileForm({
           )}
         </section>
         {mode === 'owner' && (
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-600 md:col-span-2">
             Company identity, location, type and documents require administrator
             changes. Approval and verification are controlled by administrators.
           </p>
         )}
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-3 border-t border-slate-200 pt-4 md:col-span-2">
           <Button type="submit">
             {isSubmitting
               ? 'Saving…'
@@ -245,7 +266,11 @@ export default function SupplierProfileForm({
                 ? 'Submit application'
                 : 'Save supplier profile'}
           </Button>
-          {onCancel && <Button onClick={onCancel}>Cancel profile edit</Button>}
+          {onCancel && (
+            <Button variant="secondary" onClick={onCancel}>
+              Cancel profile edit
+            </Button>
+          )}
         </div>
       </fieldset>
     </form>

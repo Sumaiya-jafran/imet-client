@@ -1,7 +1,4 @@
+import LoadingState from '@/components/shared/LoadingState';
 export default function Loading() {
-  return (
-    <p role="status" className="py-12 text-slate-600">
-      Loading machinery…
-    </p>
-  );
+  return <LoadingState label="Loading machinery…" cards={true} />;
 }

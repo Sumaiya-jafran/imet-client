@@ -22,8 +22,12 @@ export default function VerifyEmail({ token }: { token?: string }) {
     }
   };
   return (
-    <section className="mx-auto max-w-md space-y-4 rounded-xl border bg-white p-6">
+    <section className="surface mx-auto max-w-md space-y-4 p-6 sm:p-8">
+      <p className="eyebrow">Account verification</p>
       <h1 className="text-2xl font-bold">Verify your email</h1>
+      <p className="text-sm text-slate-600">
+        Confirm your email address to access your iMet account.
+      </p>
       {!token && (
         <p role="alert">This verification link is missing its token.</p>
       )}
@@ -39,7 +43,7 @@ export default function VerifyEmail({ token }: { token?: string }) {
           {busy ? 'Verifying…' : 'Verify email'}
         </Button>
       )}
-      <nav className="flex gap-4 text-orange-dark">
+      <nav className="flex flex-wrap gap-4 border-t border-slate-100 pt-4 text-xs font-medium text-orange-dark">
         <Link href="/auth/signin">Sign in</Link>
         <Link href="/auth/resend-verification">Request a new link</Link>
       </nav>

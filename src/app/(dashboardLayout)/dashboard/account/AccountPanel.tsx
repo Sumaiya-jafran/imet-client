@@ -1,4 +1,6 @@
 'use client';
+import PageHeader from '@/components/shared/PageHeader';
+import Badge from '@/components/shared/Badge';
 import ProfileForm from '@/components/forms/ProfileForm';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -65,125 +67,148 @@ export default function AccountPanel() {
     }
   };
   return (
-    <div className="space-y-8">
-      <section className="rounded-xl border bg-white p-6">
-        <h1 className="text-2xl font-bold">Your account</h1>
-        {error && (
-          <p role="alert" className="mt-4 text-red-700">
-            {error}
-          </p>
-        )}
-        {session?.error && (
-          <p role="alert">Your session expired. Sign in again.</p>
-        )}
-        {user ? (
-          <dl className="my-5 space-y-2">
-            <dt className="font-semibold">Name</dt>
-            <dd>{user.displayName}</dd>
-            <dt className="font-semibold">Email</dt>
-            <dd>{user.email}</dd>
-            <dt className="font-semibold">Roles</dt>
-            <dd>{user.roles.join(', ')}</dd>
-            <dt className="font-semibold">Account status</dt>
-            <dd>{user.status}</dd>
-          </dl>
-        ) : (
-          <p role="status" className="my-4">
-            Loading account…
-          </p>
-        )}
-        {user && session?.accessToken && (
-          <ProfileForm
-            token={session.accessToken}
-            displayName={user.displayName}
-            onSave={(displayName) => setUser({ ...user, displayName })}
-          />
-        )}
-        {user?.roles.includes('ADMIN') && (
-          <Link
-            href="/dashboard/admin/users"
-            className="block my-4 text-orange-dark"
-          >
-            Manage users
-          </Link>
-        )}
-        {user?.roles.includes('ADMIN') && (
-          <Link
-            href="/dashboard/admin/catalogue"
-            className="block my-4 text-orange-dark"
-          >
-            Manage catalogue
-          </Link>
-        )}
-        <Link href="/dashboard/supplier" className="block my-4 underline">
-          Supplier application / account
-        </Link>
-        {user?.roles.includes('ADMIN') && (
-          <div className="my-4 flex flex-wrap gap-4">
-            <Link href="/dashboard/admin/suppliers" className="underline">
-              Manage suppliers
-            </Link>
-            <Link href="/dashboard/admin/subscriptions" className="underline">
-              Manage subscription plans
-            </Link>
-          </div>
-        )}
-        <div className="flex flex-wrap gap-3">
-          <Button disabled={busy} onClick={() => void logout(false)}>
-            Sign out
-          </Button>
-          <Button disabled={busy} onClick={() => void logout(true)}>
-            Sign out of all devices
-          </Button>
-        </div>
-      </section>
-      <section className="rounded-xl border bg-white p-6">
-        <h2 className="text-xl font-bold">Change password</h2>
-        <p className="my-3 text-sm text-slate-600">
-          Changing your password signs you out of all devices.
-        </p>
-        <form onSubmit={handleSubmit(change)} className="space-y-4" noValidate>
-          {(['currentPassword', 'password', 'confirmPassword'] as const).map(
-            (field) => (
-              <div key={field}>
-                <label htmlFor={field} className="block font-medium">
-                  {
-                    {
-                      currentPassword: 'Current password',
-                      password: 'New password',
-                      confirmPassword: 'Confirm new password',
-                    }[field]
-                  }
-                </label>
-                <input
-                  id={field}
-                  type="password"
-                  autoComplete={
-                    field === 'currentPassword'
-                      ? 'current-password'
-                      : 'new-password'
-                  }
-                  {...register(field)}
-                  aria-invalid={!!errors[field]}
-                  aria-describedby={
-                    errors[field] ? `${field}-error` : undefined
-                  }
-                  className="mt-1 w-full rounded border p-2"
-                  disabled={isSubmitting}
-                />
-                {errors[field] && (
-                  <p id={`${field}-error`} className="text-red-700">
-                    {errors[field]?.message}
-                  </p>
-                )}
-              </div>
-            ),
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Account settings"
+        title="Your account"
+        description="Manage your profile, password and active sessions."
+      />
+      <div className="grid items-start gap-6 xl:grid-cols-2">
+        <section className="surface p-5 sm:p-6">
+          <h2 className="text-lg font-semibold">Profile & access</h2>
+          {error && (
+            <p role="alert" className="mt-4 text-red-700">
+              {error}
+            </p>
           )}
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Changing…' : 'Change password'}
-          </Button>
-        </form>
-      </section>
+          {session?.error && (
+            <p role="alert">Your session expired. Sign in again.</p>
+          )}
+          {user ? (
+            <dl className="my-5 grid grid-cols-[80px_1fr] items-start gap-x-4 gap-y-3 rounded-lg bg-slate-50 p-4 text-sm">
+              <dt className="font-semibold">Name</dt>
+              <dd>{user.displayName}</dd>
+              <dt className="font-semibold">Email</dt>
+              <dd>{user.email}</dd>
+              <dt className="font-semibold">Roles</dt>
+              <dd>{user.roles.join(', ')}</dd>
+              <dt className="font-semibold">Account status</dt>
+              <dd>
+                <Badge tone={user.status === 'ACTIVE' ? 'success' : 'neutral'}>
+                  {user.status.replaceAll('_', ' ')}
+                </Badge>
+              </dd>
+            </dl>
+          ) : (
+            <p role="status" className="my-4">
+              Loading account…
+            </p>
+          )}
+          {user && session?.accessToken && (
+            <ProfileForm
+              token={session.accessToken}
+              displayName={user.displayName}
+              onSave={(displayName) => setUser({ ...user, displayName })}
+            />
+          )}
+          {user?.roles.includes('ADMIN') && (
+            <Link
+              href="/dashboard/admin/users"
+              className="block my-4 text-orange-dark"
+            >
+              Manage users
+            </Link>
+          )}
+          {user?.roles.includes('ADMIN') && (
+            <Link
+              href="/dashboard/admin/catalogue"
+              className="block my-4 text-orange-dark"
+            >
+              Manage catalogue
+            </Link>
+          )}
+          <Link href="/dashboard/supplier" className="block my-4 underline">
+            Supplier application / account
+          </Link>
+          {user?.roles.includes('ADMIN') && (
+            <div className="my-4 flex flex-wrap gap-4">
+              <Link href="/dashboard/admin/suppliers" className="underline">
+                Manage suppliers
+              </Link>
+              <Link href="/dashboard/admin/subscriptions" className="underline">
+                Manage subscription plans
+              </Link>
+            </div>
+          )}
+          <div className="flex flex-wrap gap-3">
+            <Button
+              variant="secondary"
+              disabled={busy}
+              onClick={() => void logout(false)}
+            >
+              Sign out
+            </Button>
+            <Button
+              variant="ghost"
+              disabled={busy}
+              onClick={() => void logout(true)}
+            >
+              Sign out of all devices
+            </Button>
+          </div>
+        </section>
+        <section className="surface p-5 sm:p-6">
+          <h2 className="text-xl font-bold">Change password</h2>
+          <p className="my-3 text-sm text-slate-600">
+            Changing your password signs you out of all devices.
+          </p>
+          <form
+            onSubmit={handleSubmit(change)}
+            className="space-y-4"
+            noValidate
+          >
+            {(['currentPassword', 'password', 'confirmPassword'] as const).map(
+              (field) => (
+                <div key={field}>
+                  <label htmlFor={field} className="block font-medium">
+                    {
+                      {
+                        currentPassword: 'Current password',
+                        password: 'New password',
+                        confirmPassword: 'Confirm new password',
+                      }[field]
+                    }
+                  </label>
+                  <input
+                    id={field}
+                    type="password"
+                    autoComplete={
+                      field === 'currentPassword'
+                        ? 'current-password'
+                        : 'new-password'
+                    }
+                    {...register(field)}
+                    aria-invalid={!!errors[field]}
+                    aria-describedby={
+                      errors[field] ? `${field}-error` : undefined
+                    }
+                    className="mt-1 w-full rounded border p-2"
+                    disabled={isSubmitting}
+                  />
+                  {errors[field] && (
+                    <p id={`${field}-error`} className="text-red-700">
+                      {errors[field]?.message}
+                    </p>
+                  )}
+                </div>
+              ),
+            )}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Changing…' : 'Change password'}
+            </Button>
+          </form>
+        </section>
+      </div>
     </div>
   );
 }

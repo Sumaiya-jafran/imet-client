@@ -31,11 +31,11 @@ export default async function MachinePage({
 }) {
   const machine = await getMachine((await params).slug);
   return (
-    <article className="min-w-0">
+    <article className="surface min-w-0 p-5 sm:p-7">
       <Link href="/machinery" className="text-sm underline">
         Back to catalogue
       </Link>
-      <div className="mt-6 grid gap-8 md:grid-cols-2">
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
         <section aria-label="Machine images">
           <MachineImage image={machine.images[0]} />
           {machine.images.length > 1 && (
@@ -46,7 +46,7 @@ export default async function MachinePage({
             </div>
           )}
         </section>
-        <section className="min-w-0">
+        <section className="surface min-w-0 p-5 sm:p-7">
           {machine.supplier && (
             <p className="mb-3">
               Supplier:{' '}
@@ -65,10 +65,10 @@ export default async function MachinePage({
           >
             {machine.category.name}
           </Link>
-          <h1 className="mt-3 break-words text-4xl font-bold text-navy">
+          <h1 className="mt-3 break-words text-3xl font-bold sm:text-4xl text-navy">
             {machine.name}
           </h1>
-          <dl className="mt-6 space-y-3">
+          <dl className="mt-6 grid grid-cols-2 gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
             <div>
               <dt className="font-semibold">Manufacturer</dt>
               <dd className="break-words text-slate-600">
@@ -80,8 +80,8 @@ export default async function MachinePage({
               <dd className="break-words text-slate-600">{machine.model}</dd>
             </div>
           </dl>
-          <div className="mt-8 rounded-xl bg-slate-100 p-5">
-            <h2 className="text-xl font-semibold">Price on request</h2>
+          <div className="mt-6 rounded-lg border border-orange/15 bg-orange/5 p-4">
+            <h2 className="text-lg font-semibold">Price on request</h2>
             <p className="mt-2 text-slate-600">
               Request a quote for pricing. Online quote requests will be
               available in a future update.
@@ -89,20 +89,23 @@ export default async function MachinePage({
           </div>
         </section>
       </div>
-      <section className="mt-10">
-        <h2 className="text-2xl font-semibold text-navy">About this machine</h2>
+      <section className="surface mt-6 p-5 sm:p-7">
+        <h2 className="text-lg font-semibold text-navy">About this machine</h2>
         <p className="mt-4 whitespace-pre-wrap break-words leading-7 text-slate-600">
           {machine.description}
         </p>
       </section>
-      <section className="mt-10">
-        <h2 className="text-2xl font-semibold text-navy">
+      <section className="surface mt-6 p-5 sm:p-7">
+        <h2 className="text-lg font-semibold text-navy">
           Technical specifications
         </h2>
         {machine.specifications.length ? (
           <dl className="mt-4 divide-y divide-slate-200 rounded-xl border border-slate-200">
             {machine.specifications.map((spec, index) => (
-              <div key={index} className="grid gap-2 p-4 sm:grid-cols-2">
+              <div
+                key={index}
+                className="grid gap-2 bg-white px-4 py-3 odd:bg-slate-50 sm:grid-cols-2"
+              >
                 <dt className="break-words font-medium">{spec.label}</dt>
                 <dd className="break-words text-slate-600">{spec.value}</dd>
               </div>
