@@ -74,3 +74,5 @@ See [Reviews & Ratings and Dynamic Homepage](docs/milestone-7.md) for buyer/admi
 ## Milestone 8
 
 See [AI Translation](docs/milestone-8.md) for English/Bangla/Chinese public content, admin generation, original/fallback controls, backend OpenAI requirements and validation.
+
+Milestone 9 adds lazy machinery 3D/360 viewing, capability-gated VR and admin/supplier media management. See [M9 setup and validation](docs/milestone-9.md). Storage credentials remain backend-only.

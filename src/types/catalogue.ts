@@ -1,3 +1,4 @@
+import type { MachineryMedia } from './media';
 export interface MachineCategory {
   name: string;
   slug: string;
@@ -18,6 +19,7 @@ export interface MachineSummary {
   images: MachineImage[];
 }
 export interface MachineDetail extends MachineSummary {
+  media?: MachineryMedia[];
   specifications: { id: string; label: string; value: string }[];
 }
 export interface CatalogueResult {
