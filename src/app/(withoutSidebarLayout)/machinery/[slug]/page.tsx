@@ -1,3 +1,4 @@
+import PublicReviews from '@/components/shared/PublicReviews';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
@@ -60,7 +61,7 @@ export default async function MachinePage({
           )}
 
           <Link
-            className="text-sm text-orange-dark underline"
+            className="break-words text-sm text-orange-dark underline"
             href={`/machinery?category=${machine.category.slug}`}
           >
             {machine.category.name}
@@ -122,6 +123,7 @@ export default async function MachinePage({
           </p>
         )}
       </section>
+      <PublicReviews target="MACHINERY" targetId={machine.id} />
     </article>
   );
 }

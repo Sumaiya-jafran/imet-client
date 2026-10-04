@@ -1,4 +1,5 @@
 'use client';
+import PurchaseReviews from './PurchaseReviews';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
@@ -262,6 +263,7 @@ export default function SaleRecordPanel({
           )}
         </section>
       )}
+      {buyer && sale.status === 'COMPLETED' && <PurchaseReviews saleId={id} />}
     </div>
   );
 }

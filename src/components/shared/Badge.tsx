@@ -10,7 +10,7 @@ export default function Badge({
   return (
     <span
       className={cn(
-        'inline-flex max-w-full items-center gap-1 rounded-md border px-2 py-1 text-[11px] font-semibold leading-4',
+        'inline-flex max-w-full items-center [overflow-wrap:anywhere] gap-1 rounded-md border px-2 py-1 text-[11px] font-semibold leading-4',
         {
           neutral: 'border-slate-200 bg-slate-50 text-slate-600',
           success: 'border-emerald-200 bg-emerald-50 text-emerald-800',

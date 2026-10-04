@@ -66,3 +66,7 @@ Buyer RFQs, recipient leads/private quotes, admin review and subscription RFQ pe
 ## Milestone 6
 
 Recipient pipelines, private opportunity details, sales history, admin oversight and buyer read-only purchases reuse the current dashboard and M5 workflows. See [docs/milestone-6.md](docs/milestone-6.md). Use the matching backend branch and apply its additive migration. No new frontend dependency, environment variable or payment integration is required.
+
+## Milestone 7
+
+See [Reviews & Ratings and Dynamic Homepage](docs/milestone-7.md) for buyer/admin workflows, live homepage data, setup and validation.

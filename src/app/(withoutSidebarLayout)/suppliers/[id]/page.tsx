@@ -1,3 +1,4 @@
+import PublicReviews from '@/components/shared/PublicReviews';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { supplierApi } from '@/lib/api/supplier.service';
@@ -70,6 +71,7 @@ export default async function Page({
           </p>
         </section>
       </div>
+      <PublicReviews target="SUPPLIER" targetId={supplier.id} />
     </article>
   );
 }

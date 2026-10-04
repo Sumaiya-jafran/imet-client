@@ -51,6 +51,7 @@ export default function DashboardShell({
     ...(user.roles.includes('BUYER')
       ? [
           { href: '/dashboard/rfqs', label: 'My RFQs', icon: FileText },
+          { href: '/dashboard/reviews', label: 'My reviews', icon: FileText },
           {
             href: '/dashboard/purchases',
             label: 'My purchases',
@@ -79,6 +80,11 @@ export default function DashboardShell({
       : []),
     ...(user.roles.includes('ADMIN')
       ? [
+          {
+            href: '/dashboard/admin/reviews',
+            label: 'Review moderation',
+            icon: FileText,
+          },
           {
             href: '/dashboard/admin/sales',
             label: 'Sales oversight',
