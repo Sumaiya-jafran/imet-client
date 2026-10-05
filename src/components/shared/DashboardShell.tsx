@@ -35,6 +35,16 @@ export default function DashboardShell({
     ...(user.roles.includes('ADMIN')
       ? [
           {
+            href: '/dashboard/admin/analytics',
+            label: 'Operational analytics',
+            icon: LayoutDashboard,
+          },
+          {
+            href: '/dashboard/admin/audit-logs',
+            label: 'Audit log',
+            icon: FileText,
+          },
+          {
             href: '/dashboard/admin/service-tickets',
             label: 'Service management',
             icon: FileText,
