@@ -135,6 +135,19 @@ export default async function MachinePage({
           </p>
         )}
       </section>
+      <section className="surface mt-6 p-5">
+        <h2 className="font-semibold">Need after-sales service?</h2>
+        <p className="mt-2 text-sm text-slate-600">
+          Submit a service request for your completed purchase of this
+          machinery.
+        </p>
+        <Link
+          className="secondary-link mt-3"
+          href={`/dashboard/service-tickets/new?machine=${machine.slug}`}
+        >
+          Request machinery service
+        </Link>
+      </section>
       <PublicReviews target="MACHINERY" targetId={machine.id} />
     </article>
   );

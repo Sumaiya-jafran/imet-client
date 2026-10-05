@@ -76,3 +76,7 @@ See [Reviews & Ratings and Dynamic Homepage](docs/milestone-7.md) for buyer/admi
 See [AI Translation](docs/milestone-8.md) for English/Bangla/Chinese public content, admin generation, original/fallback controls, backend OpenAI requirements and validation.
 
 Milestone 9 adds lazy machinery 3D/360 viewing, capability-gated VR and admin/supplier media management. See [M9 setup and validation](docs/milestone-9.md). Storage credentials remain backend-only.
+
+## Milestone 10 — Service & Warranty
+
+The `milestone-10` branch adds completed-purchase service tickets, admin review/assignment/manual warranty assessment, assignee progress/resolution and admin closure. Read [the M10 implementation and deployment guide](docs/milestone-10.md) for permissions, APIs, pages, migration and validation. No new provider, dependency or environment variable is required.
