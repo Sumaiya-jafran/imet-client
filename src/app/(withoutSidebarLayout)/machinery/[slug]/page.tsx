@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import { catalogueApi } from '@/lib/api/catalogue.service';
 import { ApiError } from '@/lib/api/client';
-import MachineImage from '@/components/cards/MachineImage';
+import MachineryMediaGallery from '@/components/shared/MachineryMediaGallery';
 const getMachine = cache(async (slug: string) => {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || slug.length > 220) notFound();
   try {
@@ -22,7 +22,7 @@ export async function generateMetadata({
 }) {
   const machine = await getMachine((await params).slug);
   return {
-    title: `$<TranslatedText resource={{ type: 'MACHINERY', id: machine.id, field: 'NAME' }} original={machine.name} /> | iMet Machinery`,
+    title: `${machine.name} | iMet Machinery`,
     description: machine.description.slice(0, 160),
   };
 }
@@ -38,16 +38,7 @@ export default async function MachinePage({
         Back to catalogue
       </Link>
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
-        <section aria-label="Machine images">
-          <MachineImage image={machine.images[0]} />
-          {machine.images.length > 1 && (
-            <div className="mt-4 grid grid-cols-2 gap-4">
-              {machine.images.slice(1).map((image, index) => (
-                <MachineImage key={`${image.url}-${index}`} image={image} />
-              ))}
-            </div>
-          )}
-        </section>
+        <MachineryMediaGallery images={machine.images} media={machine.media} />
         <section className="surface min-w-0 p-5 sm:p-7">
           {machine.supplier && (
             <p className="mb-3">

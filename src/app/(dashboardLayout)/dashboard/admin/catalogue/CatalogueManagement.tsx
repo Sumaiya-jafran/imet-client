@@ -1,4 +1,5 @@
 'use client';
+import MachineryMediaManagement from '@/components/shared/MachineryMediaManagement';
 import LoadingState from '@/components/shared/LoadingState';
 import PageHeader from '@/components/shared/PageHeader';
 import EmptyState from '@/components/shared/EmptyState';
@@ -24,6 +25,10 @@ export default function CatalogueManagement({
   const api = supplierMode ? supplierCatalogueApi : adminApi;
   const { data: session } = useSession();
   const token = session?.accessToken;
+  const [mediaMachine, setMediaMachine] = useState<{
+    id: string;
+    name: string;
+  }>();
   const [categories, setCategories] = useState<AdminCategory[]>([]);
   const [result, setResult] = useState<AdminCatalogueResult>();
   const [filters, setFilters] = useState({
@@ -135,7 +140,17 @@ export default function CatalogueManagement({
         </div>
       )}
       {notice && <p role="status">{notice}</p>}
-      {editor ? (
+      {mediaMachine ? (
+        <MachineryMediaManagement
+          token={token}
+          machineId={mediaMachine.id}
+          name={mediaMachine.name}
+          onClose={() => {
+            setMediaMachine(undefined);
+            reload();
+          }}
+        />
+      ) : editor ? (
         <MachineForm
           key={`${editor.machine?.id ?? 'new'}-${editor.machine?.updatedAt ?? ''}`}
           token={token}
@@ -254,6 +269,19 @@ export default function CatalogueManagement({
                         <Button
                           variant="secondary"
                           disabled={busy}
+                          onClick={() => {
+                            setMediaMachine({
+                              id: machine.id,
+                              name: machine.name,
+                            });
+                            setNotice('');
+                          }}
+                        >
+                          Manage media
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          disabled={busy}
                           onClick={() => void edit(machine.id)}
                         >
                           Edit machine
@@ -311,7 +339,7 @@ export default function CatalogueManagement({
           )}
         </section>
       )}
-      {!supplierMode && !editor && !loading && (
+      {!supplierMode && !editor && !mediaMachine && !loading && (
         <CategoryManagement
           token={token}
           categories={categories}
