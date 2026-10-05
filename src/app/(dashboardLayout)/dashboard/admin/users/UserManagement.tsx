@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import type { CurrentUser, UserRole } from '@/types/auth';
 import { userService } from '@/lib/api/user.service';
+import { ApiError } from '@/lib/api/client';
 import Button from '@/components/buttons/Button';
 const roles: UserRole[] = [
   'BUYER',
@@ -25,6 +26,9 @@ export default function UserManagement() {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<
+    Record<string, { roles?: string; status?: string }>
+  >({});
   const load = useCallback(async () => {
     if (!session?.accessToken) return;
     try {
@@ -71,8 +75,17 @@ export default function UserManagement() {
     setBusy(true);
     setError('');
     setMessage('');
+    setFieldErrors((current) => ({ ...current, [user.id]: {} }));
     const data = new FormData(event.currentTarget);
     try {
+      if (!data.getAll('roles').length) {
+        setError('Select at least one role.');
+        setFieldErrors((current) => ({
+          ...current,
+          [user.id]: { roles: 'Select at least one role.' },
+        }));
+        return;
+      }
       await userService.update(session.accessToken, user.id, {
         status: data.get('status') as CurrentUser['status'],
         roles: data.getAll('roles') as UserRole[],
@@ -80,8 +93,23 @@ export default function UserManagement() {
       setMessage('Account updated; existing sessions revoked.');
       await load();
     } catch (error) {
+      if (error instanceof ApiError) {
+        const issues: { roles?: string; status?: string } = {};
+        for (const issue of error.response.errors || []) {
+          const field = issue.path.find(
+            (part) => part === 'roles' || part === 'status',
+          );
+          if (field === 'roles' || field === 'status')
+            issues[field] = issue.message;
+        }
+        setFieldErrors((current) => ({ ...current, [user.id]: issues }));
+      }
       setError(
-        error instanceof Error ? error.message : 'Unable to update user',
+        error instanceof ApiError && error.response.errors?.length
+          ? error.response.errors.map((issue) => issue.message).join(' ')
+          : error instanceof Error
+            ? error.message
+            : 'Unable to update user',
       );
     } finally {
       setBusy(false);
@@ -106,6 +134,11 @@ export default function UserManagement() {
       )}
       {loading ? (
         <LoadingState label="Loading users…" />
+      ) : error && users.length === 0 ? (
+        <EmptyState
+          title="Accounts unavailable"
+          description="The account list could not be loaded. Use Reload to try again."
+        />
       ) : users.length === 0 ? (
         <EmptyState
           title="No accounts found"
@@ -133,6 +166,12 @@ export default function UserManagement() {
                 <label className="block">
                   Status
                   <select
+                    aria-invalid={!!fieldErrors[user.id]?.status}
+                    aria-describedby={
+                      fieldErrors[user.id]?.status
+                        ? `${user.id}-status-error`
+                        : undefined
+                    }
                     name="status"
                     defaultValue={user.status}
                     className="ml-3 rounded border p-2"
@@ -149,12 +188,33 @@ export default function UserManagement() {
                     ))}
                   </select>
                 </label>
-                <fieldset>
+                {fieldErrors[user.id]?.status && (
+                  <p
+                    id={`${user.id}-status-error`}
+                    className="text-sm text-red-700"
+                  >
+                    {fieldErrors[user.id].status}
+                  </p>
+                )}
+                <fieldset
+                  aria-invalid={!!fieldErrors[user.id]?.roles}
+                  aria-describedby={
+                    fieldErrors[user.id]?.roles
+                      ? `${user.id}-roles-error`
+                      : undefined
+                  }
+                >
                   <legend className="font-medium">Roles</legend>
                   <div className="mt-2 grid gap-2 rounded-lg bg-slate-50 p-3 sm:grid-cols-2">
                     {roles.map((role) => (
                       <label key={role} className="flex gap-2 text-sm">
                         <input
+                          aria-invalid={!!fieldErrors[user.id]?.roles}
+                          aria-describedby={
+                            fieldErrors[user.id]?.roles
+                              ? `${user.id}-roles-error`
+                              : undefined
+                          }
                           name="roles"
                           type="checkbox"
                           value={role}
@@ -165,6 +225,14 @@ export default function UserManagement() {
                     ))}
                   </div>
                 </fieldset>
+                {fieldErrors[user.id]?.roles && (
+                  <p
+                    id={`${user.id}-roles-error`}
+                    className="text-sm text-red-700"
+                  >
+                    {fieldErrors[user.id].roles}
+                  </p>
+                )}
                 <Button type="submit">Save access</Button>
               </fieldset>
               {user.id === session?.account?.id && (

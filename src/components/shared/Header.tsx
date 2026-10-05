@@ -1,4 +1,5 @@
 'use client';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import LanguageSelector from './LanguageSelector';
 import { usePathname } from 'next/navigation';
@@ -6,6 +7,7 @@ import { Factory, ArrowUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 export default function Header() {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
   return (
     <header className="border-b border-slate-200 bg-white">
       <a
@@ -62,19 +64,30 @@ export default function Header() {
           <LanguageSelector />
         </div>
         <div className="ml-auto flex items-center gap-3 text-[13px] font-semibold">
-          <Link
-            href="/auth/signin"
-            className="rounded px-1 py-2 text-slate-600 hover:text-navy"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/auth/signup"
-            className="flex min-h-10 items-center gap-2 rounded-lg bg-navy px-3 py-2 text-white hover:bg-slate-700"
-          >
-            Create account
-            <ArrowUpRight size={14} aria-hidden="true" />
-          </Link>
+          {status === 'authenticated' && !session.error ? (
+            <Link
+              href="/dashboard/account"
+              className="rounded-lg bg-navy px-3 py-2 text-white"
+            >
+              Workspace
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/auth/signin"
+                className="rounded px-1 py-2 text-slate-600 hover:text-navy"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/auth/signup"
+                className="flex min-h-10 items-center gap-2 rounded-lg bg-navy px-3 py-2 text-white hover:bg-slate-700"
+              >
+                Create account
+                <ArrowUpRight size={14} aria-hidden="true" />
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>
