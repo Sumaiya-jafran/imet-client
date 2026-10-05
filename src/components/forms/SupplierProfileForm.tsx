@@ -1,7 +1,11 @@
 'use client';
-import { useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { supplierAssetsApi } from '@/lib/api/supplier-assets.service';
+import SupplierAssetFile from '@/components/shared/SupplierAssetFile';
+import { ApiError } from '@/lib/api/client';
+import type { FieldPath } from 'react-hook-form';
 import Button from '@/components/buttons/Button';
 import { supplierSchema } from '@/lib/schema-validations/supplier.schema';
 import { supplierApi } from '@/lib/api/supplier.service';
@@ -33,10 +37,32 @@ export default function SupplierProfileForm({
   onCancel?: () => void;
 }) {
   const [error, setError] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [storage, setStorage] = useState<
+    'loading' | 'ready' | 'missing' | 'error'
+  >('loading');
+  const [attempt, setAttempt] = useState(0);
+  const [pending, setPending] = useState(new Set<string>());
+  useEffect(() => {
+    let active = true;
+    supplierAssetsApi
+      .status(token)
+      .then((r) => {
+        if (active) setStorage(r.data?.configured ? 'ready' : 'missing');
+      })
+      .catch(() => {
+        if (active) setStorage('error');
+      });
+    return () => {
+      active = false;
+    };
+  }, [token, attempt]);
   const {
     register,
     handleSubmit,
     control,
+    setValue,
+    setError: setFieldError,
     formState: { errors, isSubmitting },
   } = useForm<SupplierProfileInput>({
     resolver: zodResolver(supplierSchema),
@@ -54,6 +80,7 @@ export default function SupplierProfileForm({
           registrationNumber: supplier.registrationNumber,
           website: supplier.website,
           logoUrl: supplier.logoUrl,
+          logoAssetId: supplier.logoAssetId ?? null,
           documents: supplier.documents,
         }
       : {
@@ -69,6 +96,7 @@ export default function SupplierProfileForm({
           registrationNumber: null,
           website: null,
           logoUrl: null,
+          logoAssetId: null,
           documents: [],
         },
   });
@@ -81,10 +109,79 @@ export default function SupplierProfileForm({
       else if (mode === 'owner' && supplier)
         await supplierApi.updateOwn(token, body, supplier);
       else await supplierApi.apply(token, body);
+      setPending(new Set());
       onSave();
     } catch (e) {
+      if (e instanceof ApiError && e.response.errors)
+        for (const issue of e.response.errors) {
+          const path = issue.path.filter((p) => p !== 'body').join('.');
+          if (
+            [
+              'companyName',
+              'type',
+              'description',
+              'contactName',
+              'businessEmail',
+              'businessPhone',
+              'address',
+              'city',
+              'country',
+              'registrationNumber',
+              'website',
+              'logoUrl',
+              'documents',
+            ].includes(path.split('.')[0])
+          )
+            setFieldError(path as FieldPath<SupplierProfileInput>, {
+              message: issue.message,
+            });
+        }
       setError(e instanceof Error ? e.message : 'Unable to save profile');
     }
+  };
+  const logoId = useWatch({ control, name: 'logoAssetId' });
+  const uploadFile = async (
+    purpose: 'LOGO' | 'DOCUMENT',
+    file: File | undefined,
+  ) => {
+    if (!file) return;
+    if (
+      file.size > 10 * 1024 * 1024 ||
+      !file.size ||
+      !(
+        purpose === 'LOGO'
+          ? ['image/jpeg', 'image/png']
+          : ['image/jpeg', 'image/png', 'application/pdf']
+      ).includes(file.type)
+    ) {
+      setError('Choose a supported file up to 10 MB.');
+      return;
+    }
+    setUploading(true);
+    setError('');
+    try {
+      const r = await supplierAssetsApi.upload(token, purpose, file);
+      if (!r.data) throw new Error('Upload response unavailable');
+      setPending((p) => new Set([...p, r.data!.assetId]));
+      if (purpose === 'LOGO') {
+        setValue('logoUrl', r.data.url, { shouldValidate: true });
+        setValue('logoAssetId', r.data.assetId);
+      } else
+        documents.append({
+          name: r.data.fileName,
+          url: r.data.url,
+          assetId: r.data.assetId,
+        });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+  const cancel = () => {
+    for (const id of pending)
+      void supplierAssetsApi.remove(token, id).catch(() => undefined);
+    onCancel?.();
   };
   const readonly = (field: string) =>
     mode === 'owner' &&
@@ -111,7 +208,10 @@ export default function SupplierProfileForm({
           {error} Reload the profile if it changed.
         </p>
       )}
-      <fieldset disabled={isSubmitting} className="grid gap-4 md:grid-cols-2">
+      <fieldset
+        disabled={isSubmitting || uploading}
+        className="grid gap-4 md:grid-cols-2"
+      >
         {Object.entries(labels).map(([field, label]) => {
           const key = field as keyof typeof labels;
           return (
@@ -143,7 +243,7 @@ export default function SupplierProfileForm({
                   aria-describedby={
                     errors[key] ? `supplier-${key}-error` : undefined
                   }
-                  readOnly={readonly(key)}
+                  readOnly={readonly(key) || (key === 'logoUrl' && !!logoId)}
                   {...register(key, {
                     ...(['registrationNumber', 'website', 'logoUrl'].includes(
                       key,
@@ -165,6 +265,68 @@ export default function SupplierProfileForm({
             </div>
           );
         })}
+        <section className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 md:col-span-2">
+          <label htmlFor="supplier-logo-file" className="font-semibold">
+            Upload company logo
+          </label>
+          <p className="my-2 text-xs text-slate-600">
+            JPEG or PNG, up to 10 MB. Managed logos become public only for
+            eligible marketplace suppliers.
+          </p>
+          <input
+            id="supplier-logo-file"
+            type="file"
+            accept="image/jpeg,image/png"
+            disabled={storage !== 'ready'}
+            onChange={(e) => {
+              void uploadFile('LOGO', e.target.files?.[0]);
+              e.target.value = '';
+            }}
+            className="block w-full text-sm"
+          />
+          {logoId && (
+            <>
+              <SupplierAssetFile
+                token={token}
+                assetId={logoId}
+                name="Company logo"
+                preview
+              />
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setValue('logoAssetId', null);
+                  setValue('logoUrl', null);
+                }}
+              >
+                Remove logo
+              </Button>
+            </>
+          )}
+          {storage !== 'ready' && (
+            <p role="status" className="mt-2 text-sm">
+              {storage === 'missing'
+                ? 'Uploads require Bunny Storage configuration on the server.'
+                : storage === 'loading'
+                  ? 'Checking upload availability…'
+                  : 'Unable to check upload storage.'}{' '}
+              {storage === 'error' && (
+                <button
+                  type="button"
+                  className="underline"
+                  onClick={() => setAttempt((n) => n + 1)}
+                >
+                  Retry storage
+                </button>
+              )}
+            </p>
+          )}
+          {uploading && (
+            <p role="status" className="mt-2 text-sm">
+              Uploading file…
+            </p>
+          )}
+        </section>
         <div>
           <label htmlFor="supplier-type" className="block font-medium">
             Supplier type
@@ -197,9 +359,26 @@ export default function SupplierProfileForm({
         <section className="mt-2 border-t border-slate-200 pt-5 md:col-span-2">
           <h3 className="font-semibold">Verification documents</h3>
           <p className="my-2 text-sm text-slate-600">
-            Use HTTPS document links. These links are private to your account
-            and administrators; protect access at your document host as well.
+            Upload private PDF, JPEG or PNG verification files up to 10 MB. Only
+            your account and administrators can download managed files. Existing
+            external links remain supported and require protection at their
+            host.
           </p>
+          {mode !== 'owner' && (
+            <label className="my-3 block text-sm font-medium">
+              Upload verification document
+              <input
+                type="file"
+                accept="application/pdf,image/jpeg,image/png"
+                disabled={storage !== 'ready' || documents.fields.length >= 20}
+                className="mt-2 block w-full"
+                onChange={(e) => {
+                  void uploadFile('DOCUMENT', e.target.files?.[0]);
+                  e.target.value = '';
+                }}
+              />
+            </label>
+          )}
           {documents.fields.map((field, index) => (
             <div
               key={field.id}
@@ -208,28 +387,47 @@ export default function SupplierProfileForm({
               <label className="block">
                 Document name {index + 1}
                 <input
+                  aria-invalid={!!errors.documents?.[index]?.name}
+                  aria-describedby={
+                    errors.documents?.[index]?.name
+                      ? `document-${index}-name-error`
+                      : undefined
+                  }
                   readOnly={mode === 'owner'}
                   {...register(`documents.${index}.name`)}
                   className="mt-1 w-full rounded border p-2"
                 />
               </label>
               {errors.documents?.[index]?.name && (
-                <p className="text-red-700">
+                <p id={`document-${index}-name-error`} className="text-red-700">
                   {errors.documents[index]?.name?.message}
                 </p>
               )}
               <label className="mt-2 block">
                 Document URL {index + 1}
                 <input
-                  readOnly={mode === 'owner'}
+                  aria-invalid={!!errors.documents?.[index]?.url}
+                  aria-describedby={
+                    errors.documents?.[index]?.url
+                      ? `document-${index}-url-error`
+                      : undefined
+                  }
+                  readOnly={mode === 'owner' || !!field.assetId}
                   {...register(`documents.${index}.url`)}
                   className="mt-1 w-full rounded border p-2"
                 />
               </label>
               {errors.documents?.[index]?.url && (
-                <p className="text-red-700">
+                <p id={`document-${index}-url-error`} className="text-red-700">
                   {errors.documents[index]?.url?.message}
                 </p>
+              )}
+              {field.assetId && (
+                <SupplierAssetFile
+                  token={token}
+                  assetId={field.assetId}
+                  name={field.name}
+                />
               )}
               {mode !== 'owner' && (
                 <Button
@@ -267,7 +465,7 @@ export default function SupplierProfileForm({
                 : 'Save supplier profile'}
           </Button>
           {onCancel && (
-            <Button variant="secondary" onClick={onCancel}>
+            <Button variant="secondary" onClick={cancel}>
               Cancel profile edit
             </Button>
           )}

@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { ApiError } from '@/lib/api/client';
 import Button from '@/components/buttons/Button';
 import { supplierApi } from '@/lib/api/supplier.service';
 import type {
@@ -27,6 +28,7 @@ export default function SupplierSubscriptionForm({
   const current = supplier.subscriptions.find((term) => term.isCurrent);
   const [mode, setMode] = useState<'assign' | 'edit'>('assign');
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const [planId, setPlanId] = useState('');
   const [startsAt, setStartsAt] = useState(localDate(new Date().toISOString()));
@@ -47,6 +49,7 @@ export default function SupplierSubscriptionForm({
   const save = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
+    setFieldErrors({});
     if (
       !startsAt ||
       !endsAt ||
@@ -55,10 +58,12 @@ export default function SupplierSubscriptionForm({
       new Date(endsAt) <= new Date(startsAt)
     ) {
       setError('Set a valid start and end date; end must be after start.');
+      setFieldErrors({ endsAt: 'Set valid dates; end must be after start.' });
       return;
     }
     if (mode === 'assign' && !planId) {
       setError('Select an eligible active plan.');
+      setFieldErrors({ planId: 'Select an eligible active plan.' });
       return;
     }
     if (
@@ -87,6 +92,15 @@ export default function SupplierSubscriptionForm({
         );
       onSave();
     } catch (e) {
+      if (e instanceof ApiError && e.response.errors)
+        setFieldErrors(
+          Object.fromEntries(
+            e.response.errors.map((issue) => [
+              issue.path.filter((p) => p !== 'body').join('.'),
+              issue.message,
+            ]),
+          ),
+        );
       setError(e instanceof Error ? e.message : 'Unable to save subscription');
     } finally {
       setBusy(false);
@@ -173,6 +187,10 @@ export default function SupplierSubscriptionForm({
               </label>
               <select
                 id="term-plan"
+                aria-invalid={!!fieldErrors.planId}
+                aria-describedby={
+                  fieldErrors.planId ? 'term-plan-error' : undefined
+                }
                 value={planId}
                 onChange={(event) => choose(event.target.value)}
                 className="mt-1 w-full rounded border p-2"
@@ -185,26 +203,49 @@ export default function SupplierSubscriptionForm({
                   </option>
                 ))}
               </select>
+              {fieldErrors.planId && (
+                <p id="term-plan-error" className="text-sm text-red-700">
+                  {fieldErrors.planId}
+                </p>
+              )}
             </div>
           )}
           <label className="block">
             Subscription start
             <input
               type="datetime-local"
+              aria-invalid={!!fieldErrors.startsAt}
+              aria-describedby={
+                fieldErrors.startsAt ? 'term-start-error' : undefined
+              }
               value={startsAt}
               onChange={(event) => setStartsAt(event.target.value)}
               className="mt-1 w-full rounded border p-2"
             />
           </label>
+          {fieldErrors.startsAt && (
+            <p id="term-start-error" className="text-sm text-red-700">
+              {fieldErrors.startsAt}
+            </p>
+          )}
           <label className="block">
             Subscription end
             <input
               type="datetime-local"
+              aria-invalid={!!fieldErrors.endsAt}
+              aria-describedby={
+                fieldErrors.endsAt ? 'term-end-error' : undefined
+              }
               value={endsAt}
               onChange={(event) => setEndsAt(event.target.value)}
               className="mt-1 w-full rounded border p-2"
             />
           </label>
+          {fieldErrors.endsAt && (
+            <p id="term-end-error" className="text-sm text-red-700">
+              {fieldErrors.endsAt}
+            </p>
+          )}
           <label className="block">
             Subscription state
             <select

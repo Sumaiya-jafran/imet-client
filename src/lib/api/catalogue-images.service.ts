@@ -8,23 +8,25 @@ export interface UploadedCatalogueImage {
   fileType: string;
 }
 export const catalogueImageUrl = (path: string) =>
-  /^\/catalogue\/images\/[0-9a-f-]{36}\/content$/.test(path)
+  /^\/(?:catalogue\/images\/[0-9a-f-]{36}\/content|suppliers\/assets\/[0-9a-f-]{36}\/logo)$/.test(
+    path,
+  )
     ? `${config.NEXT_PUBLIC_BACKEND_API_URL}${path}`
     : path;
 export const catalogueImagesApi = {
-  status: (token: string) =>
+  status: (token: string, supplierMode = false) =>
     apiClient.get<{ configured: boolean; maxBytes: number }>(
-      '/admin/catalogue/image-uploads/status',
+      `/${supplierMode ? 'supplier' : 'admin'}/catalogue/image-uploads/status`,
       {
         headers: { Authorization: `Bearer ${token}` },
         signal: AbortSignal.timeout(10000),
       },
     ),
-  upload: async (token: string, file: File) => {
+  upload: async (token: string, file: File, supplierMode = false) => {
     const body = new FormData();
     body.append('file', file);
     return apiClient.request<UploadedCatalogueImage>(
-      '/admin/catalogue/image-uploads',
+      `/${supplierMode ? 'supplier' : 'admin'}/catalogue/image-uploads`,
       {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
@@ -33,15 +35,23 @@ export const catalogueImagesApi = {
       },
     );
   },
-  remove: (token: string, id: string) =>
-    apiClient.request(`/admin/catalogue/image-uploads/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-      signal: AbortSignal.timeout(10000),
-    }),
-  preview: async (token: string, id: string, signal: AbortSignal) => {
+  remove: (token: string, id: string, supplierMode = false) =>
+    apiClient.request(
+      `/${supplierMode ? 'supplier' : 'admin'}/catalogue/image-uploads/${id}`,
+      {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+        signal: AbortSignal.timeout(10000),
+      },
+    ),
+  preview: async (
+    token: string,
+    id: string,
+    signal: AbortSignal,
+    supplierMode = false,
+  ) => {
     const response = await fetch(
-      `${config.NEXT_PUBLIC_BACKEND_API_URL}/admin/catalogue/image-uploads/${id}/preview`,
+      `${config.NEXT_PUBLIC_BACKEND_API_URL}/${supplierMode ? 'supplier' : 'admin'}/catalogue/image-uploads/${id}/preview`,
       {
         headers: { Authorization: `Bearer ${token}` },
         signal,

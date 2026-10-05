@@ -5,6 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { planSchema } from '@/lib/schema-validations/supplier.schema';
 import { supplierApi } from '@/lib/api/supplier.service';
 import type { PlanInput, SubscriptionPlan } from '@/types/supplier';
+import { ApiError } from '@/lib/api/client';
+import type { FieldPath } from 'react-hook-form';
 import Button from '@/components/buttons/Button';
 export default function SubscriptionPlanForm({
   token,
@@ -21,6 +23,7 @@ export default function SubscriptionPlanForm({
   const {
     register,
     handleSubmit,
+    setError: setFieldError,
     formState: { errors, isSubmitting },
   } = useForm<PlanInput>({
     resolver: zodResolver(planSchema),
@@ -60,6 +63,14 @@ export default function SubscriptionPlanForm({
       await supplierApi.savePlan(token, body, plan);
       onSave();
     } catch (e) {
+      if (e instanceof ApiError && e.response.errors)
+        for (const issue of e.response.errors) {
+          const path = issue.path.filter((p) => p !== 'body').join('.');
+          if (Object.keys(planSchema.shape).includes(path.split('.')[0]))
+            setFieldError(path as FieldPath<PlanInput>, {
+              message: issue.message,
+            });
+        }
       setError(e instanceof Error ? e.message : 'Unable to save plan');
     }
   };

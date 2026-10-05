@@ -1,4 +1,5 @@
 'use client';
+import SupplierAssetFile from '@/components/shared/SupplierAssetFile';
 import LoadingState from '@/components/shared/LoadingState';
 import Badge from '@/components/shared/Badge';
 import EmptyState from '@/components/shared/EmptyState';
@@ -29,7 +30,7 @@ function ReviewForm({
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm<{
     status: SupplierProfile['status'];
     isVerified: boolean;
@@ -92,12 +93,30 @@ function ReviewForm({
         <label className="block">
           Review note / rejection reason
           <textarea
-            {...register('reviewNote')}
+            {...register('reviewNote', {
+              validate: (value, values) =>
+                values.status !== 'REJECTED' ||
+                !!value.trim() ||
+                'Provide a rejection reason',
+            })}
+            aria-invalid={!!errors.reviewNote}
+            aria-describedby={
+              errors.reviewNote ? 'review-note-error' : undefined
+            }
             maxLength={2000}
             rows={3}
             className="mt-1 w-full rounded border p-2"
           />
         </label>
+        {errors.reviewNote && (
+          <p
+            id="review-note-error"
+            role="alert"
+            className="text-sm text-red-700"
+          >
+            {errors.reviewNote.message}
+          </p>
+        )}
         <Button type="submit">
           {isSubmitting ? 'Saving…' : 'Save supplier review'}
         </Button>
@@ -230,17 +249,26 @@ export default function SupplierManagement() {
             <h3 className="mt-4 font-semibold">
               Verification documents (private)
             </h3>
-            {selected.documents.map((document, index) => (
-              <a
-                key={index}
-                href={document.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="my-2 block break-words underline"
-              >
-                {document.name}
-              </a>
-            ))}
+            {selected.documents.map((document, index) =>
+              document.assetId ? (
+                <SupplierAssetFile
+                  key={document.assetId}
+                  token={token}
+                  assetId={document.assetId}
+                  name={document.name}
+                />
+              ) : (
+                <a
+                  key={index}
+                  href={document.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="my-2 block break-words underline"
+                >
+                  {document.name}
+                </a>
+              ),
+            )}
             {!selected.documents.length && <p>None provided.</p>}
             <Button
               variant="secondary"

@@ -18,7 +18,12 @@ export default function MachineImage({
   try {
     safe = !!image && new URL(image.url).protocol === 'https:';
   } catch {}
-  if (image && /^\/catalogue\/images\/[0-9a-f-]{36}\/content$/.test(image.url))
+  if (
+    image &&
+    /^\/(?:catalogue\/images\/[0-9a-f-]{36}\/content|suppliers\/assets\/[0-9a-f-]{36}\/logo)$/.test(
+      image.url,
+    )
+  )
     safe = true;
   return (
     <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-lg border border-slate-200/70 bg-slate-100">
