@@ -80,7 +80,7 @@ export default function CatalogueManagement({
   const saved = () => {
     setEditor(undefined);
     setNotice(
-      'Catalogue saved. Published changes are visible in the public catalogue.',
+      'Catalogue saved. Public visibility requires eligible publication and, for supplier-owned listings, an active applicable subscription.',
     );
     reload();
   };
@@ -93,6 +93,58 @@ export default function CatalogueManagement({
       if (response.data) setEditor({ machine: response.data });
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to load machine');
+    } finally {
+      setBusy(false);
+    }
+  };
+  const archive = async (machine: AdminCatalogueResult['machines'][number]) => {
+    if (
+      !token ||
+      !window.confirm(
+        `Archive “${machine.name}”? It will become a private draft. Images and specifications are retained.`,
+      )
+    )
+      return;
+    setBusy(true);
+    setError('');
+    try {
+      const response = await adminApi.detail(token, machine.id);
+      if (!response.data) throw new Error('Machine unavailable');
+      if (response.data.updatedAt !== machine.updatedAt)
+        throw new Error(
+          'This machine changed. Reload the catalogue before archiving.',
+        );
+      const {
+        name,
+        slug,
+        description,
+        manufacturer,
+        model,
+        categoryId,
+        images,
+        specifications,
+      } = response.data;
+      await adminApi.save(
+        token,
+        {
+          name,
+          slug,
+          description,
+          manufacturer,
+          model,
+          categoryId,
+          images,
+          specifications,
+          status: 'DRAFT',
+        },
+        response.data,
+      );
+      setNotice('Machine archived as a private draft.');
+      reload();
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : 'Unable to archive machine',
+      );
     } finally {
       setBusy(false);
     }
@@ -266,6 +318,15 @@ export default function CatalogueManagement({
                         )}
                       </div>
                       <div className="flex flex-wrap gap-2">
+                        {!supplierMode && machine.status === 'PUBLISHED' && (
+                          <Button
+                            variant="secondary"
+                            disabled={busy}
+                            onClick={() => void archive(machine)}
+                          >
+                            Archive machine
+                          </Button>
+                        )}
                         <Button
                           variant="secondary"
                           disabled={busy}

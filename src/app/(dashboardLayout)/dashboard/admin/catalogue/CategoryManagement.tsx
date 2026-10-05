@@ -1,4 +1,5 @@
 'use client';
+import { ApiError } from '@/lib/api/client';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,6 +18,7 @@ export default function CategoryManagement({
   categories: AdminCategory[];
   onSave: () => void;
 }) {
+  const [editingCategory, setEditingCategory] = useState<AdminCategory>();
   const [editing, setEditing] = useState<string>();
   const [error, setError] = useState('');
   const [deleting, setDeleting] = useState(false);
@@ -24,6 +26,7 @@ export default function CategoryManagement({
     register,
     handleSubmit,
     reset,
+    setError: setFieldError,
     formState: { errors, isSubmitting },
   } = useForm<{ name: string; slug: string }>({
     resolver: zodResolver(categorySchema),
@@ -31,17 +34,36 @@ export default function CategoryManagement({
   });
   const cancel = () => {
     setEditing(undefined);
+    setEditingCategory(undefined);
     reset({ name: '', slug: '' });
     setError('');
   };
   const save = async (data: { name: string; slug: string }) => {
     setError('');
     try {
-      await catalogueAdminApi.saveCategory(token, data, editing);
+      await catalogueAdminApi.saveCategory(token, data, editingCategory);
       cancel();
       onSave();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Unable to save category');
+      if (
+        e instanceof ApiError &&
+        e.status === 409 &&
+        e.message.toLowerCase().includes('slug')
+      )
+        setFieldError('slug', { message: e.message }, { shouldFocus: true });
+      if (e instanceof ApiError && e.response.errors) {
+        for (const issue of e.response.errors) {
+          const key = issue.path.at(-1);
+          if (key === 'name' || key === 'slug')
+            setFieldError(
+              key,
+              { message: issue.message },
+              { shouldFocus: true },
+            );
+        }
+        setError(e.response.errors.map((issue) => issue.message).join('. '));
+      } else
+        setError(e instanceof Error ? e.message : 'Unable to save category');
     }
   };
   const remove = async (category: AdminCategory) => {
@@ -83,10 +105,18 @@ export default function CategoryManagement({
           <input
             id="category-name"
             {...register('name')}
+            aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? 'category-name-error' : undefined}
             className="w-full rounded border p-2"
           />
           {errors.name && (
-            <p className="text-sm text-red-700">{errors.name.message}</p>
+            <p
+              id="category-name-error"
+              role="alert"
+              className="text-sm text-red-700"
+            >
+              {errors.name.message}
+            </p>
           )}
           <label className="block font-medium" htmlFor="category-slug">
             Category slug
@@ -94,10 +124,18 @@ export default function CategoryManagement({
           <input
             id="category-slug"
             {...register('slug')}
+            aria-invalid={!!errors.slug}
+            aria-describedby={errors.slug ? 'category-slug-error' : undefined}
             className="w-full rounded border p-2"
           />
           {errors.slug && (
-            <p className="text-sm text-red-700">{errors.slug.message}</p>
+            <p
+              id="category-slug-error"
+              role="alert"
+              className="text-sm text-red-700"
+            >
+              {errors.slug.message}
+            </p>
           )}
           <div className="flex flex-wrap gap-3">
             <Button type="submit">
@@ -133,6 +171,7 @@ export default function CategoryManagement({
                 disabled={isSubmitting || deleting}
                 onClick={() => {
                   setEditing(category.id);
+                  setEditingCategory(category);
                   reset({ name: category.name, slug: category.slug });
                   setError('');
                 }}
