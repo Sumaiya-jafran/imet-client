@@ -1,4 +1,11 @@
 import Link from 'next/link';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Search,
+  SlidersHorizontal,
+  X,
+} from 'lucide-react';
 import PageHeader from '@/components/shared/PageHeader';
 import EmptyState from '@/components/shared/EmptyState';
 import { z } from 'zod';
@@ -33,25 +40,37 @@ export default async function CataloguePage({
   });
   if (!parsed.success)
     return (
-      <section>
-        <h1 className="text-3xl font-bold">Invalid catalogue filters</h1>
-        <p className="mt-4">
-          Use a search up to 100 characters and a valid page number.
-        </p>
-        <Link className="mt-4 inline-block underline" href="/machinery">
+      <EmptyState
+        title="Check your catalogue filters"
+        description="Use a search of up to 100 characters, a valid category or supplier, and a page number between 1 and 10,000."
+      >
+        <Link className="secondary-link" href="/machinery">
           Reset filters
         </Link>
-      </section>
+      </EmptyState>
     );
   const { q, category, supplier, page } = parsed.data;
   const query = new URLSearchParams({ page: String(page), limit: '12' });
   if (supplier) query.set('supplier', supplier);
   if (q) query.set('q', q);
   if (category) query.set('category', category);
-  const [result, categories] = await Promise.all([
+  const [result, categoryResult] = await Promise.all([
     catalogueApi.list(query),
-    catalogueApi.categories(),
+    catalogueApi.categories().then(
+      (categories) => ({ categories, unavailable: false }),
+      () => ({ categories: [], unavailable: true }),
+    ),
   ]);
+  const { categories, unavailable: categoriesUnavailable } = categoryResult;
+  const outOfRange =
+    page > result.pagination.totalPages && result.pagination.total > 0;
+  const removeFilter = (key: string) => {
+    const params = new URLSearchParams(query);
+    params.delete('limit');
+    params.delete('page');
+    params.delete(key);
+    return `/machinery?${params}`;
+  };
   const href = (target: number) => {
     const params = new URLSearchParams(query);
     params.delete('limit');
@@ -63,15 +82,22 @@ export default async function CataloguePage({
       <PageHeader
         eyebrow="Equipment directory"
         title="Machinery catalogue"
-        description="Compare machinery and explore technical specifications. Prices are available on request."
+        description="Find equipment for your next production line. Explore specifications and request a private quote."
+        actions={
+          <span className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-navy">
+            Industrial equipment · Price on request
+          </span>
+        }
       />
       <form
         action="/machinery"
-        className="filter-bar my-6 grid gap-3 sm:grid-cols-[1fr_1fr_auto]"
+        className="filter-bar my-6 grid gap-4 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_auto]"
       >
         {supplier && <input type="hidden" name="supplier" value={supplier} />}
         <label className="min-w-0 text-sm font-medium">
-          Search machinery
+          <span className="flex items-center gap-2">
+            <Search size={15} aria-hidden="true" /> Search machinery
+          </span>
           <input
             name="q"
             type="search"
@@ -82,9 +108,12 @@ export default async function CataloguePage({
           />
         </label>
         <label className="min-w-0 text-sm font-medium">
-          Category
+          <span className="flex items-center gap-2">
+            <SlidersHorizontal size={15} aria-hidden="true" /> Category
+          </span>
           <select
             name="category"
+            disabled={categoriesUnavailable}
             defaultValue={category || ''}
             className="mt-2 w-full rounded border border-slate-300 bg-white p-3"
           >
@@ -100,11 +129,63 @@ export default async function CataloguePage({
           </select>
         </label>
         <button className="action-link self-end">Search</button>
+        {categoriesUnavailable && category && (
+          <input type="hidden" name="category" value={category} />
+        )}
       </form>
+      {categoriesUnavailable && (
+        <p
+          role="status"
+          className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900"
+        >
+          Category filters could not load. You can still search machinery.{' '}
+          <Link className="font-semibold underline" href={href(page)}>
+            Retry category filters
+          </Link>
+        </p>
+      )}
+      {(q || category || supplier) && (
+        <div
+          className="mb-5 flex flex-wrap gap-2"
+          aria-label="Active catalogue filters"
+        >
+          {[
+            q && { key: 'q', label: `Search: ${q}` },
+            category && {
+              key: 'category',
+              label: `Category: ${categories.find((c) => c.slug === category)?.name || category}`,
+            },
+            supplier && { key: 'supplier', label: 'Selected supplier' },
+          ]
+            .filter((item) => !!item)
+            .map((item) => (
+              <Link
+                key={item.key}
+                href={removeFilter(item.key)}
+                aria-label={`Remove ${item.label}`}
+                className="flex max-w-full items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700 hover:border-slate-400"
+              >
+                <span className="break-words [overflow-wrap:anywhere]">
+                  {item.label}
+                </span>
+                <X size={14} className="shrink-0" aria-hidden="true" />
+              </Link>
+            ))}
+        </div>
+      )}
       <div className="mb-5 flex flex-wrap justify-between gap-3 text-xs text-slate-600">
         <p role="status">
-          {result.pagination.total}{' '}
-          {result.pagination.total === 1 ? 'machine' : 'machines'} found
+          <span className="font-semibold text-navy">
+            {result.pagination.total}{' '}
+            {result.pagination.total === 1 ? 'machine' : 'machines'}
+          </span>
+          {result.machines.length > 0 && (
+            <>
+              {' '}
+              · Showing {(page - 1) * 12 + 1}–
+              {(page - 1) * 12 + result.machines.length}
+            </>
+          )}
         </p>
         <Link href="/machinery" className="underline">
           Clear filters
@@ -118,35 +199,39 @@ export default async function CataloguePage({
         </div>
       ) : (
         <EmptyState
-          title="No machines found"
-          description="Try another search or clear your filters. New machinery will appear here when published."
+          title={
+            outOfRange ? 'This page has no machinery' : 'No machines found'
+          }
+          description={
+            outOfRange
+              ? 'The catalogue has changed or this page is beyond the available results. Return to the first page with your filters preserved.'
+              : 'Try a different model, manufacturer or category. New machinery appears here when published.'
+          }
         >
-          <Link href="/machinery" className="secondary-link">
-            Clear filters
+          <Link
+            href={outOfRange ? href(1) : '/machinery'}
+            className="secondary-link"
+          >
+            {outOfRange ? 'Return to first page' : 'Clear filters'}
           </Link>
         </EmptyState>
       )}
-      {result.pagination.totalPages > 0 && (
+      {result.pagination.totalPages > 0 && !outOfRange && (
         <nav
           aria-label="Catalogue pagination"
-          className="mt-8 flex flex-wrap items-center justify-center gap-5 text-xs"
+          className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-5 text-sm"
         >
           {page > 1 && (
-            <Link className="underline" href={href(page - 1)}>
-              Previous
+            <Link className="secondary-link" rel="prev" href={href(page - 1)}>
+              <ArrowLeft size={15} aria-hidden="true" /> Previous
             </Link>
           )}
-          <span>
+          <span className="text-xs text-slate-600">
             Page {page} of {result.pagination.totalPages}
           </span>
           {page < result.pagination.totalPages && (
-            <Link className="underline" href={href(page + 1)}>
-              Next
-            </Link>
-          )}
-          {page > result.pagination.totalPages && (
-            <Link className="underline" href={href(1)}>
-              First page
+            <Link className="secondary-link" rel="next" href={href(page + 1)}>
+              Next <ArrowRight size={15} aria-hidden="true" />
             </Link>
           )}
         </nav>
