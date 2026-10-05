@@ -33,12 +33,17 @@ export default async function MachinePage({
 }) {
   const machine = await getMachine((await params).slug);
   return (
-    <article className="surface min-w-0 p-5 sm:p-7">
-      <Link href="/machinery" className="text-sm underline">
+    <article className="min-w-0">
+      <Link href="/machinery" className="secondary-link text-sm">
         Back to catalogue
       </Link>
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
-        <MachineryMediaGallery images={machine.images} media={machine.media} />
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+        <MachineryMediaGallery
+          key={machine.id}
+          images={machine.images}
+          media={machine.media}
+          name={machine.name}
+        />
         <section className="surface min-w-0 p-5 sm:p-7">
           {machine.supplier && (
             <p className="mb-3">
@@ -66,13 +71,17 @@ export default async function MachinePage({
           </h1>
           <dl className="mt-6 grid grid-cols-2 gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
             <div>
-              <dt className="font-semibold">Manufacturer</dt>
+              <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                Manufacturer
+              </dt>
               <dd className="break-words text-slate-600">
                 {machine.manufacturer}
               </dd>
             </div>
             <div>
-              <dt className="font-semibold">Model</dt>
+              <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                Model
+              </dt>
               <dd className="break-words text-slate-600">{machine.model}</dd>
             </div>
           </dl>
@@ -110,9 +119,9 @@ export default async function MachinePage({
         </h2>
         {machine.specifications.length ? (
           <dl className="mt-4 divide-y divide-slate-200 rounded-xl border border-slate-200">
-            {machine.specifications.map((spec, index) => (
+            {machine.specifications.map((spec) => (
               <div
-                key={index}
+                key={spec.id}
                 className="grid gap-2 bg-white px-4 py-3 odd:bg-slate-50 sm:grid-cols-2"
               >
                 <dt className="break-words font-medium">

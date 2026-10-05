@@ -14,11 +14,14 @@ const AdvancedMediaViewer = dynamic(() => import('./AdvancedMediaViewer'), {
 export default function MachineryMediaGallery({
   images,
   media = [],
+  name = 'Machinery',
 }: {
   images: ImageData[];
   media?: MachineryMedia[];
+  name?: string;
 }) {
   const [selected, setSelected] = useState<MachineryMedia>();
+  const [photo, setPhoto] = useState(0);
   const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState(false);
   const handleError = useCallback(() => setFailed(true), []);
@@ -33,7 +36,7 @@ export default function MachineryMediaGallery({
           onError={handleError}
         />
       ) : (
-        <MachineImage image={images[0]} />
+        <MachineImage image={images[photo]} alt={name} />
       )}
       {failed && (
         <div
@@ -84,10 +87,28 @@ export default function MachineryMediaGallery({
         </div>
       )}
       {(!selected || failed) && images.length > 1 && (
-        <div className="grid grid-cols-2 gap-3">
-          {images.slice(1).map((image, i) => (
-            <MachineImage key={`${image.url}-${i}`} image={image} />
-          ))}
+        <div>
+          <p className="mb-3 text-xs text-slate-600" role="status">
+            Image {photo + 1} of {images.length}
+          </p>
+          <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
+            {images.map((image, i) => (
+              <button
+                type="button"
+                key={`${image.url}-${i}`}
+                aria-label={`View image ${i + 1} of ${name}`}
+                aria-pressed={photo === i}
+                className={`rounded-lg p-1 transition ${photo === i ? 'bg-navy ring-2 ring-navy ring-offset-2' : 'bg-white hover:bg-slate-200'}`}
+                onClick={() => setPhoto(i)}
+              >
+                <MachineImage
+                  compact
+                  image={image}
+                  alt={`${name}, image ${i + 1}`}
+                />
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </section>
