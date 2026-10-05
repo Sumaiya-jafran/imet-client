@@ -4,7 +4,7 @@ import LoadingState from '@/components/shared/LoadingState';
 import PageHeader from '@/components/shared/PageHeader';
 import EmptyState from '@/components/shared/EmptyState';
 import Badge from '@/components/shared/Badge';
-import { supplierCatalogueApi } from '@/lib/api/supplier.service';
+import { supplierApi, supplierCatalogueApi } from '@/lib/api/supplier.service';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -42,6 +42,37 @@ export default function CatalogueManagement({
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
+  const [entitlement, setEntitlement] = useState<{
+    active: boolean;
+    limit: number;
+    used: number;
+  }>();
+  useEffect(() => {
+    if (!supplierMode || !token) return;
+    let active = true;
+    Promise.all([
+      supplierApi.own(token),
+      supplierCatalogueApi.list(token, new URLSearchParams({ limit: '1' })),
+    ])
+      .then(([profile, list]) => {
+        const term = profile.data?.subscriptions.find((t) => t.isCurrent);
+        if (active)
+          setEntitlement({
+            active:
+              profile.data?.status === 'APPROVED' &&
+              term?.effectiveStatus === 'ACTIVE' &&
+              term.supplierType === profile.data.type,
+            limit: term?.listingLimit ?? 0,
+            used: list.data?.pagination.total ?? 0,
+          });
+      })
+      .catch(() => {
+        if (active) setEntitlement(undefined);
+      });
+    return () => {
+      active = false;
+    };
+  }, [token, supplierMode, revision]);
   const [editor, setEditor] = useState<{ machine?: AdminMachine }>();
   useEffect(() => {
     if (!token || session?.error) return;
@@ -191,6 +222,13 @@ export default function CatalogueManagement({
           </Button>
         </div>
       )}
+      {supplierMode && (
+        <p role="status" className="surface p-4 text-sm">
+          {entitlement
+            ? `${entitlement.used} of ${entitlement.limit} machinery listings used. ${entitlement.active ? 'Your current term is active.' : 'An approved supplier and active applicable subscription are required for changes.'}`
+            : 'Loading subscription eligibility. Reload if this takes longer than expected.'}
+        </p>
+      )}
       {notice && <p role="status">{notice}</p>}
       {mediaMachine ? (
         <MachineryMediaManagement
@@ -217,7 +255,14 @@ export default function CatalogueManagement({
           <div className="flex flex-wrap justify-between gap-4">
             <h2 className="text-2xl font-semibold">Machines</h2>
             <Button
-              disabled={busy || loading || !categories.length}
+              disabled={
+                busy ||
+                loading ||
+                !categories.length ||
+                (supplierMode &&
+                  (!entitlement?.active ||
+                    entitlement.used >= entitlement.limit))
+              }
               onClick={() => {
                 setEditor({});
                 setNotice('');

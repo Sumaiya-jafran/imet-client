@@ -22,6 +22,7 @@ const request = <T>(
   body: unknown,
 ) =>
   apiClient.request<T>(path, {
+    signal: AbortSignal.timeout(15000),
     method,
     headers: headers(token),
     body: JSON.stringify(body),
@@ -35,6 +36,7 @@ export const supplierApi = {
   own: (token: string) =>
     apiClient.get<SupplierProfile | null>('/supplier/me', {
       headers: headers(token),
+      signal: AbortSignal.timeout(10000),
     }),
   apply: (token: string, body: SupplierProfileInput) =>
     request<SupplierProfile>(token, '/supplier/applications', 'POST', body),
@@ -50,20 +52,25 @@ export const supplierApi = {
       businessPhone: body.businessPhone,
       website: body.website,
       logoUrl: body.logoUrl,
+      logoAssetId: body.logoAssetId,
       updatedAt: supplier.updatedAt,
     }),
   plans: (token: string) =>
     apiClient.get<SubscriptionPlan[]>('/supplier/plans', {
       headers: headers(token),
+      signal: AbortSignal.timeout(10000),
     }),
   adminList: (token: string, query: URLSearchParams, signal?: AbortSignal) =>
     apiClient.get<SupplierList>(`/admin/suppliers?${query}`, {
       headers: headers(token),
-      signal,
+      signal: signal
+        ? AbortSignal.any([signal, AbortSignal.timeout(10000)])
+        : AbortSignal.timeout(10000),
     }),
   adminDetail: (token: string, id: string) =>
     apiClient.get<SupplierProfile>(`/admin/suppliers/${id}`, {
       headers: headers(token),
+      signal: AbortSignal.timeout(10000),
     }),
   review: (
     token: string,
@@ -91,6 +98,7 @@ export const supplierApi = {
   adminPlans: (token: string) =>
     apiClient.get<SubscriptionPlan[]>('/admin/subscriptions/plans', {
       headers: headers(token),
+      signal: AbortSignal.timeout(10000),
     }),
   savePlan: (token: string, body: PlanInput, plan?: SubscriptionPlan) =>
     request<SubscriptionPlan>(
@@ -149,16 +157,24 @@ export const supplierCatalogueApi = {
   categories: (token: string, signal?: AbortSignal) =>
     apiClient.get<AdminCategory[]>('/supplier/catalogue/categories', {
       headers: headers(token),
-      signal,
+      signal: signal
+        ? AbortSignal.any([signal, AbortSignal.timeout(10000)])
+        : AbortSignal.timeout(10000),
     }),
   list: (token: string, query: URLSearchParams, signal?: AbortSignal) =>
     apiClient.get<AdminCatalogueResult>(
       `/supplier/catalogue/machines?${query}`,
-      { headers: headers(token), signal },
+      {
+        headers: headers(token),
+        signal: signal
+          ? AbortSignal.any([signal, AbortSignal.timeout(10000)])
+          : AbortSignal.timeout(10000),
+      },
     ),
   detail: (token: string, id: string) =>
     apiClient.get<AdminMachine>(`/supplier/catalogue/machines/${id}`, {
       headers: headers(token),
+      signal: AbortSignal.timeout(10000),
     }),
   save: (token: string, data: MachineInput, machine?: AdminMachine) =>
     request<AdminMachine>(

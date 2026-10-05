@@ -1,4 +1,5 @@
 'use client';
+import SupplierAssetFile from '@/components/shared/SupplierAssetFile';
 import LoadingState from '@/components/shared/LoadingState';
 import Badge from '@/components/shared/Badge';
 import PageHeader from '@/components/shared/PageHeader';
@@ -129,6 +130,33 @@ export default function SupplierDashboard() {
               </div>
             )}
           </section>
+          {!!supplier.documents.length && (
+            <section className="surface p-5">
+              <h2 className="text-lg font-semibold">
+                Your private verification documents
+              </h2>
+              {supplier.documents.map((document, index) =>
+                document.assetId ? (
+                  <SupplierAssetFile
+                    key={document.assetId}
+                    token={token}
+                    assetId={document.assetId}
+                    name={document.name}
+                  />
+                ) : (
+                  <a
+                    key={index}
+                    href={document.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-2 block underline"
+                  >
+                    {document.name} (external)
+                  </a>
+                ),
+              )}
+            </section>
+          )}
           {editing && (
             <section className="surface p-5">
               <SupplierProfileForm

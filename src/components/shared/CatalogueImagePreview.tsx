@@ -5,10 +5,12 @@ export default function CatalogueImagePreview({
   token,
   assetId,
   alt,
+  supplierMode = false,
 }: {
   token: string;
   assetId: string;
   alt: string;
+  supplierMode?: boolean;
 }) {
   const [source, setSource] = useState<string>();
   const [error, setError] = useState(false);
@@ -21,6 +23,7 @@ export default function CatalogueImagePreview({
         token,
         assetId,
         AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]),
+        supplierMode,
       )
       .then((blob) => {
         if (controller.signal.aborted) return;
@@ -35,7 +38,7 @@ export default function CatalogueImagePreview({
       controller.abort();
       if (url) URL.revokeObjectURL(url);
     };
-  }, [token, assetId, attempt]);
+  }, [token, assetId, attempt, supplierMode]);
   return (
     <div className="mb-3 flex min-h-28 items-center justify-center rounded-lg border border-slate-200 bg-white p-2">
       {error ? (

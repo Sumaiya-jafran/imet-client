@@ -34,6 +34,37 @@ export default function MachineForm({
   supplierMode?: boolean;
 }) {
   const [error, setError] = useState('');
+  const [limits, setLimits] = useState({
+    images: supplierMode ? 0 : 20,
+    specifications: supplierMode ? 0 : 100,
+  });
+  useEffect(() => {
+    if (!supplierMode) return;
+    let active = true;
+    supplierApi
+      .own(token)
+      .then((response) => {
+        const term = response.data?.subscriptions.find(
+          (t) =>
+            t.isCurrent &&
+            t.effectiveStatus === 'ACTIVE' &&
+            response.data?.status === 'APPROVED' &&
+            t.supplierType === response.data.type,
+        );
+        if (active)
+          setLimits({
+            images: term?.imageLimit ?? 0,
+            specifications: term?.specificationLimit ?? 0,
+          });
+      })
+      .catch(() => {
+        if (active)
+          setError('Unable to load plan limits. Reload before saving.');
+      });
+    return () => {
+      active = false;
+    };
+  }, [token, supplierMode]);
   const [uploading, setUploading] = useState(false);
   const [storage, setStorage] = useState<
     'loading' | 'ready' | 'missing' | 'error'
@@ -41,10 +72,9 @@ export default function MachineForm({
   const [storageAttempt, setStorageAttempt] = useState(0);
   const [pendingUploads, setPendingUploads] = useState(new Set<string>());
   useEffect(() => {
-    if (supplierMode) return;
     let active = true;
     catalogueImagesApi
-      .status(token)
+      .status(token, supplierMode)
       .then((response) => {
         if (active) setStorage(response.data?.configured ? 'ready' : 'missing');
       })
@@ -126,6 +156,15 @@ export default function MachineForm({
   const specs = useFieldArray({ control, name: 'specifications' });
   const save = async (data: MachineInput) => {
     setError('');
+    if (
+      data.images.length > limits.images ||
+      data.specifications.length > limits.specifications
+    ) {
+      setError(
+        'Reduce image or specification rows to your current plan limits.',
+      );
+      return;
+    }
     try {
       if (supplierMode) await supplierCatalogueApi.save(token, data, machine);
       else
@@ -184,14 +223,18 @@ export default function MachineForm({
       setError('Choose a JPEG or PNG image up to 10 MB.');
       return;
     }
-    if (images.fields.length >= 20) {
-      setError('At most 20 images are allowed.');
+    if (images.fields.length >= limits.images) {
+      setError(`Your current image limit is ${limits.images}.`);
       return;
     }
     setUploading(true);
     setError('');
     try {
-      const response = await catalogueImagesApi.upload(token, file);
+      const response = await catalogueImagesApi.upload(
+        token,
+        file,
+        supplierMode,
+      );
       if (!response.data) throw new Error('Upload response unavailable');
       setPendingUploads(
         (current) => new Set([...current, response.data!.assetId]),
@@ -216,7 +259,7 @@ export default function MachineForm({
       setUploading(true);
       setError('');
       try {
-        await catalogueImagesApi.remove(token, assetId);
+        await catalogueImagesApi.remove(token, assetId, supplierMode);
         setPendingUploads((current) => {
           const next = new Set(current);
           next.delete(assetId);
@@ -236,7 +279,9 @@ export default function MachineForm({
   };
   const cancel = () => {
     for (const id of pendingUploads)
-      void catalogueImagesApi.remove(token, id).catch(() => undefined);
+      void catalogueImagesApi
+        .remove(token, id, supplierMode)
+        .catch(() => undefined);
     onCancel();
   };
   const input = 'mt-1 w-full rounded border border-slate-300 bg-white p-2';
@@ -250,6 +295,13 @@ export default function MachineForm({
         listings appear publicly only when their owner and subscription are
         eligible. Image and specification rows appear in the order shown.
       </p>
+      {supplierMode && (
+        <p className="mb-3 text-sm text-slate-600">
+          Current plan: up to {limits.images} images and {limits.specifications}{' '}
+          specifications per listing. Subscription eligibility is checked again
+          when saving.
+        </p>
+      )}
       {error && (
         <p role="alert" className="mb-4 text-red-700">
           {error}{' '}
@@ -407,7 +459,7 @@ export default function MachineForm({
             className="border-t border-slate-200 pt-5 md:col-span-2"
           >
             <h3 className="font-semibold">Images</h3>
-            {!supplierMode && (
+            {
               <div className="my-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
                 <label
                   htmlFor="machine-image-file"
@@ -423,7 +475,9 @@ export default function MachineForm({
                   id="machine-image-file"
                   type="file"
                   accept="image/jpeg,image/png"
-                  disabled={storage !== 'ready' || images.fields.length >= 20}
+                  disabled={
+                    storage !== 'ready' || images.fields.length >= limits.images
+                  }
                   className="mt-3 block w-full text-sm"
                   onChange={(event) => {
                     const file = event.target.files?.[0];
@@ -465,14 +519,15 @@ export default function MachineForm({
                   </Button>
                 )}
               </div>
-            )}
+            }
             {images.fields.map((field, index) => (
               <div
                 key={field.id}
                 className="my-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4"
               >
-                {field.assetId && !supplierMode && (
+                {field.assetId && (
                   <CatalogueImagePreview
+                    supplierMode={supplierMode}
                     key={field.assetId}
                     token={token}
                     assetId={field.assetId}
@@ -545,7 +600,7 @@ export default function MachineForm({
             ))}
             <Button
               variant="secondary"
-              disabled={images.fields.length >= 20}
+              disabled={images.fields.length >= limits.images}
               onClick={() => images.append({ url: '', alt: '' })}
             >
               Add image URL
@@ -628,7 +683,7 @@ export default function MachineForm({
             ))}
             <Button
               variant="secondary"
-              disabled={specs.fields.length >= 100}
+              disabled={specs.fields.length >= limits.specifications}
               onClick={() => specs.append({ label: '', value: '' })}
             >
               Add specification

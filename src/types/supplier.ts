@@ -14,7 +14,8 @@ export interface SupplierProfileInput {
   registrationNumber: string | null;
   website: string | null;
   logoUrl: string | null;
-  documents: { name: string; url: string }[];
+  logoAssetId?: string | null;
+  documents: { name: string; url: string; assetId?: string }[];
 }
 export interface PlanInput {
   name: string;
@@ -39,6 +40,7 @@ export interface SubscriptionPlan extends PlanInput {
 export interface SupplierSubscription {
   id: string;
   planId: string;
+  supplierType: SupplierType;
   planName: string;
   isCurrent: boolean;
   state: 'PENDING' | 'ACTIVE' | 'SUSPENDED' | 'CANCELLED';

@@ -25,8 +25,25 @@ export const supplierSchema = z.object({
   country: text(100),
   registrationNumber: text(150).nullable(),
   website: url.nullable(),
-  logoUrl: url.nullable(),
-  documents: z.array(z.object({ name: text(200), url })).max(20),
+  logoUrl: z
+    .union([
+      url,
+      z.string().regex(/^\/suppliers\/assets\/[0-9a-f-]{36}\/logo$/),
+    ])
+    .nullable(),
+  logoAssetId: z.uuid().nullable().optional(),
+  documents: z
+    .array(
+      z.object({
+        name: text(200),
+        url: z.union([
+          url,
+          z.string().regex(/^\/supplier\/assets\/[0-9a-f-]{36}\/content$/),
+        ]),
+        assetId: z.uuid().optional(),
+      }),
+    )
+    .max(20),
 });
 export const planSchema = z.object({
   name: text(100),
