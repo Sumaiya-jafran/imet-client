@@ -80,3 +80,7 @@ Milestone 9 adds lazy machinery 3D/360 viewing, capability-gated VR and admin/su
 ## Milestone 10 — Service & Warranty
 
 The `milestone-10` branch adds completed-purchase service tickets, admin review/assignment/manual warranty assessment, assignee progress/resolution and admin closure. Read [the M10 implementation and deployment guide](docs/milestone-10.md) for permissions, APIs, pages, migration and validation. No new provider, dependency or environment variable is required.
+
+## Milestone 11 — Notifications
+
+The `milestone-11` branch preserves the existing UI for the approved email-only notification scope. See [M11 behavior and deployment](docs/milestone-11.md). Service emails link to existing authorized dashboards; no notification inbox, badge, new client API or dependency is introduced.
