@@ -1,4 +1,18 @@
-import { apiClient } from './client';
+import { apiClient as sharedApiClient } from './client';
+const timed = (options: RequestInit = {}) => ({
+  ...options,
+  signal: options.signal
+    ? AbortSignal.any([options.signal, AbortSignal.timeout(15000)])
+    : AbortSignal.timeout(15000),
+});
+const apiClient = {
+  get: <T>(path: string, options?: RequestInit) =>
+    sharedApiClient.get<T>(path, timed(options)),
+  post: <T>(path: string, body: unknown, options?: RequestInit) =>
+    sharedApiClient.post<T>(path, body, timed(options)),
+  request: <T>(path: string, options?: RequestInit) =>
+    sharedApiClient.request<T>(path, timed(options)),
+};
 import type { CurrentUser } from '@/types/auth';
 export const authService = {
   register: (body: { email: string; displayName: string; password: string }) =>

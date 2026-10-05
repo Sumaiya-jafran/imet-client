@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import PasswordInput from './PasswordInput';
+import { safeReturnUrl } from '@/lib/auth/returnUrl';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/lib/api/auth.service';
@@ -38,9 +40,15 @@ const titles = {
 export default function AuthForm({
   mode,
   token,
+  callbackUrl,
+  googleEnabled = false,
+  oauthError,
 }: {
   mode: Mode;
   token?: string;
+  callbackUrl?: string;
+  googleEnabled?: boolean;
+  oauthError?: string;
 }) {
   const schema = schemas[mode];
   type Values = z.infer<typeof schema>;
@@ -52,7 +60,14 @@ export default function AuthForm({
     setError,
   } = useForm<Values>({ resolver: zodResolver(schema) });
   const [message, setMessage] = useState('');
-  const [failure, setFailure] = useState('');
+  const [failure, setFailure] = useState(
+    oauthError
+      ? oauthError === 'AccountLinkRequired'
+        ? 'Sign in with your password, then link Google in account settings.'
+        : 'Google sign-in failed. Try again or use email and password.'
+      : '',
+  );
+  const [googleBusy, setGoogleBusy] = useState(false);
   const router = useRouter();
   const fields =
     mode === 'signup'
@@ -81,6 +96,7 @@ export default function AuthForm({
       if (mode === 'signin') {
         const result = await signIn('credentials', {
           redirect: false,
+          callbackUrl: safeReturnUrl(callbackUrl),
           email: values.email,
           password: values.password,
         });
@@ -88,7 +104,7 @@ export default function AuthForm({
           setFailure(result?.error || 'Unable to sign in');
           return;
         }
-        router.push('/dashboard/account');
+        router.push(safeReturnUrl(callbackUrl));
         router.refresh();
         return;
       }
@@ -125,7 +141,8 @@ export default function AuthForm({
       );
     }
   };
-  const invalidLink = mode === 'reset-password' && !token;
+  const invalidLink =
+    mode === 'reset-password' && !/^[a-f0-9]{64}$/.test(token || '');
   return (
     <section className="surface mx-auto max-w-md p-6 sm:p-8">
       <p className="eyebrow mb-3">iMet account</p>
@@ -145,13 +162,16 @@ export default function AuthForm({
         noValidate
       >
         {fields.map((field) => {
+          const Input = field.toLowerCase().includes('password')
+            ? PasswordInput
+            : 'input';
           const error = (errors as Record<string, { message?: string }>)[field];
           return (
             <div key={field}>
               <label htmlFor={field} className="mb-1 block text-sm font-medium">
                 {labels[field]}
               </label>
-              <input
+              <Input
                 id={field}
                 type={
                   field.toLowerCase().includes('password')
@@ -191,7 +211,7 @@ export default function AuthForm({
         )}
         {invalidLink && (
           <p role="alert">
-            This reset link is missing its token. Request a new link.
+            This reset link is missing or invalid. Request a new link.
           </p>
         )}
         {failure && (
@@ -212,6 +232,36 @@ export default function AuthForm({
           {isSubmitting ? 'Please wait…' : titles[mode]}
         </Button>
       </form>
+      {(mode === 'signin' || mode === 'signup') && (
+        <div className="mt-4 space-y-2">
+          <Button
+            type="button"
+            variant="secondary"
+            className="w-full"
+            disabled={!googleEnabled || googleBusy || isSubmitting}
+            onClick={async () => {
+              setGoogleBusy(true);
+              setFailure('');
+              try {
+                await signIn('google', {
+                  callbackUrl: safeReturnUrl(callbackUrl),
+                });
+              } catch {
+                setFailure('Unable to start Google sign-in. Try again.');
+                setGoogleBusy(false);
+              }
+            }}
+          >
+            {googleBusy ? 'Connecting…' : 'Continue with Google'}
+          </Button>
+          {!googleEnabled && (
+            <p className="text-xs text-slate-500">
+              Google Sign-In is temporarily unavailable. You can use email and
+              password.
+            </p>
+          )}
+        </div>
+      )}
       <nav
         className="mt-6 flex flex-wrap gap-x-4 gap-y-2 border-t border-slate-100 pt-5 text-xs font-medium text-orange-dark"
         aria-label="Authentication"

@@ -1,4 +1,8 @@
 'use client';
+import PasswordInput from '@/components/forms/PasswordInput';
+import { ApiError } from '@/lib/api/client';
+import { useRouter } from 'next/navigation';
+import { signIn, getProviders } from 'next-auth/react';
 import PageHeader from '@/components/shared/PageHeader';
 import Badge from '@/components/shared/Badge';
 import ProfileForm from '@/components/forms/ProfileForm';
@@ -13,11 +17,20 @@ import { changeSchema } from '@/lib/schema-validations/auth.schema';
 import { authService } from '@/lib/api/auth.service';
 import Button from '@/components/buttons/Button';
 export default function AccountPanel() {
-  const { data: session } = useSession();
+  const { data: session, status, update } = useSession();
+  const router = useRouter();
+  const [attempt, setAttempt] = useState(0);
+  const [googleEnabled, setGoogleEnabled] = useState(false);
+  useEffect(() => {
+    void getProviders().then((providers) =>
+      setGoogleEnabled(Boolean(providers?.google)),
+    );
+  }, []);
   const [user, setUser] = useState<CurrentUser>();
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const {
+    setError: setFieldError,
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
@@ -30,15 +43,19 @@ export default function AccountPanel() {
     authService
       .me(session.accessToken)
       .then((response) => {
-        if (active) setUser(response.data);
+        if (active) {
+          setUser(response.data);
+          setError('');
+        }
       })
       .catch(() => {
-        if (active) setError('Unable to load your account. Sign in again.');
+        if (active)
+          setError('Unable to load your account. Retry, or sign in again.');
       });
     return () => {
       active = false;
     };
-  }, [session]);
+  }, [session, attempt]);
   const logout = async (all: boolean) => {
     if (session?.error || !session?.accessToken) {
       await signOut({ callbackUrl: '/auth/signin' });
@@ -61,6 +78,22 @@ export default function AccountPanel() {
       await authService.change(values, session.accessToken);
       await signOut({ callbackUrl: '/auth/signin' });
     } catch (error) {
+      if (
+        error instanceof ApiError &&
+        error.status === 400 &&
+        error.message === 'Current password is incorrect'
+      )
+        setFieldError('currentPassword', { message: error.message });
+      if (error instanceof ApiError)
+        for (const issue of error.response.errors || []) {
+          const field = issue.path.at(-1);
+          if (
+            field === 'currentPassword' ||
+            field === 'password' ||
+            field === 'confirmPassword'
+          )
+            setFieldError(field, { message: issue.message });
+        }
       setError(
         error instanceof Error ? error.message : 'Unable to change password',
       );
@@ -99,6 +132,20 @@ export default function AccountPanel() {
                 </Badge>
               </dd>
             </dl>
+          ) : error || session?.error || status === 'unauthenticated' ? (
+            <div className="my-4 flex gap-3">
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setError('');
+                  setAttempt((value) => value + 1);
+                }}
+                disabled={!!session?.error}
+              >
+                Retry account
+              </Button>
+              <Link href="/auth/signin">Sign in again</Link>
+            </div>
           ) : (
             <p role="status" className="my-4">
               Loading account…
@@ -108,7 +155,17 @@ export default function AccountPanel() {
             <ProfileForm
               token={session.accessToken}
               displayName={user.displayName}
-              onSave={(displayName) => setUser({ ...user, displayName })}
+              onSave={(displayName) => {
+                setUser({ ...user, displayName });
+                void update()
+                  .then(() => router.refresh())
+                  .catch(() => {
+                    router.refresh();
+                    setError(
+                      'Profile saved. Reload to refresh your account header.',
+                    );
+                  });
+              }}
             />
           )}
           {user?.roles.includes('ADMIN') && (
@@ -140,7 +197,26 @@ export default function AccountPanel() {
               </Link>
             </div>
           )}
-          <div className="flex flex-wrap gap-3">
+          <p className="my-3 text-sm text-slate-600">
+            Google-only accounts can use Forgot password to set a password. To
+            link Google, use the same verified email as this account.
+          </p>
+          <Button
+            variant="secondary"
+            disabled={!googleEnabled || busy}
+            onClick={() => {
+              setBusy(true);
+              void signIn('google', {
+                callbackUrl: '/dashboard/account',
+              }).catch(() => {
+                setBusy(false);
+                setError('Unable to connect Google. Try again.');
+              });
+            }}
+          >
+            Link / sign in with Google
+          </Button>
+          <div className="mt-3 flex flex-wrap gap-3">
             <Button
               variant="secondary"
               disabled={busy}
@@ -179,7 +255,7 @@ export default function AccountPanel() {
                       }[field]
                     }
                   </label>
-                  <input
+                  <PasswordInput
                     id={field}
                     type="password"
                     autoComplete={
@@ -193,7 +269,12 @@ export default function AccountPanel() {
                       errors[field] ? `${field}-error` : undefined
                     }
                     className="mt-1 w-full rounded border p-2"
-                    disabled={isSubmitting}
+                    disabled={
+                      isSubmitting ||
+                      busy ||
+                      !!session?.error ||
+                      !session?.accessToken
+                    }
                   />
                   {errors[field] && (
                     <p id={`${field}-error`} className="text-red-700">
@@ -203,7 +284,15 @@ export default function AccountPanel() {
                 </div>
               ),
             )}
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={
+                isSubmitting ||
+                busy ||
+                !!session?.error ||
+                !session?.accessToken
+              }
+            >
               {isSubmitting ? 'Changing…' : 'Change password'}
             </Button>
           </form>

@@ -1,4 +1,6 @@
 import type { NextAuthOptions } from 'next-auth';
+import { getServerSession } from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import type { AuthResponse } from '@/types/auth';
 import { config } from '@/config/env';
@@ -11,12 +13,13 @@ async function refreshToken(token: string): Promise<AuthResponse> {
   if (existing) return existing;
   const promise = (async () => {
     const response = await fetch(
-      `${config.NEXT_PUBLIC_BACKEND_API_URL}/auth/refresh`,
+      `${config.NEXT_PUBLIC_BACKEND_API_URL}/auth/refresh-coordinated`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken: token }),
         cache: 'no-store',
+        signal: AbortSignal.timeout(15000),
       },
     );
     const body = await response.json();
@@ -30,6 +33,15 @@ async function refreshToken(token: string): Promise<AuthResponse> {
 export const authOptions: NextAuthOptions = {
   secret,
   providers: [
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? [
+          GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            checks: ['pkce', 'state', 'nonce'],
+          }),
+        ]
+      : []),
     CredentialsProvider({
       name: 'Email and password',
       credentials: {
@@ -48,6 +60,7 @@ export const authOptions: NextAuthOptions = {
               password: credentials.password,
             }),
             cache: 'no-store',
+            signal: AbortSignal.timeout(15000),
           },
         );
         const result = await response.json();
@@ -69,7 +82,56 @@ export const authOptions: NextAuthOptions = {
   session: { strategy: 'jwt', maxAge: 7 * 24 * 60 * 60 },
   pages: { signIn: '/auth/signin' },
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account }) {
+      if (account?.provider !== 'google') return true;
+      if (!account.id_token) return '/auth/signin?error=GoogleCredential';
+      try {
+        const current = await getServerSession(authOptions);
+        if (current?.accessToken && !current.error) {
+          const linked = await fetch(
+            `${config.NEXT_PUBLIC_BACKEND_API_URL}/auth/google/link`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${current.accessToken}`,
+              },
+              body: JSON.stringify({ idToken: account.id_token }),
+              signal: AbortSignal.timeout(15000),
+            },
+          );
+          if (!linked.ok) return '/auth/signin?error=GoogleLink';
+        }
+        const response = await fetch(
+          `${config.NEXT_PUBLIC_BACKEND_API_URL}/auth/google`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken: account.id_token }),
+            signal: AbortSignal.timeout(15000),
+          },
+        );
+        if (!response.ok)
+          return response.status === 409
+            ? '/auth/signin?error=AccountLinkRequired'
+            : '/auth/signin?error=GoogleCredential';
+        const body = await response.json();
+        const auth = body.data as AuthResponse;
+        Object.assign(user, {
+          id: auth.user.id,
+          name: auth.user.displayName,
+          email: auth.user.email,
+          account: auth.user,
+          accessToken: auth.accessToken,
+          refreshToken: auth.refreshToken,
+          expiresAt: auth.expiresAt,
+        });
+        return true;
+      } catch {
+        return '/auth/signin?error=GoogleCredential';
+      }
+    },
+    async jwt({ token, user, trigger }) {
       if (user)
         return {
           ...token,
@@ -79,6 +141,21 @@ export const authOptions: NextAuthOptions = {
           account: user.account,
         };
       if (token.error) return token;
+      if (trigger === 'update' && token.accessToken) {
+        const response = await fetch(
+          `${config.NEXT_PUBLIC_BACKEND_API_URL}/auth/me`,
+          {
+            headers: { Authorization: `Bearer ${token.accessToken}` },
+            cache: 'no-store',
+            signal: AbortSignal.timeout(15000),
+          },
+        );
+        if (response.ok) {
+          const body = await response.json();
+          token.account = body.data as AuthResponse['user'];
+          token.name = token.account.displayName;
+        }
+      }
       if (token.expiresAt && Date.now() < token.expiresAt - 60_000)
         return token;
       try {
@@ -103,6 +180,8 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       session.accessToken = token.accessToken;
       session.account = token.account;
+      if (session.user && token.account)
+        session.user.name = token.account.displayName;
       session.error = token.error;
       return session;
     },
@@ -114,6 +193,7 @@ export const authOptions: NextAuthOptions = {
         method: 'POST',
         headers: { Authorization: `Bearer ${token.accessToken}` },
         cache: 'no-store',
+        signal: AbortSignal.timeout(15000),
       }).catch(() => undefined);
     },
   },

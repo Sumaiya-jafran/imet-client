@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { userService } from '@/lib/api/user.service';
+import { ApiError } from '@/lib/api/client';
 import Button from '@/components/buttons/Button';
 const schema = z.object({ displayName: z.string().trim().min(2).max(100) });
 export default function ProfileForm({
@@ -18,6 +19,7 @@ export default function ProfileForm({
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const {
+    setError: setFieldError,
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
@@ -33,6 +35,10 @@ export default function ProfileForm({
       onSave(response.data!.displayName);
       setMessage('Profile updated.');
     } catch (error) {
+      if (error instanceof ApiError)
+        for (const issue of error.response.errors || [])
+          if (issue.path.at(-1) === 'displayName')
+            setFieldError('displayName', { message: issue.message });
       setError(
         error instanceof Error ? error.message : 'Unable to save profile',
       );

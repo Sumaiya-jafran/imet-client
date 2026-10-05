@@ -7,6 +7,7 @@ export default function VerifyEmail({ token }: { token?: string }) {
   const [message, setMessage] = useState('');
   const [failure, setFailure] = useState('');
   const [busy, setBusy] = useState(false);
+  const invalidLink = !/^[a-f0-9]{64}$/.test(token || '');
   const verify = async () => {
     setBusy(true);
     setFailure('');
@@ -28,8 +29,10 @@ export default function VerifyEmail({ token }: { token?: string }) {
       <p className="text-sm text-slate-600">
         Confirm your email address to access your iMet account.
       </p>
-      {!token && (
-        <p role="alert">This verification link is missing its token.</p>
+      {invalidLink && (
+        <p role="alert">
+          This verification link is missing or invalid. Request a new link.
+        </p>
       )}
       {failure && (
         <p role="alert" className="text-red-700">
@@ -39,7 +42,7 @@ export default function VerifyEmail({ token }: { token?: string }) {
       {message ? (
         <p role="status">{message}</p>
       ) : (
-        <Button disabled={!token || busy} onClick={verify}>
+        <Button disabled={invalidLink || busy} onClick={verify}>
           {busy ? 'Verifying…' : 'Verify email'}
         </Button>
       )}
