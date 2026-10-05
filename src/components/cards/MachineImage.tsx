@@ -1,4 +1,5 @@
 'use client';
+import { catalogueImageUrl } from '@/lib/api/catalogue-images.service';
 import { useState } from 'react';
 import { Factory, LoaderCircle } from 'lucide-react';
 import type { MachineImage as ImageData } from '@/types/catalogue';
@@ -17,6 +18,8 @@ export default function MachineImage({
   try {
     safe = !!image && new URL(image.url).protocol === 'https:';
   } catch {}
+  if (image && /^\/catalogue\/images\/[0-9a-f-]{36}\/content$/.test(image.url))
+    safe = true;
   return (
     <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-lg border border-slate-200/70 bg-slate-100">
       {image && safe && failedUrl !== image.url ? (
@@ -31,7 +34,7 @@ export default function MachineImage({
           {/* Catalogue images use arbitrary HTTPS hosts; avoid proxying untrusted URLs through the server. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={image.url}
+            src={catalogueImageUrl(image.url)}
             alt={image.alt || alt}
             loading="lazy"
             referrerPolicy="no-referrer"

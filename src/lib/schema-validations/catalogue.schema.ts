@@ -21,23 +21,37 @@ export const machineSchema = z
       .array(
         z
           .object({
-            url: z
-              .url()
-              .max(2000)
-              .refine((value) => {
-                let url: URL;
-                try {
-                  url = new URL(value);
-                } catch {
-                  return false;
-                }
-                return (
-                  url.protocol === 'https:' && !url.username && !url.password
-                );
-              }, 'Use an HTTPS URL without embedded credentials'),
+            url: z.string().max(2000).optional(),
+            assetId: z.uuid().nullable().optional(),
             alt: text(250),
           })
-          .strict(),
+          .strict()
+          .superRefine((image, ctx) => {
+            if (image.assetId) {
+              if (
+                image.url &&
+                image.url !== `/catalogue/images/${image.assetId}/content`
+              )
+                ctx.addIssue({
+                  code: 'custom',
+                  path: ['url'],
+                  message: 'Invalid managed image reference',
+                });
+            } else {
+              let safe = false;
+              try {
+                const url = new URL(image.url || '');
+                safe =
+                  url.protocol === 'https:' && !url.username && !url.password;
+              } catch {}
+              if (!safe)
+                ctx.addIssue({
+                  code: 'custom',
+                  path: ['url'],
+                  message: 'Use an HTTPS URL without embedded credentials',
+                });
+            }
+          }),
       )
       .max(20),
     specifications: z

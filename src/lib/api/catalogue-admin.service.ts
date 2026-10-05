@@ -4,6 +4,7 @@ export interface AdminCategory {
   id: string;
   name: string;
   slug: string;
+  updatedAt?: string;
   _count?: { machines: number };
 }
 export interface AdminMachine extends MachineInput {
@@ -71,14 +72,17 @@ export const catalogueAdminApi = {
   saveCategory: (
     token: string,
     data: { name: string; slug: string },
-    id?: string,
+    category?: AdminCategory,
   ) =>
     apiClient.request<AdminCategory>(
-      `/admin/catalogue/categories${id ? `/${id}` : ''}`,
+      `/admin/catalogue/categories${category ? `/${category.id}` : ''}`,
       {
-        method: id ? 'PUT' : 'POST',
+        method: category ? 'PUT' : 'POST',
         headers: headers(token),
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          ...(category ? { updatedAt: category.updatedAt } : {}),
+        }),
       },
     ),
   removeCategory: (token: string, id: string) =>
