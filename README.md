@@ -84,3 +84,7 @@ The `milestone-10` branch adds completed-purchase service tickets, admin review/
 ## Milestone 11 — Notifications
 
 The `milestone-11` branch preserves the existing UI for the approved email-only notification scope. See [M11 behavior and deployment](docs/milestone-11.md). Service emails link to existing authorized dashboards; no notification inbox, badge, new client API or dependency is introduced.
+
+## Milestone 12 — Analytics & Audit
+
+The `milestone-12` branch adds admin-only operational analytics and a private-safe, read-only audit viewer, reusing existing RFQ/sales/service history and adding atomic governance audit records. See [M12 metrics, APIs, access rules, migration and verification](docs/milestone-12.md). Apply the additive backend migration and restart matching API/client builds. No new dependency, provider or environment variable is required.
