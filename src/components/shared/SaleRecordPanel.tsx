@@ -91,6 +91,14 @@ export default function SaleRecordPanel({
       : '/dashboard/sales/history';
   return (
     <div className="space-y-5 [&_dd]:break-words">
+      {buyer && sale.status === 'COMPLETED' && (
+        <Link
+          className="action-link"
+          href={`/dashboard/service-tickets/new?saleId=${sale.id}`}
+        >
+          Request machinery service
+        </Link>
+      )}
       <PageHeader
         eyebrow={sale.rfq.rfqNumber}
         title={sale.rfq.title}

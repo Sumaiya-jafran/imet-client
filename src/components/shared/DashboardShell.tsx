@@ -35,6 +35,11 @@ export default function DashboardShell({
     ...(user.roles.includes('ADMIN')
       ? [
           {
+            href: '/dashboard/admin/service-tickets',
+            label: 'Service management',
+            icon: FileText,
+          },
+          {
             href: '/dashboard/admin/translations',
             label: 'AI translations',
             icon: FileText,
@@ -61,6 +66,11 @@ export default function DashboardShell({
     ...(user.roles.includes('BUYER')
       ? [
           { href: '/dashboard/rfqs', label: 'My RFQs', icon: FileText },
+          {
+            href: '/dashboard/service-tickets',
+            label: 'My service tickets',
+            icon: FileText,
+          },
           { href: '/dashboard/reviews', label: 'My reviews', icon: FileText },
           {
             href: '/dashboard/purchases',
@@ -79,6 +89,11 @@ export default function DashboardShell({
     )
       ? [
           { href: '/dashboard/sales', label: 'Sales pipeline', icon: Layers3 },
+          {
+            href: '/dashboard/service-management',
+            label: 'Assigned service',
+            icon: FileText,
+          },
           {
             href: '/dashboard/sales/history',
             label: 'Sales history',
