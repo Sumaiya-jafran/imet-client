@@ -52,6 +52,12 @@ export default function SupplierDashboard() {
     return <p role="alert">Sign in again to manage your supplier account.</p>;
   return (
     <div className="space-y-6">
+      <Link
+        href="/subscription"
+        className="mb-4 inline-block font-semibold text-orange"
+      >
+        Manage subscription / secure activation
+      </Link>
       <PageHeader
         title="Supplier account"
         eyebrow="Company workspace"
@@ -173,8 +179,8 @@ export default function SupplierDashboard() {
             <h2 className="text-lg font-semibold">Subscriptions</h2>
             <p className="my-3 text-sm text-slate-600">
               An approved account and applicable active subscription are
-              required for supplier listings. Activation and renewal are handled
-              manually by administrators.
+              required for supplier listings. Activate through verified
+              SSLCOMMERZ checkout or contact an administrator for a manual term.
             </p>
             {supplier.subscriptions.length ? (
               supplier.subscriptions.map((term) => (

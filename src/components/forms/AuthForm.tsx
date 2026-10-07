@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import PasswordInput from './PasswordInput';
 import { safeReturnUrl } from '@/lib/auth/returnUrl';
-import { signIn } from 'next-auth/react';
+import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/lib/api/auth.service';
 import { ApiError } from '@/lib/api/client';
@@ -104,7 +104,14 @@ export default function AuthForm({
           setFailure(result?.error || 'Unable to sign in');
           return;
         }
-        router.push(safeReturnUrl(callbackUrl));
+        const currentSession = await getSession();
+        router.push(
+          currentSession?.account?.status === 'PENDING'
+            ? /^\/payments\/[0-9a-f-]{36}$/.test(safeReturnUrl(callbackUrl))
+              ? safeReturnUrl(callbackUrl)
+              : '/subscription'
+            : safeReturnUrl(callbackUrl),
+        );
         router.refresh();
         return;
       }

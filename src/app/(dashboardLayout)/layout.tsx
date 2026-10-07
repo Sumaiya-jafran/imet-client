@@ -21,5 +21,6 @@ export default async function DashboardLayout({
   } catch {
     redirect(signInUrl);
   }
+  if (user.status === 'PENDING') redirect('/subscription');
   return <DashboardShell user={user}>{children}</DashboardShell>;
 }

@@ -1,4 +1,5 @@
 'use client';
+import SupplierActivationPanel from '@/components/forms/SupplierActivationPanel';
 import SupplierAssetFile from '@/components/shared/SupplierAssetFile';
 import LoadingState from '@/components/shared/LoadingState';
 import Badge from '@/components/shared/Badge';
@@ -294,6 +295,12 @@ export default function SupplierManagement() {
               />
             </section>
           )}
+          <SupplierActivationPanel
+            token={token}
+            supplier={selected}
+            plans={plans}
+            onSave={saved}
+          />
           <div className="grid items-start gap-5 xl:grid-cols-2">
             <ReviewForm
               key={selected.updatedAt}

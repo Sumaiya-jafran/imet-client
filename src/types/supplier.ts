@@ -44,6 +44,10 @@ export interface SupplierSubscription {
   planName: string;
   isCurrent: boolean;
   state: 'PENDING' | 'ACTIVE' | 'SUSPENDED' | 'CANCELLED';
+  activationMethod?: 'PAYMENT' | 'ADMIN_MANUAL' | null;
+  activatedAt?: string | null;
+  activatedById?: string | null;
+  activationReason?: string | null;
   effectiveStatus: 'PENDING' | 'ACTIVE' | 'EXPIRED' | 'SUSPENDED' | 'CANCELLED';
   startsAt: string;
   endsAt: string;
@@ -60,6 +64,7 @@ export interface SupplierSubscription {
   visibility: 'HIDDEN' | 'STANDARD' | 'FEATURED';
 }
 export interface SupplierProfile extends SupplierProfileInput {
+  user?: { id: string; status: string; isEmailVerified: boolean };
   id: string;
   status: SupplierStatus;
   isVerified: boolean;
