@@ -88,3 +88,7 @@ The `milestone-11` branch preserves the existing UI for the approved email-only 
 ## Milestone 12 — Analytics & Audit
 
 The `milestone-12` branch adds admin-only operational analytics and a private-safe, read-only audit viewer, reusing existing RFQ/sales/service history and adding atomic governance audit records. See [M12 metrics, APIs, access rules, migration and verification](docs/milestone-12.md). Apply the additive backend migration and restart matching API/client builds. No new dependency, provider or environment variable is required.
+
+## Updated supplier activation
+
+See [supplier-payment-activation.md](docs/supplier-payment-activation.md) for supplier onboarding, SSLCOMMERZ payment status and audited manual activation. Backend credentials and live sandbox acceptance steps are in the companion server report.

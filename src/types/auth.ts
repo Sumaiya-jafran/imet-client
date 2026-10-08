@@ -10,7 +10,8 @@ export interface CurrentUser {
   email: string;
   displayName: string;
   roles: UserRole[];
-  status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'PENDING_VERIFICATION';
+  status:
+    'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'PENDING_VERIFICATION' | 'PENDING';
   isEmailVerified: boolean;
 }
 export interface AuthResponse {

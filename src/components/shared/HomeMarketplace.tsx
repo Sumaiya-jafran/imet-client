@@ -135,7 +135,7 @@ export async function HomePlans() {
       <SectionHeading
         eyebrow="For suppliers & manufacturers"
         title="Choose your marketplace plan"
-        description="Current plans defined by iMet administrators. Buyers browse and request quotations without a subscription. Plan activation and renewal are handled manually by the admin team."
+        description="Current plans defined by iMet administrators. Buyers browse and request quotations without a subscription. Activate through verified SSLCOMMERZ checkout or an audited administrator action."
       />
       {plans.length ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -175,7 +175,7 @@ export async function HomePlans() {
                   </span>
                 </p>
                 <p className="mt-1 text-xs text-slate-500">
-                  {p.durationDays} days · Manual activation
+                  {p.durationDays} days · Supplier subscription
                 </p>
                 <ul className="my-5 space-y-3 border-t border-slate-100 pt-5">
                   {features.map((f) => (
@@ -191,9 +191,9 @@ export async function HomePlans() {
                 </ul>
                 <Link
                   className="secondary-link mt-auto justify-center"
-                  href="/dashboard/supplier"
+                  href={`/auth/signup?type=supplier&planId=${p.id}`}
                 >
-                  Apply or view supplier account
+                  Choose this plan
                 </Link>
               </article>
             );

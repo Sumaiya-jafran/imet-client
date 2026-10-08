@@ -29,21 +29,26 @@ export default function SupplierProfileForm({
   mode,
   onSave,
   onCancel,
+  submitOverride,
+  onTypeChange,
 }: {
   token: string;
   supplier?: SupplierProfile;
   mode: 'application' | 'owner' | 'admin';
   onSave: () => void;
   onCancel?: () => void;
+  onTypeChange?: (type: 'LOCAL' | 'INTERNATIONAL') => void;
+  submitOverride?: (body: SupplierProfileInput) => Promise<unknown>;
 }) {
   const [error, setError] = useState('');
   const [uploading, setUploading] = useState(false);
   const [storage, setStorage] = useState<
     'loading' | 'ready' | 'missing' | 'error'
-  >('loading');
+  >(token ? 'loading' : 'missing');
   const [attempt, setAttempt] = useState(0);
   const [pending, setPending] = useState(new Set<string>());
   useEffect(() => {
+    if (!token) return;
     let active = true;
     supplierAssetsApi
       .status(token)
@@ -104,7 +109,8 @@ export default function SupplierProfileForm({
   const save = async (body: SupplierProfileInput) => {
     setError('');
     try {
-      if (mode === 'admin' && supplier)
+      if (submitOverride) await submitOverride(body);
+      else if (mode === 'admin' && supplier)
         await supplierApi.adminUpdate(token, body, supplier);
       else if (mode === 'owner' && supplier)
         await supplierApi.updateOwn(token, body, supplier);
@@ -114,7 +120,9 @@ export default function SupplierProfileForm({
     } catch (e) {
       if (e instanceof ApiError && e.response.errors)
         for (const issue of e.response.errors) {
-          const path = issue.path.filter((p) => p !== 'body').join('.');
+          const path = issue.path
+            .filter((p) => p !== 'body' && p !== 'profile')
+            .join('.');
           if (
             [
               'companyName',
@@ -306,7 +314,9 @@ export default function SupplierProfileForm({
           {storage !== 'ready' && (
             <p role="status" className="mt-2 text-sm">
               {storage === 'missing'
-                ? 'Uploads require Bunny Storage configuration on the server.'
+                ? token
+                  ? 'Uploads require Bunny Storage configuration on the server.'
+                  : 'Verify your account and sign in to upload your company files.'
                 : storage === 'loading'
                   ? 'Checking upload availability…'
                   : 'Unable to check upload storage.'}{' '}
@@ -343,12 +353,25 @@ export default function SupplierProfileForm({
                 }
                 className="mt-1 w-full rounded border bg-slate-100 p-2"
               />
-              <input type="hidden" {...register('type')} />
+              <input
+                type="hidden"
+                {...register('type', {
+                  onChange: (event: React.ChangeEvent<HTMLSelectElement>) =>
+                    onTypeChange?.(
+                      event.target.value as 'LOCAL' | 'INTERNATIONAL',
+                    ),
+                })}
+              />
             </>
           ) : (
             <select
               id="supplier-type"
-              {...register('type')}
+              {...register('type', {
+                onChange: (event: React.ChangeEvent<HTMLSelectElement>) =>
+                  onTypeChange?.(
+                    event.target.value as 'LOCAL' | 'INTERNATIONAL',
+                  ),
+              })}
               className="mt-1 w-full rounded border bg-white p-2"
             >
               <option value="LOCAL">Local supplier / dealer</option>

@@ -182,6 +182,7 @@ export default function UserManagement() {
                         'INACTIVE',
                         'SUSPENDED',
                         'PENDING_VERIFICATION',
+                        'PENDING',
                       ] as const
                     ).map((status) => (
                       <option key={status}>{status}</option>
