@@ -48,4 +48,15 @@ class ApiClient {
     });
   }
 }
-export const apiClient = new ApiClient(config.NEXT_PUBLIC_BACKEND_API_URL);
+const getBaseURL = () => {
+  if (typeof window === 'undefined') {
+    return (
+      process.env.INTERNAL_BACKEND_API_URL || config.NEXT_PUBLIC_BACKEND_API_URL
+    );
+  }
+
+  return config.NEXT_PUBLIC_BACKEND_API_URL;
+};
+
+export const apiClient = new ApiClient(getBaseURL());
+// export const apiClient = new ApiClient(config.NEXT_PUBLIC_BACKEND_API_URL);
