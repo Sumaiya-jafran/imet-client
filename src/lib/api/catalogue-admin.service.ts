@@ -1,3 +1,4 @@
+import type { Pagination } from '@/types/api';
 import { apiClient } from './client';
 import type { MachineInput } from '@/lib/schema-validations/catalogue.schema';
 export interface AdminCategory {
@@ -22,12 +23,7 @@ export interface AdminCatalogueResult {
     updatedAt: string;
     category: { name: string };
   }[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  pagination: Pagination;
 }
 const headers = (token: string) => ({ Authorization: `Bearer ${token}` });
 export const catalogueAdminApi = {

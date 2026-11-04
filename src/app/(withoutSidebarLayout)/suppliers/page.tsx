@@ -1,3 +1,4 @@
+import { supplierTypeLabels } from '@/types/supplier';
 import Link from 'next/link';
 import PageHeader from '@/components/shared/PageHeader';
 import Badge from '@/components/shared/Badge';
@@ -81,9 +82,7 @@ export default async function Page({
               </Link>
             </h2>
             <p className="mt-2 text-xs text-slate-600">
-              {supplier.type === 'LOCAL'
-                ? 'Local supplier / dealer'
-                : 'International manufacturer'}
+              {supplierTypeLabels[supplier.type]}
             </p>
             <p className="mt-2 flex items-center gap-1.5 break-words text-xs text-slate-500">
               <MapPin size={13} aria-hidden="true" />

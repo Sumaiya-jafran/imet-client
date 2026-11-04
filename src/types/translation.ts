@@ -1,3 +1,4 @@
+import type { Pagination } from './api';
 export type Language = 'en' | 'bn' | 'zh';
 export type TranslationResourceType =
   'MACHINERY' | 'SPECIFICATION' | 'SUPPLIER' | 'REVIEW';
@@ -31,12 +32,7 @@ export interface TranslationResources {
     id: string;
     title: string;
   }[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  pagination: Pagination;
   providerConfigured: boolean;
   maxCharacters: number;
 }

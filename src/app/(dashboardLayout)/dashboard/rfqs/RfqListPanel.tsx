@@ -1,4 +1,5 @@
 'use client';
+import { QUOTE_HREF } from '@/config/routes';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -112,7 +113,7 @@ export default function RfqListPanel({
         }
         actions={
           scope === 'buyer' ? (
-            <Link href="/dashboard/rfqs/new" className="action-link">
+            <Link href={QUOTE_HREF} className="action-link">
               Create RFQ
             </Link>
           ) : scope === 'admin' ? (

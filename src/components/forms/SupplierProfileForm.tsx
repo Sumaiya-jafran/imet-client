@@ -1,4 +1,5 @@
 'use client';
+import { supplierTypeLabels } from '@/types/supplier';
 import { useEffect, useState } from 'react';
 import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -347,9 +348,7 @@ export default function SupplierProfileForm({
                 id="supplier-type"
                 readOnly
                 value={
-                  supplier?.type === 'LOCAL'
-                    ? 'Local supplier / dealer'
-                    : 'International manufacturer'
+                  supplierTypeLabels[supplier?.type ?? 'INTERNATIONAL']
                 }
                 className="mt-1 w-full rounded border bg-slate-100 p-2"
               />

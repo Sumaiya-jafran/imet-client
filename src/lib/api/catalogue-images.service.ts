@@ -7,10 +7,13 @@ export interface UploadedCatalogueImage {
   fileSize: number;
   fileType: string;
 }
-export const catalogueImageUrl = (path: string) =>
+// Backend-relative paths for catalogue images and supplier logos.
+export const isCatalogueAssetPath = (path: string) =>
   /^\/(?:catalogue\/images\/[0-9a-f-]{36}\/content|suppliers\/assets\/[0-9a-f-]{36}\/logo)$/.test(
     path,
-  )
+  );
+export const catalogueImageUrl = (path: string) =>
+  isCatalogueAssetPath(path)
     ? `${config.NEXT_PUBLIC_BACKEND_API_URL}${path}`
     : path;
 export const catalogueImagesApi = {

@@ -3,7 +3,27 @@
   --color-navy: #192b35;
   --color-orange: #a94b25;
   --color-orange-dark: #873a1c;
+  --color-navy-deep: #0f1c24;
+  --color-orange-light: #f0a47f;
   --font-sans: 'Inter', 'Segoe UI', Arial, sans-serif;
+
+  /* Homepage motion: used only through motion-safe: utilities. */
+  --animate-fade-up: fade-up 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-marquee: marquee 45s linear infinite;
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+@theme inline {
+  --font-display: var(--font-archivo), 'Inter', 'Segoe UI', Arial, sans-serif;
 }
 @layer base {
   :root {
@@ -53,7 +73,7 @@
     min-width: 0;
     min-height: 42px;
     border: 1px solid #cbd2d7;
-    border-radius: 8px;
+    border-radius: 4px;
     background-color: white;
     padding: 9px 12px;
     font-size: 14px;
@@ -63,6 +83,11 @@
   textarea {
     min-height: 110px;
     resize: vertical;
+  }
+  input:not([type='checkbox']):not([type='radio']):hover,
+  select:hover,
+  textarea:hover {
+    border-color: #9aa8b2;
   }
   input::placeholder,
   textarea::placeholder {
@@ -112,82 +137,105 @@
   }
 }
 @layer components {
+  /* Shared building blocks for public pages and dashboards.
+     Square-ish corners, crisp borders and the display face match the homepage. */
   .surface {
-    border: 1px solid #e0e5e8;
-    border-radius: 12px;
+    border: 1px solid #dde3e7;
+    border-radius: 6px;
     background: white;
-    box-shadow:
-      0 2px 6px #192b3504,
-      0 12px 30px #192b3503;
+    box-shadow: 0 1px 2px #192b350a;
   }
   .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: #873a1c;
+    letter-spacing: 0.18em;
+    color: var(--color-orange-dark);
+  }
+  .eyebrow::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--color-orange);
   }
   .page-title {
-    font-size: clamp(1.7rem, 3vw, 2.5rem);
-    line-height: 1.15;
-    font-weight: 700;
-    letter-spacing: -0.045em;
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.03em;
   }
   .filter-bar {
-    border: 1px solid #e0e5e8;
-    border-radius: 12px;
+    border: 1px solid #dde3e7;
+    border-left: 3px solid var(--color-orange);
+    border-radius: 6px;
     background: white;
     padding: 16px;
   }
-  .action-link {
+  .action-link,
+  .secondary-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     min-height: 42px;
-    border-radius: 8px;
+    border: 1px solid transparent;
+    border-radius: 4px;
     padding: 9px 16px;
     font-weight: 600;
     font-size: 13px;
-    background: #192b35;
-    color: white;
     text-decoration: none;
+  }
+  .action-link {
+    background: var(--color-orange);
+    color: white;
   }
   .action-link:hover {
-    background: #304653;
+    background: var(--color-orange-dark);
   }
   .secondary-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 42px;
-    border: 1px solid #dce1e5;
-    border-radius: 8px;
-    padding: 9px 16px;
-    font-weight: 600;
-    font-size: 13px;
+    border-color: #cfd6db;
     background: white;
-    color: #192b35;
-    text-decoration: none;
+    color: var(--color-navy);
   }
   .secondary-link:hover {
-    background: #f3f5f6;
+    border-color: var(--color-navy);
   }
   .dashboard-content > div > h1,
   .dashboard-content > section > h1 {
     font-size: clamp(1.6rem, 3vw, 2rem);
     line-height: 1.2;
   }
+  .dashboard-content h2,
+  .dashboard-content h3 {
+    font-family: var(--font-display);
+    overflow-wrap: anywhere;
+  }
   .dashboard-content section.surface h2,
   .dashboard-content form.surface h2 {
     font-size: 18px;
+    font-weight: 700;
   }
   .dashboard-content .surface {
     min-width: 0;
   }
-  .dashboard-content h2,
-  .dashboard-content h3 {
-    overflow-wrap: anywhere;
+  .dashboard-content table {
+    width: 100%;
+    font-size: 13px;
+  }
+  .dashboard-content thead th {
+    background: #f6f7f8;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #52616b;
+  }
+  .dashboard-content tbody tr:hover {
+    background: #fafbfb;
   }
 }
 @media (prefers-reduced-motion: reduce) {

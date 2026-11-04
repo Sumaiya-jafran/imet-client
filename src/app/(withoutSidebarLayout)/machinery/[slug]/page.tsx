@@ -1,3 +1,4 @@
+import { quoteHref } from '@/config/routes';
 import TranslatedText from '@/components/shared/TranslatedText';
 import PublicReviews from '@/components/shared/PublicReviews';
 import Link from 'next/link';
@@ -92,7 +93,7 @@ export default async function MachinePage({
             </p>
             <Link
               className="action-link mt-4 inline-flex"
-              href={`/dashboard/rfqs/new?machine=${machine.slug}`}
+              href={quoteHref(machine.slug)}
             >
               Request a quote
             </Link>

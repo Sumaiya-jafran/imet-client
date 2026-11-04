@@ -23,7 +23,7 @@ export default function LoadingState({
         {Array.from({ length: cards ? 6 : 3 }, (_, index) => (
           <div key={index} className="surface p-5 motion-safe:animate-pulse">
             {cards && (
-              <div className="mb-4 aspect-[4/3] rounded-lg bg-slate-100" />
+              <div className="mb-4 aspect-[4/3] rounded bg-slate-100" />
             )}
             <div className="h-3 w-1/3 rounded bg-slate-100" />
             <div className="mt-3 h-3 w-3/4 rounded bg-slate-100" />

@@ -1,4 +1,5 @@
 import Header from '@/components/shared/Header';
+import Footer from '@/components/shared/Footer';
 export default function PublicLayout({
   children,
 }: {
@@ -14,12 +15,7 @@ export default function PublicLayout({
       >
         {children}
       </main>
-      <footer className="border-t border-slate-200 bg-white px-5 py-6">
-        <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-3 text-xs text-slate-500">
-          <span className="font-semibold text-navy">iMet Machinery</span>
-          <span>Machinery · Suppliers · Manufacturing</span>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }

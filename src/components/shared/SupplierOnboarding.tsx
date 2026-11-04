@@ -1,4 +1,5 @@
 'use client';
+import { supplierTypeLabels } from '@/types/supplier';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -87,9 +88,7 @@ export default function SupplierOnboarding() {
             <div>
               <h2 className="font-semibold">{data.supplier.companyName}</h2>
               <p className="mt-1 text-sm text-slate-600">
-                {data.supplier.type === 'LOCAL'
-                  ? 'Local supplier / dealer'
-                  : 'International manufacturer'}{' '}
+                {supplierTypeLabels[data.supplier.type]}{' '}
                 · {active ? 'Active subscription' : 'Activation pending'}
               </p>
             </div>

@@ -1,5 +1,8 @@
 'use client';
-import { catalogueImageUrl } from '@/lib/api/catalogue-images.service';
+import {
+  catalogueImageUrl,
+  isCatalogueAssetPath,
+} from '@/lib/api/catalogue-images.service';
 import { useState } from 'react';
 import { Factory, LoaderCircle } from 'lucide-react';
 import type { MachineImage as ImageData } from '@/types/catalogue';
@@ -18,13 +21,7 @@ export default function MachineImage({
   try {
     safe = !!image && new URL(image.url).protocol === 'https:';
   } catch {}
-  if (
-    image &&
-    /^\/(?:catalogue\/images\/[0-9a-f-]{36}\/content|suppliers\/assets\/[0-9a-f-]{36}\/logo)$/.test(
-      image.url,
-    )
-  )
-    safe = true;
+  if (image && isCatalogueAssetPath(image.url)) safe = true;
   return (
     <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-lg border border-slate-200/70 bg-slate-100">
       {image && safe && failedUrl !== image.url ? (

@@ -1,17 +1,25 @@
+import type { Pagination } from './api';
 import type { MachineryMedia } from './media';
 export interface MachineCategory {
   name: string;
   slug: string;
 }
+// Minimal machine reference embedded in RFQs, sales and reviews.
+export interface MachineRef {
+  id: string;
+  name: string;
+  slug: string;
+}
+// Category as returned by option endpoints (includes the id).
+export interface CategoryOption extends MachineCategory {
+  id: string;
+}
 export interface MachineImage {
   url: string;
   alt: string;
 }
-export interface MachineSummary {
+export interface MachineSummary extends MachineRef {
   supplier?: { id: string; companyName: string; isVerified: boolean } | null;
-  id: string;
-  name: string;
-  slug: string;
   description: string;
   manufacturer: string;
   model: string;
@@ -24,10 +32,5 @@ export interface MachineDetail extends MachineSummary {
 }
 export interface CatalogueResult {
   machines: MachineSummary[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  pagination: Pagination;
 }

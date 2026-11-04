@@ -8,7 +8,7 @@ import { rfqSchema } from '@/lib/schema-validations/rfq.schema';
 import { rfqApi } from '@/lib/api/rfq.service';
 import { catalogueApi } from '@/lib/api/catalogue.service';
 import type { RfqInput, RfqDetail } from '@/types/rfq';
-import type { MachineSummary } from '@/types/catalogue';
+import type { CategoryOption, MachineSummary } from '@/types/catalogue';
 import Button from '@/components/buttons/Button';
 import LoadingState from '@/components/shared/LoadingState';
 export default function RfqForm({
@@ -25,9 +25,7 @@ export default function RfqForm({
   const { data: session } = useSession();
   const token = session?.accessToken;
   const router = useRouter();
-  const [categories, setCategories] = useState<
-    { id: string; name: string; slug: string }[]
-  >([]);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [machines, setMachines] = useState<MachineSummary[]>([]);
   const [search, setSearch] = useState('');
   const [searching, setSearching] = useState(false);

@@ -1,3 +1,5 @@
+import type { MachineRef } from './catalogue';
+import type { Pagination } from './api';
 import type { RfqStatus } from './rfq';
 export type SalesStage =
   'NEW' | 'QUALIFIED' | 'QUOTED' | 'NEGOTIATION' | 'WON' | 'LOST';
@@ -15,7 +17,7 @@ export interface SalesRfq {
   expiresAt: string | null;
   isFlagged: boolean;
   buyer: { displayName: string };
-  machine: { id: string; name: string; slug: string } | null;
+  machine: MachineRef | null;
 }
 export interface SalesQuote {
   id: string;
@@ -79,12 +81,7 @@ export interface SalesDetail extends Omit<SalesOpportunity, 'sale'> {
   }[];
   sale: SaleRecord | null;
 }
-export interface Pagination {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-}
+export type { Pagination };
 export interface PipelineResult {
   opportunities: SalesOpportunity[];
   counts: Partial<Record<SalesStage, number>>;

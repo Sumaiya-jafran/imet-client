@@ -6,7 +6,7 @@ import MachineImage from './MachineImage';
 import Badge from '@/components/shared/Badge';
 export default function MachineCard({ machine }: { machine: MachineSummary }) {
   return (
-    <article className="surface group flex min-w-0 flex-col overflow-hidden p-3 transition hover:border-slate-300 hover:shadow-md">
+    <article className="group flex min-w-0 flex-col overflow-hidden border border-slate-200 bg-white p-3 transition hover:border-slate-300 hover:shadow-xl hover:shadow-navy/5 [&_img]:transition-transform [&_img]:duration-500 motion-safe:hover:[&_img]:scale-105">
       <Link
         href={`/machinery/${machine.slug}`}
         aria-label={`View ${machine.name}`}

@@ -1,3 +1,5 @@
+import type { MachineRef } from './catalogue';
+import type { Pagination } from './api';
 export type RfqStatus =
   | 'DRAFT'
   | 'SUBMITTED'
@@ -80,7 +82,7 @@ export interface RfqDetail extends Omit<
   flagReason: string | null;
   targetBudget?: string | null;
   budgetCurrency?: string | null;
-  machine: { id: string; name: string; slug: string } | null;
+  machine: MachineRef | null;
   category: { id: string; name: string } | null;
   attachments: RfqAttachment[];
   recipients: RfqRecipient[];
@@ -104,12 +106,7 @@ export interface RfqList {
     category: { id: string; name: string } | null;
     recipients?: { id: string; leadStatus: LeadStatus }[];
   }[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  pagination: Pagination;
 }
 export interface RfqMessage {
   id: string;

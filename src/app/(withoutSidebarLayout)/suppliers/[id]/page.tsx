@@ -1,3 +1,4 @@
+import { supplierTypeLabels } from '@/types/supplier';
 import TranslatedText from '@/components/shared/TranslatedText';
 import PublicReviews from '@/components/shared/PublicReviews';
 import { notFound } from 'next/navigation';
@@ -39,9 +40,7 @@ export default async function Page({
             {supplier.companyName}
           </h1>
           <p className="mt-4">
-            {supplier.type === 'LOCAL'
-              ? 'Local supplier / dealer'
-              : 'International manufacturer'}{' '}
+            {supplierTypeLabels[supplier.type]}{' '}
             · {supplier.city}, {supplier.country}
           </p>
           <p className="mt-3 text-orange-dark">

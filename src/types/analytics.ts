@@ -1,3 +1,4 @@
+import type { Pagination } from './api';
 export type MetricGroup = { total: number; counts: Record<string, number> };
 export type AnalyticsOverview = {
   asOf: string;
@@ -25,11 +26,6 @@ export type AuditEntry = {
 };
 export type AuditList = {
   entries: AuditEntry[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  pagination: Pagination;
   range: { from: string; to: string; timeZone: string };
 };

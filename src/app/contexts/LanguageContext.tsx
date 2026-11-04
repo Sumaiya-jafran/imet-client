@@ -6,13 +6,14 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from 'react';
-import type { Language } from '@/types/translation';
+import { languages, type Language } from '@/types/translation';
 const storageKey = 'imet-content-language';
 let memoryLanguage: Language = 'en';
 function snapshot(): Language {
   try {
     const value = localStorage.getItem(storageKey);
-    if (value === 'en' || value === 'bn' || value === 'zh') return value;
+    const match = languages.find((l) => l.code === value);
+    if (match) return match.code;
   } catch {
     /* Browser storage may be disabled. */
   }

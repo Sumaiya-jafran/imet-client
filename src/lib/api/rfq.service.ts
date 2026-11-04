@@ -1,3 +1,5 @@
+import type { CategoryOption } from '@/types/catalogue';
+import type { Pagination } from '@/types/api';
 import { apiClient } from './client';
 import { config } from '@/config/env';
 import type {
@@ -35,7 +37,7 @@ export const rfqApi = {
       { headers: headers(token) },
     ),
   categories: (token: string) =>
-    apiClient.get<{ id: string; name: string; slug: string }[]>(
+    apiClient.get<CategoryOption[]>(
       '/rfq-options/categories',
       { headers: headers(token) },
     ),
@@ -84,7 +86,7 @@ export const rfqApi = {
   quotes: (token: string, query = new URLSearchParams()) =>
     apiClient.get<{
       quotes: RfqQuote[];
-      pagination: { page: number; totalPages: number; total: number };
+      pagination: Pick<Pagination, 'page' | 'totalPages' | 'total'>;
     }>(`/quotes?${query}`, { headers: headers(token) }),
   messages: (token: string, rfqId: string, recipientId: string) =>
     apiClient.get<RfqMessage[]>(
@@ -121,7 +123,7 @@ export const rfqApi = {
   overview: (token: string, query = new URLSearchParams()) =>
     apiClient.get<{
       suppliers: LeadOverview[];
-      pagination: { page: number; totalPages: number; total: number };
+      pagination: Pick<Pagination, 'page' | 'totalPages' | 'total'>;
     }>(`/admin/leads?${query}`, { headers: headers(token) }),
   upload: (token: string, id: string, file: File, quote = false) => {
     const body = new FormData();

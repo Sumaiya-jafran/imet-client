@@ -10,11 +10,11 @@ export default function EmptyState({
   children?: ReactNode;
 }) {
   return (
-    <div className="surface flex flex-col items-center px-5 py-12 text-center">
-      <span className="mb-4 flex size-12 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-500">
+    <div className="flex flex-col items-center rounded-md border border-dashed border-slate-300 bg-white px-5 py-14 text-center">
+      <span className="mb-5 flex size-12 items-center justify-center bg-navy text-white">
         <PackageSearch size={23} aria-hidden="true" />
       </span>
-      <h2 className="text-lg font-semibold">{title}</h2>
+      <h2 className="font-display text-lg font-bold">{title}</h2>
       {description && (
         <p className="mt-2 max-w-md text-sm leading-6 text-slate-600">
           {description}

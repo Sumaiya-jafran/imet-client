@@ -1,4 +1,5 @@
 'use client';
+import { supplierTypeLabels } from '@/types/supplier';
 import SupplierActivationPanel from '@/components/forms/SupplierActivationPanel';
 import SupplierAssetFile from '@/components/shared/SupplierAssetFile';
 import LoadingState from '@/components/shared/LoadingState';
@@ -381,9 +382,7 @@ export default function SupplierManagement() {
                       </h2>
                       <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
                         <span>
-                          {supplier.type === 'LOCAL'
-                            ? 'Local supplier'
-                            : 'International manufacturer'}
+                          {supplierTypeLabels[supplier.type]}
                         </span>
                         <Badge
                           tone={

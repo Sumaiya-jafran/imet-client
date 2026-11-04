@@ -1,4 +1,14 @@
+import type { Pagination } from './api';
 export type SupplierType = 'LOCAL' | 'INTERNATIONAL';
+export const supplierTypeLabels: Record<SupplierType, string> = {
+  LOCAL: 'Local supplier / dealer',
+  INTERNATIONAL: 'International manufacturer',
+};
+// Used where plans list which supplier types may subscribe.
+export const supplierTypePluralLabels: Record<SupplierType, string> = {
+  LOCAL: 'Local suppliers / dealers',
+  INTERNATIONAL: 'International manufacturers',
+};
 export type SupplierStatus =
   'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED' | 'INACTIVE';
 export interface SupplierProfileInput {
@@ -17,10 +27,9 @@ export interface SupplierProfileInput {
   logoAssetId?: string | null;
   documents: { name: string; url: string; assetId?: string }[];
 }
-export interface PlanInput {
-  name: string;
-  eligibleTypes: SupplierType[];
-  durationDays: number;
+export type PlanVisibility = 'HIDDEN' | 'STANDARD' | 'FEATURED';
+// Commercial terms shared by a plan and the subscription created from it.
+export interface PlanEntitlements {
   price: string;
   currency: string;
   listingLimit: number;
@@ -30,14 +39,19 @@ export interface PlanInput {
   rfqEnabled: boolean;
   leadLimitPerMonth: number | null;
   canRevealContacts: boolean;
-  visibility: 'HIDDEN' | 'STANDARD' | 'FEATURED';
+  visibility: PlanVisibility;
+}
+export interface PlanInput extends PlanEntitlements {
+  name: string;
+  eligibleTypes: SupplierType[];
+  durationDays: number;
   isActive: boolean;
 }
 export interface SubscriptionPlan extends PlanInput {
   id: string;
   updatedAt: string;
 }
-export interface SupplierSubscription {
+export interface SupplierSubscription extends PlanEntitlements {
   id: string;
   planId: string;
   supplierType: SupplierType;
@@ -52,16 +66,6 @@ export interface SupplierSubscription {
   startsAt: string;
   endsAt: string;
   updatedAt: string;
-  price: string;
-  currency: string;
-  listingLimit: number;
-  imageLimit: number;
-  specificationLimit: number;
-  canPublishMachinery: boolean;
-  rfqEnabled: boolean;
-  leadLimitPerMonth: number | null;
-  canRevealContacts: boolean;
-  visibility: 'HIDDEN' | 'STANDARD' | 'FEATURED';
 }
 export interface SupplierProfile extends SupplierProfileInput {
   user?: { id: string; status: string; isEmailVerified: boolean };
@@ -83,14 +87,9 @@ export interface PublicSupplier {
   website: string | null;
   logoUrl: string | null;
   isVerified: boolean;
-  visibility: 'STANDARD' | 'FEATURED';
+  visibility: Exclude<PlanVisibility, 'HIDDEN'>;
 }
 export interface SupplierList {
   suppliers: SupplierProfile[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  pagination: Pagination;
 }

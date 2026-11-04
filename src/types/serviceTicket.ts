@@ -1,3 +1,4 @@
+import type { Pagination } from './api';
 export type TicketStatus =
   'OPEN' | 'UNDER_REVIEW' | 'ASSIGNED' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
 export interface TicketMachine {
@@ -50,19 +51,13 @@ export interface TicketEvent {
   actor: { displayName: string };
   assignedTo: { displayName: string } | null;
 }
-export interface TicketPagination {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-}
 export interface TicketList {
   tickets: TicketSummary[];
-  pagination: TicketPagination;
+  pagination: Pagination;
 }
 export interface TicketHistory {
   events: TicketEvent[];
-  pagination: TicketPagination;
+  pagination: Pagination;
 }
 export interface EligiblePurchases {
   purchases: {
@@ -70,7 +65,7 @@ export interface EligiblePurchases {
     completedAt: string | null;
     machine: TicketMachine | null;
   }[];
-  pagination: TicketPagination;
+  pagination: Pagination;
 }
 export interface TicketCandidate {
   id: string;

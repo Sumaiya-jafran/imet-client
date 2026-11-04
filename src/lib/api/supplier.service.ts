@@ -1,3 +1,4 @@
+import type { Pagination } from '@/types/api';
 import { apiClient } from './client';
 import type {
   SupplierProfile,
@@ -146,7 +147,7 @@ export const supplierApi = {
   publicList: (query: URLSearchParams) =>
     apiClient.get<{
       suppliers: PublicSupplier[];
-      pagination: { page: number; totalPages: number; total: number };
+      pagination: Pick<Pagination, 'page' | 'totalPages' | 'total'>;
     }>(`/suppliers?${query}`, { signal: AbortSignal.timeout(10000) }),
   publicDetail: (id: string) =>
     apiClient.get<PublicSupplier>(`/suppliers/${encodeURIComponent(id)}`, {

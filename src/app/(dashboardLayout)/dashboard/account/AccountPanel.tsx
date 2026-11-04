@@ -16,6 +16,8 @@ import type { CurrentUser } from '@/types/auth';
 import { changeSchema } from '@/lib/schema-validations/auth.schema';
 import { authService } from '@/lib/api/auth.service';
 import Button from '@/components/buttons/Button';
+import { ArrowRight } from 'lucide-react';
+import { navGroups } from '@/config/dashboard-nav';
 export default function AccountPanel() {
   const { data: session, status, update } = useSession();
   const router = useRouter();
@@ -106,6 +108,42 @@ export default function AccountPanel() {
         title="Your account"
         description="Manage your profile, password and active sessions."
       />
+      {user && (
+        <section aria-labelledby="shortcuts-title">
+          <h2 id="shortcuts-title" className="sr-only">
+            Workspace shortcuts
+          </h2>
+          <div className="grid gap-6 lg:grid-cols-3">
+            {navGroups(user.roles)
+              .filter((g) => g.title !== 'Workspace')
+              .map((group) => (
+                <div key={group.title} className="surface p-5">
+                  <p className="eyebrow">{group.title}</p>
+                  <ul className="mt-4 grid gap-1">
+                    {group.links.slice(0, 5).map(({ href, label, icon: Icon }) => (
+                      <li key={href}>
+                        <Link
+                          href={href}
+                          className="group flex items-center gap-3 rounded px-2 py-2 text-sm font-medium text-navy hover:bg-slate-50"
+                        >
+                          <span className="flex size-8 shrink-0 items-center justify-center rounded bg-slate-100 text-slate-600 group-hover:bg-orange group-hover:text-white">
+                            <Icon size={16} aria-hidden="true" />
+                          </span>
+                          <span className="min-w-0 flex-1 truncate">{label}</span>
+                          <ArrowRight
+                            size={15}
+                            aria-hidden="true"
+                            className="text-slate-400 transition-transform group-hover:translate-x-0.5 group-hover:text-navy"
+                          />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+          </div>
+        </section>
+      )}
       <div className="grid items-start gap-6 xl:grid-cols-2">
         <section className="surface p-5 sm:p-6">
           <h2 className="text-lg font-semibold">Profile & access</h2>

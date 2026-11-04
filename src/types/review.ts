@@ -1,4 +1,5 @@
-import type { Pagination } from './sales';
+import type { MachineRef } from './catalogue';
+import type { Pagination } from './api';
 export type ReviewTarget = 'MACHINERY' | 'SUPPLIER';
 export type ReviewStatus =
   'PENDING' | 'PUBLISHED' | 'REJECTED' | 'HIDDEN' | 'WITHDRAWN';
@@ -10,7 +11,7 @@ export interface PublicReview {
   createdAt: string;
   updatedAt: string;
   author: { displayName: string };
-  machine: { id: string; name: string; slug: string } | null;
+  machine: MachineRef | null;
   supplier: { id: string; companyName: string } | null;
 }
 export interface Review extends PublicReview {
