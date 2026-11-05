@@ -23,7 +23,7 @@ export function Eyebrow({ children, dark = false }: { children: ReactNode; dark?
     <p
       className={cn(
         'flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em]',
-        dark ? 'text-orange-light' : 'text-orange-dark',
+        dark ? 'text-accent' : 'text-secondary',
       )}
     >
       <span className={cn('h-px w-8', dark ? 'bg-orange-light' : 'bg-orange')} aria-hidden="true" />
@@ -53,7 +53,7 @@ export function SectionHeading({
         <Eyebrow dark={dark}>{eyebrow}</Eyebrow>
         <h2
           className={cn(
-            'mt-4 font-display text-3xl font-extrabold leading-[1.05] tracking-tight sm:text-4xl lg:text-5xl',
+            'mt-4 font-display text-section font-semibold leading-tight tracking-tight',
             dark ? 'text-white' : 'text-navy',
           )}
         >
@@ -119,7 +119,7 @@ export async function HomeCategories() {
                     className="group flex h-full min-h-32 flex-col justify-between gap-6 bg-white p-4 transition-colors hover:bg-navy sm:min-h-40 sm:p-6"
                   >
                     <span className="flex items-center justify-between">
-                      <span className="font-display text-sm font-bold text-orange-dark group-hover:text-orange-light">
+                      <span className="font-display text-sm font-bold text-secondary group-hover:text-accent">
                         {String(i + 1).padStart(2, '0')}
                       </span>
                       <ArrowUpRight
@@ -217,7 +217,7 @@ export async function HomeSuppliers() {
                     <Badge>{supplierTypeLabels[s.type]}</Badge>
                   </div>
                   <h3 className="mt-5 break-words font-display text-xl font-bold">
-                    <Link href={`/suppliers/${s.id}`} className="hover:text-orange-dark">
+                    <Link href={`/suppliers/${s.id}`} className="hover:text-secondary">
                       {s.companyName}
                     </Link>
                   </h3>
@@ -292,7 +292,7 @@ export async function HomeReviews() {
                   <figcaption className="mt-auto border-t border-slate-200 pt-5">
                     <p className="break-words font-display font-bold text-navy">{r.author.displayName}</p>
                     <Link
-                      className="mt-1 block break-words text-xs text-slate-600 underline underline-offset-2 hover:text-orange-dark"
+                      className="mt-1 block break-words text-xs text-slate-600 underline underline-offset-2 hover:text-secondary"
                       href={r.machine ? `/machinery/${r.machine.slug}` : `/suppliers/${r.supplier!.id}`}
                     >
                       {r.machine ? (
@@ -386,7 +386,7 @@ export async function HomePlans() {
                           <Check
                             size={16}
                             aria-hidden="true"
-                            className={cn('mt-0.5 shrink-0', featured ? 'text-orange-light' : 'text-orange-dark')}
+                            className={cn('mt-0.5 shrink-0', featured ? 'text-accent' : 'text-secondary')}
                           />
                           <span className="break-words">{f}</span>
                         </li>
@@ -397,7 +397,7 @@ export async function HomePlans() {
                       className={cn(
                         'mt-auto inline-flex min-h-11 items-center justify-center gap-2 border text-sm font-semibold',
                         featured
-                          ? 'border-orange bg-orange text-white hover:bg-orange-dark'
+                          ? 'border-orange bg-orange text-foreground hover:bg-orange-dark'
                           : 'border-navy text-navy hover:bg-navy hover:text-white',
                       )}
                     >

@@ -54,7 +54,7 @@ export default function SupplierDashboard() {
     <div className="space-y-6">
       <Link
         href="/subscription"
-        className="mb-4 inline-block font-semibold text-orange"
+        className="mb-4 inline-block font-semibold text-secondary"
       >
         Manage subscription / secure activation
       </Link>

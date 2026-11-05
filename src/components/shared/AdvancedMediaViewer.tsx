@@ -40,7 +40,7 @@ export default function AdvancedMediaViewer({
       session: XRSession | undefined;
     const controller = new AbortController();
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#eef2f5');
+    scene.background = new THREE.Color(getComputedStyle(host).getPropertyValue('--color-background').trim());
     const camera = new THREE.PerspectiveCamera(50, 1, 0.01, 100);
     const group = new THREE.Group();
     scene.add(group);

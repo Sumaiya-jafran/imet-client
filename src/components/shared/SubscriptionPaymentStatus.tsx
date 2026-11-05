@@ -81,7 +81,7 @@ export default function SubscriptionPaymentStatus({ id }: { id: string }) {
         <h1 className="text-xl font-semibold">Sign in to view your payment</h1>
         <Link
           href={`/auth/signin?callbackUrl=${encodeURIComponent(`/payments/${id}`)}`}
-          className="text-orange"
+          className="text-secondary"
         >
           Sign in
         </Link>
@@ -119,7 +119,7 @@ export default function SubscriptionPaymentStatus({ id }: { id: string }) {
             </div>
             <div className="sm:col-span-2">
               <dt className="text-xs text-slate-500">Transaction reference</dt>
-              <dd className="mt-1 break-all font-mono text-sm">
+              <dd className="mt-1 break-all font-sans text-sm">
                 {payment.transactionId}
               </dd>
             </div>
@@ -150,7 +150,7 @@ export default function SubscriptionPaymentStatus({ id }: { id: string }) {
         {payment?.status === 'PENDING' && payment.gatewayUrl && (
           <a
             href={payment.gatewayUrl}
-            className="inline-flex items-center rounded-lg bg-orange px-4 py-2 text-sm font-semibold text-white"
+            className="inline-flex items-center rounded-lg bg-orange px-4 py-2 text-sm font-semibold text-foreground"
           >
             Continue checkout
           </a>
@@ -159,7 +159,7 @@ export default function SubscriptionPaymentStatus({ id }: { id: string }) {
           href={
             payment?.status === 'PAID' ? '/dashboard/supplier' : '/subscription'
           }
-          className="inline-flex items-center px-3 text-sm font-semibold text-orange"
+          className="inline-flex items-center px-3 text-sm font-semibold text-secondary"
         >
           {payment?.status === 'PAID'
             ? 'Open supplier dashboard'

@@ -4,11 +4,11 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 
-// Display face for headings on public pages; body text stays on Inter.
-const display = localFont({
-  src: './fonts/archivo-latin.woff2',
-  weight: '100 900',
-  variable: '--font-archivo',
+// Self-host Inter so builds and browsers do not depend on Google Fonts access.
+const inter = localFont({
+  src: './fonts/inter-latin.woff2',
+  weight: '400 700',
+  variable: '--font-inter',
   display: 'swap',
 });
 
@@ -27,8 +27,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={display.variable}>
-      <body className="bg-slate-50 text-slate-900 antialiased">
+    <html lang="en" className={inter.variable}>
+      <body className="bg-background text-foreground antialiased">
         <SessionContext>
           <LanguageContext>{children}</LanguageContext>
         </SessionContext>

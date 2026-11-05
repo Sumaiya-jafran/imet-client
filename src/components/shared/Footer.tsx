@@ -38,7 +38,7 @@ export default function Footer() {
             href="/"
             className="flex items-center gap-2.5 font-display text-xl font-extrabold text-white"
           >
-            <span className="flex size-9 items-center justify-center bg-orange">
+            <span className="flex size-9 items-center justify-center bg-orange text-foreground">
               <Factory size={19} aria-hidden="true" />
             </span>
             Machinmate <span className="text-sm font-medium text-slate-400">Machinery</span>
@@ -57,7 +57,7 @@ export default function Footer() {
             <ul className="mt-5 space-y-3 text-sm">
               {col.links.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="hover:text-orange-light">
+                  <Link href={l.href} className="hover:text-accent">
                     {l.label}
                   </Link>
                 </li>

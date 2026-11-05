@@ -48,7 +48,7 @@ export default function DashboardShell({
           compact && 'justify-center px-0',
         )}
       >
-        <span className="flex size-9 shrink-0 items-center justify-center bg-orange">
+        <span className="flex size-9 shrink-0 items-center justify-center bg-orange text-foreground">
           <Factory size={19} aria-hidden="true" />
         </span>
         {!compact && (
@@ -65,7 +65,7 @@ export default function DashboardShell({
             {compact ? (
               <hr className="mx-3 mb-3 border-white/10" />
             ) : (
-              <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
+              <p className="mb-2 px-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
                 {group.title}
               </p>
             )}
@@ -81,14 +81,14 @@ export default function DashboardShell({
                       aria-label={compact ? label : undefined}
                       aria-current={current ? 'page' : undefined}
                       className={cn(
-                        'relative flex min-h-10 items-center gap-3 rounded px-3 py-2 text-[13px] font-medium focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white',
+                        'relative flex min-h-10 items-center gap-3 rounded px-3 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white',
                         compact && 'justify-center px-0',
                         current
                           ? 'bg-white/10 text-white before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:bg-orange-light'
                           : 'text-slate-300 hover:bg-white/5 hover:text-white',
                       )}
                     >
-                      <Icon size={18} aria-hidden="true" className={cn('shrink-0', current && 'text-orange-light')} />
+                      <Icon size={18} aria-hidden="true" className={cn('shrink-0', current && 'text-accent')} />
                       {!compact && <span className="min-w-0 truncate leading-5">{label}</span>}
                     </Link>
                   </li>
@@ -115,7 +115,7 @@ export default function DashboardShell({
   );
 
   return (
-    <div className="min-h-screen bg-slate-100/70 lg:flex">
+    <div className="dashboard-shell min-h-screen bg-slate-100/70 lg:flex">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:bg-white focus:p-3 focus:font-semibold"
@@ -165,7 +165,7 @@ export default function DashboardShell({
               <Menu size={20} aria-hidden="true" />
             </button>
             <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-orange-dark">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-secondary">
                 {active?.group ?? 'Workspace'}
               </p>
               <p className="truncate font-display text-base font-bold text-navy">
@@ -178,7 +178,7 @@ export default function DashboardShell({
                 <Link
                   prefetch={false}
                   href={QUOTE_HREF}
-                  className="hidden min-h-10 items-center gap-2 rounded bg-orange px-4 text-xs font-semibold text-white hover:bg-orange-dark sm:inline-flex"
+                  className="hidden min-h-10 items-center gap-2 rounded bg-orange px-4 text-xs font-semibold text-foreground hover:bg-orange-dark sm:inline-flex"
                 >
                   Request a quote
                   <ArrowUpRight size={15} aria-hidden="true" />
@@ -193,7 +193,7 @@ export default function DashboardShell({
                 href="/dashboard/account"
                 aria-label={`Your account: ${user.displayName}`}
                 title={user.displayName}
-                className="flex size-10 shrink-0 items-center justify-center rounded-full bg-navy font-display text-sm font-bold text-white hover:bg-orange"
+                className="flex size-10 shrink-0 items-center justify-center rounded-full bg-navy font-display text-sm font-bold text-white hover:bg-secondary"
               >
                 {initial}
               </Link>

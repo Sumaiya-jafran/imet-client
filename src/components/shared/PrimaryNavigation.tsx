@@ -200,7 +200,7 @@ export default function PrimaryNavigation({ roles }: { roles?: UserRole[] }) {
             <ArrowUp size={20} strokeWidth={2.5} aria-hidden="true" />
           </button>
 
-          {/* Center Navigation Links (Active gets white pill #eff1f3) */}
+          {/* Center Navigation Links (Active gets surface pill) */}
           <ul className="primary-nav-dock-list">
             {links.map((item, index) => (
               <li key={item.label} className="min-w-0">
@@ -275,7 +275,7 @@ export default function PrimaryNavigation({ roles }: { roles?: UserRole[] }) {
             >
               <Plus size={22} strokeWidth={2.6} aria-hidden="true" />
             </Link>
-            <span className="mt-1 text-[10px] font-semibold leading-none text-slate-500">
+            <span className="mt-1 text-xs font-semibold leading-none text-slate-500">
               Post RFQ
             </span>
           </li>

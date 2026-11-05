@@ -134,7 +134,7 @@ export default function SupplierActivationPanel({
               {payments.map((p) => (
                 <tr key={p.id} className="border-t">
                   <td className="p-3">
-                    <span className="font-mono text-xs">{p.transactionId}</span>
+                    <span className="font-sans text-xs">{p.transactionId}</span>
                     <br />
                     {p.subscription.planName}
                   </td>

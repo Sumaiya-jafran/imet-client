@@ -56,7 +56,7 @@ export default function ReviewForm({
                   <Star
                     size={14}
                     aria-hidden="true"
-                    className="text-orange-dark"
+                    className="text-secondary"
                   />
                 </label>
               ))}

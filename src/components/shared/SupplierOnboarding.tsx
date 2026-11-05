@@ -48,7 +48,7 @@ export default function SupplierOnboarding() {
         </h1>
         <Link
           href="/auth/signin?callbackUrl=%2Fsubscription"
-          className="mt-4 inline-block text-orange"
+          className="mt-4 inline-block text-secondary"
         >
           Sign in
         </Link>
@@ -104,7 +104,7 @@ export default function SupplierOnboarding() {
             {active && (
               <Link
                 href="/dashboard/supplier"
-                className="font-semibold text-orange"
+                className="font-semibold text-secondary"
               >
                 Open dashboard
               </Link>
@@ -139,7 +139,7 @@ export default function SupplierOnboarding() {
                 Check its status before starting another payment.
               </p>
               <Link
-                className="font-semibold text-orange"
+                className="font-semibold text-secondary"
                 href={`/payments/${pending.id}`}
               >
                 Check payment status
@@ -158,7 +158,7 @@ export default function SupplierOnboarding() {
                 Contact Machinmate before making another payment.
               </p>
               <Link
-                className="font-semibold text-orange"
+                className="font-semibold text-secondary"
                 href={`/payments/${review.id}`}
               >
                 View review status
@@ -262,7 +262,7 @@ export default function SupplierOnboarding() {
                   >
                     <Link
                       href={`/payments/${p.id}`}
-                      className="font-semibold text-orange"
+                      className="font-semibold text-secondary"
                     >
                       {p.planName}
                     </Link>

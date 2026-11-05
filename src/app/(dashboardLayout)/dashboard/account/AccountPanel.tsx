@@ -119,14 +119,14 @@ export default function AccountPanel() {
               .map((group) => (
                 <div key={group.title} className="surface p-5">
                   <p className="eyebrow">{group.title}</p>
-                  <ul className="mt-4 grid gap-1">
+                  <ul className="mt-4 grid min-w-0 gap-1">
                     {group.links.slice(0, 5).map(({ href, label, icon: Icon }) => (
-                      <li key={href}>
+                      <li key={href} className="min-w-0">
                         <Link
                           href={href}
-                          className="group flex items-center gap-3 rounded px-2 py-2 text-sm font-medium text-navy hover:bg-slate-50"
+                          className="group flex min-w-0 items-center gap-3 rounded px-2 py-2 text-sm font-medium text-navy hover:bg-slate-50"
                         >
-                          <span className="flex size-8 shrink-0 items-center justify-center rounded bg-slate-100 text-slate-600 group-hover:bg-orange group-hover:text-white">
+                          <span className="flex size-8 shrink-0 items-center justify-center rounded bg-slate-100 text-slate-600 group-hover:bg-orange group-hover:text-foreground">
                             <Icon size={16} aria-hidden="true" />
                           </span>
                           <span className="min-w-0 flex-1 truncate">{label}</span>
@@ -209,7 +209,7 @@ export default function AccountPanel() {
           {user?.roles.includes('ADMIN') && (
             <Link
               href="/dashboard/admin/users"
-              className="block my-4 text-orange-dark"
+              className="block my-4 text-secondary"
             >
               Manage users
             </Link>
@@ -217,7 +217,7 @@ export default function AccountPanel() {
           {user?.roles.includes('ADMIN') && (
             <Link
               href="/dashboard/admin/catalogue"
-              className="block my-4 text-orange-dark"
+              className="block my-4 text-secondary"
             >
               Manage catalogue
             </Link>

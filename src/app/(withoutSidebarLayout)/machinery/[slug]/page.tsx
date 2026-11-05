@@ -59,7 +59,7 @@ export default async function MachinePage({
           )}
 
           <Link
-            className="break-words text-sm text-orange-dark underline"
+            className="break-words text-sm text-secondary underline"
             href={`/machinery?category=${machine.category.slug}`}
           >
             {machine.category.name}

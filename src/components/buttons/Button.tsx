@@ -11,7 +11,7 @@ export default function Button({
 }: Props) {
   const variants = {
     primary:
-      'border-transparent bg-orange text-white hover:bg-orange-dark',
+      'border-transparent bg-accent text-foreground hover:bg-accent-hover',
     secondary: 'border-slate-300 bg-white text-navy hover:border-navy',
     danger: 'border-red-200 bg-red-50 text-red-800 hover:bg-red-100',
     ghost:
@@ -21,7 +21,7 @@ export default function Button({
     <button
       type={type}
       className={cn(
-        'inline-flex min-h-10 items-center justify-center gap-2 rounded border px-4 py-2 text-[13px] font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange disabled:cursor-not-allowed disabled:opacity-50',
+        'inline-flex min-h-10 items-center justify-center gap-2 rounded border px-4 py-2 text-button font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary disabled:cursor-not-allowed disabled:opacity-50',
         variants[variant],
         className,
       )}

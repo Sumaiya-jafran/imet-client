@@ -388,7 +388,7 @@ export default function AnalyticsWorkspace({
                             <dt className="font-medium text-slate-500">
                               Resource ID
                             </dt>
-                            <dd className="mt-1 break-all font-mono">
+                            <dd className="mt-1 break-all font-sans">
                               {entry.resourceId}
                             </dd>
                           </div>
@@ -401,7 +401,7 @@ export default function AnalyticsWorkspace({
                                 'System / unavailable'}
                             </dd>
                             {entry.actor.id && (
-                              <dd className="mt-1 break-all font-mono text-slate-500">
+                              <dd className="mt-1 break-all font-sans text-slate-500">
                                 {entry.actor.id}
                               </dd>
                             )}
@@ -416,7 +416,7 @@ export default function AnalyticsWorkspace({
                         {(Object.keys(entry.context.before).length > 0 ||
                           Object.keys(entry.context.after).length > 0) && (
                           <details className="mt-3 text-xs">
-                            <summary className="cursor-pointer font-medium focus-visible:outline-2 focus-visible:outline-orange">
+                            <summary className="cursor-pointer font-medium focus-visible:outline-2 focus-visible:outline-secondary">
                               Safe state changes
                             </summary>
                             <div className="mt-2 grid gap-3 sm:grid-cols-2">

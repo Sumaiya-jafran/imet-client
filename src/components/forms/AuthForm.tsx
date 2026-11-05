@@ -153,7 +153,7 @@ export default function AuthForm({
   return (
     <section className="surface mx-auto max-w-md p-6 sm:p-8">
       <p className="eyebrow mb-3">Machinmate account</p>
-      <h1 className="text-2xl font-bold text-navy">{titles[mode]}</h1>
+      <h1 className="text-3xl font-bold text-navy">{titles[mode]}</h1>
       <p className="mt-2 text-sm leading-6 text-slate-500">
         {mode === 'signin'
           ? 'Welcome back. Sign in to your workspace.'
@@ -199,7 +199,7 @@ export default function AuthForm({
                 {...register(field as keyof Values)}
                 aria-invalid={!!error}
                 aria-describedby={error ? `${field}-error` : undefined}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 focus-visible:outline-2 focus-visible:outline-orange"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 focus-visible:outline-2 focus-visible:outline-secondary"
                 disabled={isSubmitting}
               />
               {error && (
@@ -270,7 +270,7 @@ export default function AuthForm({
         </div>
       )}
       <nav
-        className="mt-6 flex flex-wrap gap-x-4 gap-y-2 border-t border-slate-100 pt-5 text-xs font-medium text-orange-dark"
+        className="mt-6 flex flex-wrap gap-x-4 gap-y-2 border-t border-slate-100 pt-5 text-xs font-medium text-secondary"
         aria-label="Authentication"
       >
         <Link href="/auth/signin">Sign in</Link>

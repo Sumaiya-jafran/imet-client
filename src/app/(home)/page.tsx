@@ -68,7 +68,7 @@ function PrimaryButton({ className = '' }: { className?: string }) {
   return (
     <Link
       href={QUOTE_HREF}
-      className={`group inline-flex min-h-12 items-center gap-3 bg-orange px-6 text-sm font-semibold text-white hover:bg-orange-dark ${className}`}
+      className={`group inline-flex min-h-12 items-center gap-3 bg-orange px-6 text-sm font-semibold text-foreground hover:bg-orange-dark ${className}`}
     >
       Request a quote
       <ArrowUpRight size={18} aria-hidden="true" className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -83,11 +83,11 @@ function RotatingBadge({ className = '' }: { className?: string }) {
         <defs>
           <path id="badge-circle" d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0" />
         </defs>
-        <text className="fill-white font-display text-[9.5px] font-bold uppercase tracking-[0.2em]">
+        <text className="fill-white font-display text-xs font-bold uppercase tracking-[0.2em]">
           <textPath href="#badge-circle">Request a quote • Machinmate •</textPath>
         </text>
       </svg>
-      <span className="flex size-12 items-center justify-center rounded-full bg-orange text-white">
+      <span className="flex size-12 items-center justify-center rounded-full bg-orange text-foreground">
         <ArrowUpRight size={22} />
       </span>
     </span>
@@ -129,11 +129,11 @@ export default function HomePage() {
             <div className="motion-safe:animate-fade-up">
               <Eyebrow dark>Industrial machinery marketplace</Eyebrow>
             </div>
-            <h1 className="mt-6 font-display text-[clamp(2.6rem,6.4vw,5.25rem)] font-extrabold leading-[0.98] tracking-[-0.035em] text-white motion-safe:animate-fade-up motion-safe:[animation-delay:100ms]">
+            <h1 className="mt-6 font-display text-hero font-extrabold leading-[0.98] tracking-[-0.035em] text-white motion-safe:animate-fade-up motion-safe:[animation-delay:100ms]">
               Source industrial machinery from{' '}
-              <span className="text-orange-light">approved suppliers.</span>
+              <span className="text-accent">approved suppliers.</span>
             </h1>
-            <p className="mt-7 max-w-xl text-lg leading-8 text-slate-300 motion-safe:animate-fade-up motion-safe:[animation-delay:200ms]">
+            <p className="mt-7 max-w-xl text-base leading-7 text-slate-300 motion-safe:animate-fade-up motion-safe:[animation-delay:200ms]">
               Compare technical specifications from local dealers and international
               manufacturers, then send one request for quotation. Free for buyers,
               with pricing shared privately on request.
@@ -149,7 +149,7 @@ export default function HomePage() {
             </div>
             <p className="mt-6 text-sm text-slate-400 motion-safe:animate-fade-up motion-safe:[animation-delay:400ms]">
               Supplier or manufacturer?{' '}
-              <Link href="#supplier-plans" className="font-semibold text-white underline decoration-orange-light underline-offset-4 hover:text-orange-light">
+              <Link href="#supplier-plans" className="font-semibold text-white underline decoration-orange-light underline-offset-4 hover:text-accent">
                 See marketplace plans
               </Link>
             </p>
@@ -166,7 +166,7 @@ export default function HomePage() {
               <dl className="mt-6 space-y-4">
                 {rfqFields.map((field, i) => (
                   <div key={field} className="flex items-end gap-3 text-sm">
-                    <dt className="shrink-0 text-xs font-bold text-orange-dark">{String(i + 1).padStart(2, '0')}</dt>
+                    <dt className="shrink-0 text-xs font-bold text-secondary">{String(i + 1).padStart(2, '0')}</dt>
                     <dd className="flex-1 border-b border-dashed border-slate-300 pb-1 text-slate-600">{field}</dd>
                   </div>
                 ))}
@@ -190,7 +190,7 @@ export default function HomePage() {
             <ul className="grid divide-white/10 sm:grid-cols-3 sm:divide-x">
               {highlights.map((h, i) => (
                 <li key={h} className="flex items-center gap-4 py-5 sm:px-6 sm:first:pl-0">
-                  <span className="font-display text-sm font-bold text-orange-light">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="font-display text-sm font-bold text-accent">{String(i + 1).padStart(2, '0')}</span>
                   <span className="text-sm font-medium text-slate-200">{h}</span>
                 </li>
               ))}
@@ -200,14 +200,14 @@ export default function HomePage() {
       </section>
 
       {/* MARQUEE */}
-      <div className="overflow-hidden bg-orange py-5 text-white">
+      <div className="overflow-hidden border-y border-border bg-background py-5 text-primary">
         <div className="flex w-max motion-safe:animate-marquee">
           {[0, 1].map((copy) => (
             <ul key={copy} aria-hidden={copy === 1} className="flex shrink-0 items-center">
               {marqueeItems.map((item) => (
                 <li key={item} className="flex items-center gap-8 pr-8 font-display text-xl font-bold uppercase tracking-wide sm:text-2xl">
                   {item}
-                  <span className="size-2 rotate-45 bg-white/60" aria-hidden="true" />
+                  <span className="size-2 rotate-45 bg-secondary/30" aria-hidden="true" />
                 </li>
               ))}
             </ul>
@@ -241,7 +241,7 @@ export default function HomePage() {
             {reasons.map((r, i) => (
               <li key={r.title} className="border-b border-slate-200">
                 <Reveal delay={i * 80} className="group flex gap-6 py-8">
-                  <span className="flex size-14 shrink-0 items-center justify-center border border-slate-300 font-display text-lg font-bold text-navy transition-colors group-hover:border-orange group-hover:bg-orange group-hover:text-white">
+                  <span className="flex size-14 shrink-0 items-center justify-center border border-slate-300 font-display text-lg font-bold text-navy transition-colors group-hover:border-orange group-hover:bg-orange group-hover:text-foreground">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <div>
@@ -268,7 +268,7 @@ export default function HomePage() {
             {steps.map((s, i) => (
               <li key={s.title} className="bg-navy">
                 <Reveal delay={i * 90} className="group h-full p-6 transition-colors hover:bg-white/5 lg:p-7">
-                  <span className="block font-display text-5xl font-black text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.45)] group-hover:[-webkit-text-stroke:1px_#f0a47f]">
+                  <span className="block font-display text-5xl font-black text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.45)] group-hover:[-webkit-text-stroke:1px_var(--color-accent)]">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <h3 className="mt-8 font-display text-lg font-bold text-white">{s.title}</h3>
@@ -281,13 +281,13 @@ export default function HomePage() {
       </section>
 
       {/* MID CTA */}
-      <section aria-label="Request a quote" className="bg-orange text-white">
+      <section aria-label="Request a quote" className="bg-primary text-white">
         <Container className="flex flex-col items-start justify-between gap-8 py-14 md:flex-row md:items-center">
           <Reveal>
             <h2 className="max-w-2xl font-display text-3xl font-extrabold leading-tight text-white sm:text-4xl">
               Tell suppliers exactly what your production line needs.
             </h2>
-            <p className="mt-3 text-white/90">One request. No buyer subscription.</p>
+            <p className="mt-3 text-inverse-muted">One request. No buyer subscription.</p>
           </Reveal>
           <Link
             href={QUOTE_HREF}

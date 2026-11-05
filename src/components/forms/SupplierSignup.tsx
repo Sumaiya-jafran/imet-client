@@ -59,7 +59,7 @@ export default function SupplierSignup({
       <p className="text-sm text-slate-600">
         Already registered?{' '}
         <Link
-          className="font-semibold text-orange"
+          className="font-semibold text-secondary"
           href="/auth/signin?callbackUrl=%2Fsubscription"
         >
           Sign in to continue
@@ -95,7 +95,7 @@ export default function SupplierSignup({
             checkout.
           </p>
           <Link
-            className="font-semibold text-orange"
+            className="font-semibold text-secondary"
             href="/auth/signin?callbackUrl=%2Fsubscription"
           >
             Continue to sign in

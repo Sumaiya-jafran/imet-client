@@ -145,7 +145,7 @@ export default function SalesOpportunityPanel({
             (stage) => (
               <li
                 key={stage}
-                className={`rounded-lg border p-3 text-xs font-semibold ${o.stage === stage ? 'border-orange/40 bg-orange/5 text-orange-dark' : 'border-slate-200 text-slate-500'}`}
+                className={`rounded-lg border p-3 text-xs font-semibold ${o.stage === stage ? 'border-orange/40 bg-orange/5 text-secondary' : 'border-slate-200 text-slate-500'}`}
               >
                 {stage}
               </li>

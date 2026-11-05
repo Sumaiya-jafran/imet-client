@@ -16,9 +16,9 @@ export default function MachineCard({ machine }: { machine: MachineSummary }) {
       </Link>
       <div className="flex flex-1 flex-col px-2 pb-2 pt-4">
         <Badge>{machine.category.name}</Badge>
-        <h2 className="mt-3 break-words text-lg font-semibold leading-6">
+        <h2 className="mt-3 break-words text-card font-semibold leading-6">
           <Link
-            className="hover:text-orange-dark"
+            className="hover:text-secondary"
             href={`/machinery/${machine.slug}`}
           >
             <TranslatedText

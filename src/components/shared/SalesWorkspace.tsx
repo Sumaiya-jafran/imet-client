@@ -127,7 +127,7 @@ export default function SalesWorkspace({
                 apply(q);
               }}
             >
-              <span className="text-[10px] font-semibold tracking-wide text-slate-500">
+              <span className="text-xs font-semibold tracking-wide text-slate-500">
                 {stage}
               </span>
               <span className="mt-2 block text-2xl font-semibold">

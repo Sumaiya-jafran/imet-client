@@ -14,7 +14,7 @@ export default function EmptyState({
       <span className="mb-5 flex size-12 items-center justify-center bg-navy text-white">
         <PackageSearch size={23} aria-hidden="true" />
       </span>
-      <h2 className="font-display text-lg font-bold">{title}</h2>
+      <h2 className="font-display text-lg font-semibold">{title}</h2>
       {description && (
         <p className="mt-2 max-w-md text-sm leading-6 text-slate-600">
           {description}

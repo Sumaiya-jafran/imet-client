@@ -46,7 +46,7 @@ export default function VerifyEmail({ token }: { token?: string }) {
           {busy ? 'Verifying…' : 'Verify email'}
         </Button>
       )}
-      <nav className="flex flex-wrap gap-4 border-t border-slate-100 pt-4 text-xs font-medium text-orange-dark">
+      <nav className="flex flex-wrap gap-4 border-t border-slate-100 pt-4 text-xs font-medium text-secondary">
         <Link href="/auth/signin">Sign in</Link>
         <Link href="/auth/resend-verification">Request a new link</Link>
       </nav>

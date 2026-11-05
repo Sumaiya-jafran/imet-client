@@ -43,7 +43,7 @@ export default async function Page({
             {supplierTypeLabels[supplier.type]}{' '}
             · {supplier.city}, {supplier.country}
           </p>
-          <p className="mt-3 text-orange-dark">
+          <p className="mt-3 text-secondary">
             {supplier.isVerified ? 'Verified supplier' : ''}
             {supplier.visibility === 'FEATURED' ? ' · Featured' : ''}
           </p>

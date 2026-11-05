@@ -1,12 +1,155 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-navy: #192b35;
-  --color-orange: #a94b25;
-  --color-orange-dark: #873a1c;
-  --color-navy-deep: #0f1c24;
-  --color-orange-light: #f0a47f;
-  --font-sans: 'Inter', 'Segoe UI', Arial, sans-serif;
+  /* Official brand palette. Use semantic utilities for new components. */
+  --color-primary: #142f46;
+  --color-secondary: #245b7a;
+  --color-accent: #f28c28;
+  --color-accent-hover: #d97706;
+  --color-background: #f4f6f8;
+  --color-surface: #ffffff;
+  --color-foreground: #17212b;
+  --color-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-muted-foreground: color-mix(in srgb, var(--color-muted), black 6%);
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
+  --color-info: var(--color-secondary);
+  --color-inverse: var(--color-surface);
+  --color-inverse-muted: color-mix(
+    in srgb,
+    var(--color-border),
+    var(--color-muted) 20%
+  );
+  --color-success-foreground: color-mix(
+    in srgb,
+    var(--color-success),
+    black 35%
+  );
+  --color-warning-foreground: color-mix(
+    in srgb,
+    var(--color-warning),
+    black 35%
+  );
+  --color-danger-foreground: color-mix(in srgb, var(--color-danger), black 20%);
+  --color-info-foreground: var(--color-secondary);
+  --shadow-surface: 0 1px 3px
+    color-mix(in srgb, var(--color-primary) 6%, transparent);
+  --shadow-dock: 0 8px 24px
+    color-mix(in srgb, var(--color-primary) 18%, transparent);
+
+  --color-white: var(--color-surface);
+
+  /* Compatibility aliases keep every existing page on the same palette. */
+  --color-navy: var(--color-primary);
+  --color-navy-deep: var(--color-primary);
+  --color-orange: var(--color-accent);
+  --color-orange-dark: var(--color-accent-hover);
+  --color-orange-light: var(--color-accent);
+  --color-slate-50: var(--color-background);
+  --color-slate-100: color-mix(
+    in srgb,
+    var(--color-background),
+    var(--color-border) 25%
+  );
+  --color-slate-200: var(--color-border);
+  --color-slate-300: color-mix(
+    in srgb,
+    var(--color-border),
+    var(--color-muted) 20%
+  );
+  --color-slate-400: color-mix(
+    in srgb,
+    var(--color-border),
+    var(--color-muted) 65%
+  );
+  --color-slate-500: var(--color-muted-foreground);
+  --color-slate-600: var(--color-secondary);
+  --color-slate-700: var(--color-foreground);
+  --color-slate-800: var(--color-foreground);
+  --color-slate-900: var(--color-foreground);
+  --color-slate-950: var(--color-primary);
+
+  --text-hero: clamp(2.5rem, 5vw, 3.5rem);
+  --text-page: clamp(1.75rem, 3vw, 2rem);
+  --text-section: 1.5rem;
+  --text-card: 1.125rem;
+  --text-body: 1rem;
+  --text-nav: 0.9375rem;
+  --text-button: 0.875rem;
+  --text-meta: 0.8125rem;
+  --text-xs: var(--text-meta);
+  --text-xs--line-height: 1.5;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.6;
+  --text-base: var(--text-body);
+  --text-base--line-height: 1.6;
+  --text-lg: var(--text-card);
+  --text-lg--line-height: 1.4;
+  --text-xl: 1.5rem;
+  --text-xl--line-height: 1.3;
+  --text-2xl: var(--text-section);
+  --text-2xl--line-height: 1.3;
+  --text-3xl: 2rem;
+  --text-3xl--line-height: 1.2;
+  --text-4xl: 2rem;
+  --text-4xl--line-height: 1.2;
+  --text-5xl: clamp(2.25rem, 4vw, 3.5rem);
+  --text-6xl: clamp(2.5rem, 5vw, 3.5rem);
+  --font-weight-extrabold: 700;
+  --font-weight-black: 700;
+
+  --color-emerald-50: color-mix(in srgb, var(--color-success), white 95%);
+  --color-emerald-100: color-mix(in srgb, var(--color-success), white 90%);
+  --color-emerald-200: color-mix(in srgb, var(--color-success), white 75%);
+  --color-emerald-300: color-mix(in srgb, var(--color-success), white 55%);
+  --color-emerald-400: color-mix(in srgb, var(--color-success), white 25%);
+  --color-emerald-500: var(--color-success);
+  --color-emerald-600: var(--color-success);
+  --color-emerald-700: color-mix(in srgb, var(--color-success), black 20%);
+  --color-emerald-800: color-mix(in srgb, var(--color-success), black 35%);
+  --color-emerald-900: color-mix(in srgb, var(--color-success), black 45%);
+  --color-green-50: color-mix(in srgb, var(--color-success), white 95%);
+  --color-green-100: color-mix(in srgb, var(--color-success), white 90%);
+  --color-green-200: color-mix(in srgb, var(--color-success), white 75%);
+  --color-green-300: color-mix(in srgb, var(--color-success), white 55%);
+  --color-green-400: color-mix(in srgb, var(--color-success), white 25%);
+  --color-green-500: var(--color-success);
+  --color-green-600: var(--color-success);
+  --color-green-700: color-mix(in srgb, var(--color-success), black 20%);
+  --color-green-800: color-mix(in srgb, var(--color-success), black 35%);
+  --color-green-900: color-mix(in srgb, var(--color-success), black 45%);
+  --color-amber-50: color-mix(in srgb, var(--color-warning), white 95%);
+  --color-amber-100: color-mix(in srgb, var(--color-warning), white 90%);
+  --color-amber-200: color-mix(in srgb, var(--color-warning), white 75%);
+  --color-amber-300: color-mix(in srgb, var(--color-warning), white 55%);
+  --color-amber-400: color-mix(in srgb, var(--color-warning), white 25%);
+  --color-amber-500: var(--color-warning);
+  --color-amber-600: var(--color-warning);
+  --color-amber-700: color-mix(in srgb, var(--color-warning), black 20%);
+  --color-amber-800: color-mix(in srgb, var(--color-warning), black 35%);
+  --color-amber-900: color-mix(in srgb, var(--color-warning), black 45%);
+  --color-red-50: color-mix(in srgb, var(--color-danger), white 95%);
+  --color-red-100: color-mix(in srgb, var(--color-danger), white 90%);
+  --color-red-200: color-mix(in srgb, var(--color-danger), white 75%);
+  --color-red-300: color-mix(in srgb, var(--color-danger), white 55%);
+  --color-red-400: color-mix(in srgb, var(--color-danger), white 25%);
+  --color-red-500: var(--color-danger);
+  --color-red-600: var(--color-danger);
+  --color-red-700: color-mix(in srgb, var(--color-danger), black 20%);
+  --color-red-800: color-mix(in srgb, var(--color-danger), black 35%);
+  --color-red-900: color-mix(in srgb, var(--color-danger), black 45%);
+  --color-blue-50: color-mix(in srgb, var(--color-info), white 95%);
+  --color-blue-100: color-mix(in srgb, var(--color-info), white 90%);
+  --color-blue-200: color-mix(in srgb, var(--color-info), white 75%);
+  --color-blue-300: color-mix(in srgb, var(--color-info), white 55%);
+  --color-blue-400: color-mix(in srgb, var(--color-info), white 25%);
+  --color-blue-500: var(--color-info);
+  --color-blue-600: var(--color-info);
+  --color-blue-700: color-mix(in srgb, var(--color-info), black 20%);
+  --color-blue-800: color-mix(in srgb, var(--color-info), black 35%);
+  --color-blue-900: color-mix(in srgb, var(--color-info), black 45%);
 
   /* Homepage motion: used only through motion-safe: utilities. */
   --animate-fade-up: fade-up 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
@@ -27,7 +170,8 @@
 }
 
 @theme inline {
-  --font-display: var(--font-archivo), 'Inter', 'Segoe UI', Arial, sans-serif;
+  --font-sans: var(--font-inter), 'Segoe UI', Arial, sans-serif;
+  --font-display: var(--font-sans);
 }
 
 @layer base {
@@ -37,20 +181,37 @@
 
   body {
     font-family: var(--font-sans);
-    background: #f6f7f8;
-    font-size: 14px;
+    background: var(--color-background);
+    font-size: var(--text-sm);
     line-height: 1.6;
   }
 
   h1,
   h2,
   h3 {
-    color: #192b35;
+    color: var(--color-primary);
     letter-spacing: -0.035em;
   }
 
   h1 {
+    font-size: var(--text-page);
     font-weight: 700;
+    line-height: 1.2;
+  }
+  h2 {
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  h3 {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  button {
+    font-family: inherit;
+    font-size: var(--text-button);
+    font-weight: 600;
   }
 
   button,
@@ -76,7 +237,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid #a94b25;
+    outline: 2px solid var(--color-secondary);
     outline-offset: 3px;
   }
 
@@ -85,13 +246,13 @@
   textarea {
     min-width: 0;
     min-height: 42px;
-    border: 1px solid #cbd2d7;
+    border: 1px solid var(--color-border);
     border-radius: 4px;
-    background-color: white;
+    background-color: var(--color-surface);
     padding: 9px 12px;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.5;
-    color: #192b35;
+    color: var(--color-primary);
   }
 
   textarea {
@@ -102,12 +263,12 @@
   input:not([type='checkbox']):not([type='radio']):hover,
   select:hover,
   textarea:hover {
-    border-color: #9aa8b2;
+    border-color: var(--color-secondary);
   }
 
   input::placeholder,
   textarea::placeholder {
-    color: #64748b;
+    color: var(--color-muted-foreground);
   }
 
   input:disabled,
@@ -115,28 +276,28 @@
   textarea:disabled,
   input[readonly],
   textarea[readonly] {
-    background-color: #f3f5f6;
-    color: #52616b;
+    background-color: var(--color-background);
+    color: var(--color-muted-foreground);
   }
 
   input[aria-invalid='true'],
   textarea[aria-invalid='true'],
   select[aria-invalid='true'] {
-    border-color: #b91c1c;
+    border-color: var(--color-danger);
   }
 
   input[type='checkbox'],
   input[type='radio'] {
     width: 16px;
     height: 16px;
-    accent-color: #a94b25;
+    accent-color: var(--color-secondary);
     flex-shrink: 0;
   }
 
   label,
   legend {
-    font-size: 13px;
-    color: #374b57;
+    font-size: var(--text-xs);
+    color: var(--color-foreground);
   }
 
   img {
@@ -144,7 +305,7 @@
   }
 
   dt {
-    color: #52616b;
+    color: var(--color-muted-foreground);
     font-size: 12px;
   }
 
@@ -154,33 +315,33 @@
 
   p[role='alert'] {
     border-radius: 8px;
-    border: 1px solid #fecaca;
-    background: #fff5f5;
+    border: 1px solid color-mix(in srgb, var(--color-danger) 25%, white);
+    background: color-mix(in srgb, var(--color-danger) 5%, white);
     padding: 12px;
-    color: #991b1b;
+    color: var(--color-danger-foreground);
   }
 }
 
 @layer components {
-
   /* Shared building blocks for public pages and dashboards.
      Square-ish corners, crisp borders and the display face match the homepage. */
   .surface {
-    border: 1px solid #dde3e7;
+    border: 1px solid var(--color-border);
     border-radius: 6px;
-    background: white;
-    box-shadow: 0 1px 2px #192b350a;
+    background: var(--color-surface);
+    box-shadow: 0 1px 2px
+      color-mix(in srgb, var(--color-primary) 4%, transparent);
   }
 
   .eyebrow {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.18em;
-    color: var(--color-orange-dark);
+    color: var(--color-secondary);
   }
 
   .eyebrow::before {
@@ -192,17 +353,17 @@
 
   .page-title {
     font-family: var(--font-display);
-    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-size: var(--text-page);
     line-height: 1.1;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: -0.03em;
   }
 
   .filter-bar {
-    border: 1px solid #dde3e7;
+    border: 1px solid var(--color-border);
     border-left: 3px solid var(--color-orange);
     border-radius: 6px;
-    background: white;
+    background: var(--color-surface);
     padding: 16px;
   }
 
@@ -217,13 +378,13 @@
     border-radius: 4px;
     padding: 9px 16px;
     font-weight: 600;
-    font-size: 13px;
+    font-size: var(--text-button);
     text-decoration: none;
   }
 
   .action-link {
     background: var(--color-orange);
-    color: white;
+    color: var(--color-foreground);
   }
 
   .action-link:hover {
@@ -231,8 +392,8 @@
   }
 
   .secondary-link {
-    border-color: #cfd6db;
-    background: white;
+    border-color: var(--color-border);
+    background: var(--color-surface);
     color: var(--color-navy);
   }
 
@@ -240,8 +401,8 @@
     border-color: var(--color-navy);
   }
 
-  .dashboard-content>div>h1,
-  .dashboard-content>section>h1 {
+  .dashboard-content > div > h1,
+  .dashboard-content > section > h1 {
     font-size: clamp(1.6rem, 3vw, 2rem);
     line-height: 1.2;
   }
@@ -255,7 +416,7 @@
   .dashboard-content section.surface h2,
   .dashboard-content form.surface h2 {
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
   }
 
   .dashboard-content .surface {
@@ -264,25 +425,24 @@
 
   .dashboard-content table {
     width: 100%;
-    font-size: 13px;
+    font-size: var(--text-xs);
   }
 
   .dashboard-content thead th {
-    background: #f6f7f8;
-    font-size: 11px;
+    background: var(--color-background);
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #52616b;
+    color: var(--color-muted-foreground);
   }
 
   .dashboard-content tbody tr:hover {
-    background: #fafbfb;
+    background: var(--color-background);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {
@@ -323,9 +483,11 @@ body {
   z-index: 50;
   inset-inline: 0;
   bottom: 0;
-  padding: 4px max(6px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(6px, env(safe-area-inset-left, 0px));
-  border-top: 1px solid #e2e8f0;
-  background: #ffffff;
+  padding: 4px max(6px, env(safe-area-inset-right, 0px))
+    calc(6px + env(safe-area-inset-bottom, 0px))
+    max(6px, env(safe-area-inset-left, 0px));
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
   box-shadow: 0 -4px 18px rgba(15, 23, 42, 0.06);
   transition:
     background-color 200ms ease,
@@ -347,19 +509,19 @@ body {
   justify-content: center;
   gap: 3px;
   border-radius: 8px;
-  color: #64748b;
-  font-size: 10px;
+  color: var(--color-muted-foreground);
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
   text-decoration: none;
 }
 
 .primary-nav-mobile-item:hover {
-  color: #257680;
+  color: var(--color-secondary);
 }
 
 .primary-nav-mobile-active {
-  color: #257680;
+  color: var(--color-secondary);
   font-weight: 700;
 }
 
@@ -371,19 +533,19 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  background: #fbbd23;
-  color: #ffffff;
-  box-shadow: 0 6px 16px rgba(251, 189, 35, 0.45);
-  border: 3px solid #ffffff;
+  background: var(--color-accent);
+  color: var(--color-foreground);
+  box-shadow: var(--shadow-surface);
+  border: 3px solid var(--color-surface);
 }
 
 .primary-nav-mobile-fab:hover {
-  background: #f59e0b;
+  background: var(--color-accent-hover);
 }
 
 .primary-nav-unavailable {
-  color: #64748b;
-  opacity: 0.55;
+  color: var(--color-muted-foreground);
+  opacity: 1;
   cursor: default;
 }
 
@@ -409,9 +571,9 @@ body {
     padding: 0 18px;
     border: 0;
     border-radius: 0 0 22px 22px;
-    background: #07080d;
-    color: #ffffff;
-    box-shadow: 0 12px 28px rgba(7, 8, 13, 0.22);
+    background: var(--color-primary);
+    color: var(--color-surface);
+    box-shadow: var(--shadow-dock);
   }
 
   /* Concave top-left & top-right corner fillets on the top notch */
@@ -427,16 +589,20 @@ body {
 
   .primary-nav-slot[data-docked='false'] .primary-nav::before {
     left: -18px;
-    background: radial-gradient(circle at 0 100%,
-        transparent 18px,
-        #07080d 18.5px);
+    background: radial-gradient(
+      circle at 0 100%,
+      transparent 18px,
+      var(--color-primary) 18.5px
+    );
   }
 
   .primary-nav-slot[data-docked='false'] .primary-nav::after {
     right: -18px;
-    background: radial-gradient(circle at 100% 100%,
-        transparent 18px,
-        #07080d 18.5px);
+    background: radial-gradient(
+      circle at 100% 100%,
+      transparent 18px,
+      var(--color-primary) 18.5px
+    );
   }
 
   .primary-nav-slot[data-docked='false'] .primary-nav-notch-inner {
@@ -453,9 +619,9 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    color: #ffffff;
+    color: var(--color-surface);
     font-weight: 700;
-    font-size: 14px;
+    font-size: var(--text-sm);
     letter-spacing: -0.01em;
     text-decoration: none;
     white-space: nowrap;
@@ -468,8 +634,8 @@ body {
     align-items: center;
     justify-content: center;
     border-radius: 8px;
-    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 55%, #1e3a8a 100%);
-    color: #ffffff;
+    background: var(--color-secondary);
+    color: var(--color-surface);
     box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35);
   }
 
@@ -489,8 +655,8 @@ body {
     padding: 4px 2px;
     border-radius: 6px;
     background: transparent;
-    color: rgba(255, 255, 255, 0.68);
-    font-size: 13px;
+    color: var(--color-inverse-muted);
+    font-size: var(--text-button);
     font-weight: 500;
     white-space: nowrap;
     text-decoration: none;
@@ -498,18 +664,18 @@ body {
   }
 
   .primary-nav-slot[data-docked='false'] .primary-nav-item:hover {
-    color: #ffffff;
+    color: var(--color-surface);
     background: transparent;
   }
 
   .primary-nav-slot[data-docked='false'] .primary-nav-active {
-    color: #ffffff;
+    color: var(--color-surface);
     font-weight: 600;
     background: transparent;
   }
 
   .primary-nav-slot[data-docked='false'] .primary-nav-unavailable {
-    color: rgba(255, 255, 255, 0.38);
+    color: var(--color-inverse-muted);
   }
 
   .primary-nav-cta-pill {
@@ -519,9 +685,9 @@ body {
     height: 30px;
     padding: 0 14px;
     border-radius: 9999px;
-    background: #ffffff;
-    color: #090a0f;
-    font-size: 12.5px;
+    background: var(--color-surface);
+    color: var(--color-primary);
+    font-size: var(--text-button);
     font-weight: 600;
     white-space: nowrap;
     text-decoration: none;
@@ -529,7 +695,7 @@ body {
   }
 
   .primary-nav-cta-pill:hover {
-    background: #f1f5f9;
+    background: var(--color-background);
   }
 
   /* Image 2: Desktop Floating Bottom Dock (after scrolling, data-docked='true') */
@@ -544,9 +710,9 @@ body {
     padding: 0 14px;
     border: 0;
     border-radius: 16px;
-    background: #181920;
-    color: #ffffff;
-    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.38);
+    background: var(--color-primary);
+    color: var(--color-surface);
+    box-shadow: var(--shadow-dock);
     animation: dock-enter 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
@@ -568,7 +734,7 @@ body {
     top: -23px;
     width: 156px;
     height: 24px;
-    color: #181920;
+    color: var(--color-primary);
     transition: left 260ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
@@ -583,14 +749,14 @@ body {
     justify-content: center;
     border-radius: 10px;
     border: 0;
-    background: rgba(116, 120, 130, 0.55);
-    color: #ffffff;
+    background: var(--color-secondary);
+    color: var(--color-surface);
     text-decoration: none;
     transition: background-color 150ms ease;
   }
 
   .primary-nav-dock-square-btn:hover {
-    background: rgba(136, 140, 152, 0.75);
+    background: color-mix(in srgb, var(--color-secondary), white 10%);
   }
 
   .primary-nav-dock-list {
@@ -612,8 +778,8 @@ body {
     padding: 0 20px;
     border-radius: 11px;
     background: transparent;
-    color: #e5e7eb;
-    font-size: 14.5px;
+    color: var(--color-inverse-muted);
+    font-size: var(--text-button);
     font-weight: 500;
     white-space: nowrap;
     text-decoration: none;
@@ -624,23 +790,23 @@ body {
 
   .primary-nav-slot[data-docked='true'] .primary-nav-item:hover {
     background: rgba(255, 255, 255, 0.08);
-    color: #ffffff;
+    color: var(--color-surface);
   }
 
   .primary-nav-slot[data-docked='true'] .primary-nav-active {
-    background: #eff1f3 !important;
-    color: #14151a !important;
+    background: var(--color-surface) !important;
+    color: var(--color-primary) !important;
     font-weight: 600;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 
   .primary-nav-slot[data-docked='true'] .primary-nav-unavailable {
-    color: rgba(229, 231, 235, 0.4);
+    color: var(--color-inverse-muted);
   }
 
   .primary-nav-slot[data-docked='true'] .primary-nav-unavailable:hover {
     background: transparent;
-    color: rgba(229, 231, 235, 0.4);
+    color: var(--color-inverse-muted);
   }
 }
 
@@ -658,4 +824,21 @@ body {
 
 :is(input, select, textarea, button, a) {
   scroll-margin-bottom: var(--dock-space);
+}
+
+/* Account for the sidebar width at compact desktop sizes. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .dashboard-shell
+    .primary-nav-slot[data-docked='false']
+    .primary-nav-notch-inner {
+    gap: 12px;
+  }
+  .dashboard-shell .primary-nav-slot[data-docked='false'] .primary-nav-brand {
+    display: none;
+  }
+  .dashboard-shell
+    .primary-nav-slot[data-docked='false']
+    .primary-nav-links-list {
+    gap: 16px;
+  }
 }

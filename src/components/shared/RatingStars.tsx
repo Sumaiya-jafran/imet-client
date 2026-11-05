@@ -13,7 +13,7 @@ export default function RatingStars({ rating }: { rating: number }) {
           aria-hidden="true"
           className={
             star <= Math.round(rating)
-              ? 'fill-orange-dark text-orange-dark'
+              ? 'fill-warning text-warning'
               : 'text-slate-300'
           }
         />

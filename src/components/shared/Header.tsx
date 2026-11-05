@@ -73,7 +73,7 @@ export default function Header() {
       >
         Skip to content
       </a>
-      <header className="relative z-40 bg-[#257680] text-white shadow-sm lg:border-b lg:border-slate-200/80 lg:bg-white lg:text-slate-900 lg:shadow-none">
+      <header className="relative z-40 bg-primary text-white shadow-sm lg:border-b lg:border-slate-200/80 lg:bg-white lg:text-slate-900 lg:shadow-none">
         {/* Desktop utility strip (Find suppliers, Search, LanguageSelector, Workspace/Sign in) */}
         <div className="hidden border-b border-slate-100 lg:block">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-1.5 text-xs text-slate-600 lg:px-8">
@@ -119,7 +119,7 @@ export default function Header() {
                 <button
                   type="submit"
                   aria-label="Search machines"
-                  className="flex size-8 shrink-0 items-center justify-center rounded-full bg-navy text-white hover:bg-orange-dark"
+                  className="flex size-8 shrink-0 items-center justify-center rounded-full bg-navy text-white hover:bg-secondary"
                 >
                   <Search size={14} aria-hidden="true" />
                 </button>
@@ -129,7 +129,7 @@ export default function Header() {
 
               <Link
                 href={signedIn ? '/dashboard/account' : '/auth/signin'}
-                className="flex items-center gap-1.5 font-semibold text-navy hover:text-orange-dark"
+                className="flex items-center gap-1.5 font-semibold text-navy hover:text-secondary"
               >
                 <UserRound size={15} aria-hidden="true" />
                 <span>{signedIn ? 'Workspace' : 'Sign in'}</span>
@@ -148,7 +148,7 @@ export default function Header() {
               aria-expanded={mobileDrawerOpen}
               aria-controls="mobile-header-drawer"
               aria-label="Toggle marketplace menu"
-              className="inline-flex h-[34px] items-center gap-2 rounded-full bg-white px-2.5 text-[#257680] shadow-sm"
+              className="inline-flex h-[34px] items-center gap-2 rounded-full bg-white px-2.5 text-secondary shadow-sm"
             >
               <span className="flex size-6 items-center justify-center rounded-full bg-slate-100 text-slate-500">
                 <UserRound size={14} aria-hidden="true" />
@@ -169,7 +169,7 @@ export default function Header() {
               <Factory
                 size={17}
                 aria-hidden="true"
-                className="text-[#fbbd23]"
+                className="text-accent"
               />
               <span>Machinmate</span>
             </Link>
@@ -179,18 +179,18 @@ export default function Header() {
               <Link
                 href={servicesHref}
                 aria-label="Service tickets and notifications"
-                className="relative flex size-[34px] items-center justify-center rounded-full bg-white text-[#257680] shadow-sm"
+                className="relative flex size-[34px] items-center justify-center rounded-full bg-white text-secondary shadow-sm"
               >
                 <Bell size={16} aria-hidden="true" />
                 <span
                   aria-hidden="true"
-                  className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[#fbbd23] ring-1 ring-white"
+                  className="absolute right-1.5 top-1.5 size-2 rounded-full bg-accent ring-1 ring-white"
                 />
               </Link>
               <Link
                 href={messagesHref}
                 aria-label="RFQ messages and workspace"
-                className="flex size-[34px] items-center justify-center rounded-full bg-white text-[#257680] shadow-sm"
+                className="flex size-[34px] items-center justify-center rounded-full bg-white text-secondary shadow-sm"
               >
                 <MessageSquare size={15} aria-hidden="true" />
               </Link>
@@ -217,12 +217,12 @@ export default function Header() {
               type="search"
               maxLength={100}
               placeholder="Find products and many more..."
-              className="!min-h-[38px] w-full !rounded-md !border-0 !bg-white !py-1.5 !pl-10 !pr-9 !text-[13px] !text-slate-800 placeholder:!text-slate-400 shadow-sm focus-visible:!outline-2 focus-visible:!outline-[#fbbd23]"
+              className="!min-h-[38px] w-full !rounded-md !border-0 !bg-white !py-1.5 !pl-10 !pr-9 !text-base !text-slate-800 placeholder:!text-slate-400 shadow-sm focus-visible:!outline-2 focus-visible:!outline-secondary"
             />
             <button
               type="submit"
               aria-label="Search machines"
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 flex size-7 items-center justify-center rounded text-slate-500 hover:text-[#257680]"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 flex size-7 items-center justify-center rounded text-slate-500 hover:text-secondary"
             >
               <Search size={15} aria-hidden="true" />
             </button>
@@ -233,7 +233,7 @@ export default function Header() {
             <div
               id="mobile-header-drawer"
               ref={drawerRef}
-              className="mt-3 rounded-xl border border-white/15 bg-[#1d5f68] p-3.5 text-white shadow-lg"
+              className="mt-3 rounded-xl border border-white/15 bg-primary p-3.5 text-white shadow-lg"
             >
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/15 pb-3">
                 <Link
@@ -246,7 +246,7 @@ export default function Header() {
                 <Link
                   href={QUOTE_HREF}
                   onClick={() => setMobileDrawerOpen(false)}
-                  className="rounded-full bg-[#fbbd23] px-3 py-1 text-xs font-bold text-slate-950"
+                  className="rounded-full bg-accent px-3 py-1 text-xs font-bold text-slate-950"
                 >
                   + Request a quote
                 </Link>
@@ -258,7 +258,7 @@ export default function Header() {
                 <Link
                   href={signedIn ? '/dashboard/account' : '/auth/signin'}
                   onClick={() => setMobileDrawerOpen(false)}
-                  className="inline-flex min-h-9 flex-1 items-center justify-center gap-2 rounded-lg bg-white px-3 text-xs font-semibold text-[#257680]"
+                  className="inline-flex min-h-9 flex-1 items-center justify-center gap-2 rounded-lg bg-white px-3 text-xs font-semibold text-secondary"
                 >
                   <UserRound size={15} aria-hidden="true" />
                   <span>

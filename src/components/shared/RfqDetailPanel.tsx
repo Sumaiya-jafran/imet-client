@@ -119,7 +119,7 @@ export default function RfqDetailPanel({
         <li key={f.id}>
           <button
             type="button"
-            className="text-sm font-medium text-orange-dark underline"
+            className="text-sm font-medium text-secondary underline"
             onClick={() => void run(() => rfqApi.download(token, f, isQuote))}
           >
             {f.fileName} · {Math.ceil(f.fileSize / 1024)} KB
