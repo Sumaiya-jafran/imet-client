@@ -17,7 +17,7 @@ const labels = {
   ],
   REVIEW: [
     'Payment requires review',
-    'The payment is on hold. Contact iMet; do not make another payment.',
+    'The payment is on hold. Contact Machinmate; do not make another payment.',
   ],
   FAILED: [
     'Payment failed',

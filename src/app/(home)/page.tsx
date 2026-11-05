@@ -48,7 +48,7 @@ const reasons = [
   },
   {
     title: 'Private by default',
-    text: 'Prices are shared on request and contact details stay protected by iMet until RFQ rules allow them to be revealed.',
+    text: 'Prices are shared on request and contact details stay protected by Machinmate until RFQ rules allow them to be revealed.',
   },
   {
     title: 'Reviews from real purchases',
@@ -84,7 +84,7 @@ function RotatingBadge({ className = '' }: { className?: string }) {
           <path id="badge-circle" d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0" />
         </defs>
         <text className="fill-white font-display text-[9.5px] font-bold uppercase tracking-[0.2em]">
-          <textPath href="#badge-circle">Request a quote • iMet Machinery •</textPath>
+          <textPath href="#badge-circle">Request a quote • Machinmate •</textPath>
         </text>
       </svg>
       <span className="flex size-12 items-center justify-center rounded-full bg-orange text-white">
@@ -107,7 +107,7 @@ export default function HomePage() {
     <>
       {/* HERO */}
       <section className="relative isolate overflow-hidden bg-navy text-white">
-        {/* PLACEHOLDER: add an iMet factory or machinery photo at /public/images/home/hero.jpg.
+        {/* PLACEHOLDER: add an Machinmate factory or machinery photo at /public/images/home/hero.jpg.
             The section is designed to look complete without it. */}
         <div
           aria-hidden="true"
@@ -121,7 +121,7 @@ export default function HomePage() {
           aria-hidden="true"
           className="pointer-events-none absolute -bottom-[0.18em] -right-[0.04em] -z-10 select-none font-display text-[clamp(9rem,30vw,26rem)] font-black leading-none text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.1)]"
         >
-          iMet
+          Machinmate
         </span>
 
         <Container className="grid items-center gap-14 pb-16 pt-16 sm:pt-20 lg:grid-cols-[1.25fr_0.75fr] lg:gap-16 lg:pb-24 lg:pt-28">
@@ -227,12 +227,12 @@ export default function HomePage() {
       <section aria-labelledby="why-title" className="py-20 lg:py-28">
         <Container className="grid gap-12 lg:grid-cols-2 lg:gap-20">
           <Reveal className="lg:sticky lg:top-32 lg:self-start">
-            <Eyebrow>Why iMet</Eyebrow>
+            <Eyebrow>Why Machinmate</Eyebrow>
             <h2 id="why-title" className="mt-4 font-display text-3xl font-extrabold leading-[1.05] tracking-tight text-navy sm:text-4xl lg:text-5xl">
               Built for the way industrial equipment is bought.
             </h2>
             <p className="mt-5 max-w-md text-base leading-7 text-slate-600">
-              Machinery purchases are large, technical and rarely off the shelf. iMet
+              Machinery purchases are large, technical and rarely off the shelf. Machinmate
               keeps the details visible and the negotiation private.
             </p>
             <PrimaryButton className="mt-8" />
@@ -323,7 +323,7 @@ export default function HomePage() {
           <Reveal>
             <Eyebrow dark>Ready when you are</Eyebrow>
             <h2 id="closing-title" className="mt-4 max-w-3xl font-display text-4xl font-extrabold leading-[1.02] tracking-tight text-white sm:text-5xl lg:text-6xl">
-              Find your next machine on iMet.
+              Find your next machine on Machinmate.
             </h2>
             <div className="mt-9 flex flex-wrap gap-4">
               <PrimaryButton />

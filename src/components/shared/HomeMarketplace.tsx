@@ -200,7 +200,7 @@ export async function HomeSuppliers() {
         <SectionHeading
           eyebrow="Supplier network"
           title="Meet active suppliers & manufacturers"
-          description="Approved businesses with current marketplace subscriptions. Private contact details stay protected by iMet."
+          description="Approved businesses with current marketplace subscriptions. Private contact details stay protected by Machinmate."
           href="/suppliers"
           label="All suppliers"
         />
@@ -334,8 +334,8 @@ export async function HomePlans() {
       <Container>
         <SectionHeading
           eyebrow="For suppliers & manufacturers"
-          title="List your machinery on iMet"
-          description="Plans are set by iMet administrators. Activate through verified SSLCOMMERZ checkout or an audited administrator action. Buyers never need a subscription."
+          title="List your machinery on Machinmate"
+          description="Plans are set by Machinmate administrators. Activate through verified SSLCOMMERZ checkout or an audited administrator action. Buyers never need a subscription."
           href="/dashboard/supplier"
           label="Become a supplier"
         />

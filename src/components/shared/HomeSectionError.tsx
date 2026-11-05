@@ -9,7 +9,7 @@ export default function HomeSectionError({ label }: { label: string }) {
     <div role="alert" className="surface p-5">
       <p className="text-sm text-slate-600">
         {label} is temporarily unavailable. You can still explore the rest of
-        iMet.
+        Machinmate.
       </p>
       <Button
         className="mt-3"

@@ -27,7 +27,7 @@ export default function VerifyEmail({ token }: { token?: string }) {
       <p className="eyebrow">Account verification</p>
       <h1 className="text-2xl font-bold">Verify your email</h1>
       <p className="text-sm text-slate-600">
-        Confirm your email address to access your iMet account.
+        Confirm your email address to access your Machinmate account.
       </p>
       {invalidLink && (
         <p role="alert">

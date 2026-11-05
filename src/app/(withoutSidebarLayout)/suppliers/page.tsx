@@ -7,7 +7,7 @@ import { BadgeCheck, MapPin } from 'lucide-react';
 import { z } from 'zod';
 import { supplierApi } from '@/lib/api/supplier.service';
 import MachineImage from '@/components/cards/MachineImage';
-export const metadata = { title: 'Suppliers | iMet Machinery' };
+export const metadata = { title: 'Suppliers | Machinmate' };
 export default async function Page({
   searchParams,
 }: {

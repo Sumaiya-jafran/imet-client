@@ -12,7 +12,7 @@ import { z } from 'zod';
 import { catalogueApi } from '@/lib/api/catalogue.service';
 import MachineCard from '@/components/cards/MachineCard';
 export const metadata = {
-  title: 'Machinery catalogue | iMet Machinery',
+  title: 'Machinery catalogue | Machinmate',
   description:
     'Explore industrial machinery and technical specifications. Prices available on request.',
 };

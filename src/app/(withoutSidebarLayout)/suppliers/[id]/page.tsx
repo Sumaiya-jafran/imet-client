@@ -75,7 +75,7 @@ export default async function Page({
             Browse this supplier’s machinery
           </Link>
           <p className="mt-4 text-sm text-slate-600">
-            Private contact details are managed through iMet.
+            Private contact details are managed through Machinmate.
           </p>
         </section>
       </div>

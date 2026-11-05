@@ -155,7 +155,7 @@ export default function SupplierOnboarding() {
                 A payment needs administrator review
               </h2>
               <p className="my-2 text-sm">
-                Contact iMet before making another payment.
+                Contact Machinmate before making another payment.
               </p>
               <Link
                 className="font-semibold text-orange"
@@ -169,7 +169,7 @@ export default function SupplierOnboarding() {
             <>
               {!data.onlineAvailable && (
                 <p role="status" className="surface p-4">
-                  Online activation is currently unavailable. Contact iMet for
+                  Online activation is currently unavailable. Contact Machinmate for
                   manual activation.
                 </p>
               )}
@@ -238,7 +238,7 @@ export default function SupplierOnboarding() {
                     {(!data.currencies.includes(plan.currency) ||
                       Number(plan.price) <= 0) && (
                       <p className="text-xs text-slate-500">
-                        Contact iMet for manual activation of this plan.
+                        Contact Machinmate for manual activation of this plan.
                       </p>
                     )}
                   </section>
@@ -246,7 +246,7 @@ export default function SupplierOnboarding() {
               </div>
               {!data.plans.length && (
                 <p className="surface p-5">
-                  No active plans match your supplier type. Contact iMet.
+                  No active plans match your supplier type. Contact Machinmate.
                 </p>
               )}
             </>

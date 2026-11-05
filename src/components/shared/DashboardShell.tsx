@@ -11,6 +11,7 @@ import {
   X,
 } from 'lucide-react';
 import SignOutButton from './SignOutButton';
+import PrimaryNavigation from './PrimaryNavigation';
 import LanguageSelector from './LanguageSelector';
 import type { CurrentUser } from '@/types/auth';
 import { findActive, navGroups } from '@/config/dashboard-nav';
@@ -41,7 +42,7 @@ export default function DashboardShell({
       <Link
         prefetch={false}
         href="/"
-        aria-label="iMet Machinery home"
+        aria-label="Machinmate home"
         className={cn(
           'mb-6 flex h-12 shrink-0 items-center gap-3 px-2 font-display text-xl font-extrabold text-white',
           compact && 'justify-center px-0',
@@ -52,8 +53,8 @@ export default function DashboardShell({
         </span>
         {!compact && (
           <span>
-            iMet
-            <span className="ml-2 font-sans text-xs font-medium text-slate-400">Workspace</span>
+            Machinmate
+            <span className="block font-sans text-xs font-medium text-slate-400">Workspace</span>
           </span>
         )}
       </Link>
@@ -151,7 +152,7 @@ export default function DashboardShell({
       </aside>
 
       <div className="min-w-0 flex-1">
-        <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+        <header className="border-b border-slate-200 bg-white/95 backdrop-blur">
           <div className="flex min-h-16 items-center gap-3 px-4 sm:px-6 lg:px-8">
             <button
               ref={trigger}
@@ -198,6 +199,7 @@ export default function DashboardShell({
               </Link>
             </div>
           </div>
+          <PrimaryNavigation roles={user.roles} />
         </header>
 
         <main

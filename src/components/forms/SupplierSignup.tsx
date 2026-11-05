@@ -196,7 +196,7 @@ export default function SupplierSignup({
               </label>
               {plans?.length === 0 && (
                 <p role="status">
-                  No active plans are available. Contact iMet to arrange
+                  No active plans are available. Contact Machinmate to arrange
                   supplier onboarding.
                 </p>
               )}

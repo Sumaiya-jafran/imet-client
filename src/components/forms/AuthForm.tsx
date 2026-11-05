@@ -152,7 +152,7 @@ export default function AuthForm({
     mode === 'reset-password' && !/^[a-f0-9]{64}$/.test(token || '');
   return (
     <section className="surface mx-auto max-w-md p-6 sm:p-8">
-      <p className="eyebrow mb-3">iMet account</p>
+      <p className="eyebrow mb-3">Machinmate account</p>
       <h1 className="text-2xl font-bold text-navy">{titles[mode]}</h1>
       <p className="mt-2 text-sm leading-6 text-slate-500">
         {mode === 'signin'

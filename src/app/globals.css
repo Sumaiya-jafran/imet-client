@@ -253,3 +253,108 @@
 :lang(zh) {
   letter-spacing: normal;
 }
+
+/* One primary navigation moves between a reserved top row and the bottom dock. */
+:root {
+  --dock-space: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+}
+html {
+  scroll-padding-bottom: var(--dock-space);
+}
+body {
+  padding-bottom: var(--dock-space);
+}
+.primary-nav-slot {
+  height: 0;
+}
+.primary-nav {
+  position: fixed;
+  z-index: 50;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 6px max(4px, env(safe-area-inset-right, 0px))
+    calc(6px + env(safe-area-inset-bottom, 0px))
+    max(4px, env(safe-area-inset-left, 0px));
+  border-top: 1px solid #cbd2d7;
+  background: white;
+  box-shadow: 0 -4px 20px #192b3510;
+  transition:
+    background-color 180ms,
+    box-shadow 180ms;
+}
+.primary-nav-item {
+  display: flex;
+  min-height: 56px;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border-radius: 6px;
+  color: #374b57;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.primary-nav-item:hover {
+  background: #f3f5f6;
+  color: #873a1c;
+}
+.primary-nav-active {
+  background: #fff1e8;
+  color: #873a1c;
+}
+.primary-nav-unavailable {
+  color: #64748b;
+  cursor: default;
+}
+.primary-nav-unavailable:hover {
+  color: #64748b;
+  background: transparent;
+}
+@media (min-width: 640px) {
+  .primary-nav {
+    max-width: 680px;
+    margin-inline: auto;
+  }
+  .primary-nav-item {
+    font-size: 12px;
+  }
+}
+@media (min-width: 1024px) {
+  .primary-nav-slot {
+    height: 64px;
+  }
+  .primary-nav {
+    position: static;
+    padding: 4px;
+    border: 0;
+    box-shadow: none;
+  }
+  .primary-nav-item {
+    flex-direction: row;
+    gap: 8px;
+  }
+  .primary-nav-slot[data-docked='true'] .primary-nav {
+    position: fixed;
+    bottom: max(16px, env(safe-area-inset-bottom, 0px));
+    border: 1px solid #cbd2d7;
+    border-radius: 12px;
+    box-shadow: 0 6px 24px #192b3526;
+    animation: dock-enter 180ms ease-out;
+  }
+}
+@keyframes dock-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:is(input, select, textarea, button, a) {
+  scroll-margin-bottom: var(--dock-space);
+}

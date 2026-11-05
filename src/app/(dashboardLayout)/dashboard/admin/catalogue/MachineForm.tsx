@@ -333,7 +333,7 @@ export default function MachineForm({
                   className="mt-1 w-full rounded border p-2"
                 >
                   <option value="">
-                    iMet curated catalogue (no supplier owner)
+                    Machinmate curated catalogue (no supplier owner)
                   </option>
                   {machine?.supplier &&
                     !suppliers.some((s) => s.id === machine.supplierId) && (

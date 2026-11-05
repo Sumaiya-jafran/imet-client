@@ -29,7 +29,7 @@ export default function AuthLayout({
               <Factory size={25} strokeWidth={1.5} aria-hidden="true" />
             </span>
             <div>
-              <p className="text-sm font-semibold text-navy">iMet Machinery</p>
+              <p className="text-sm font-semibold text-navy">Machinmate</p>
               <p className="text-xs text-slate-500">
                 Built for buyers, suppliers and manufacturers
               </p>

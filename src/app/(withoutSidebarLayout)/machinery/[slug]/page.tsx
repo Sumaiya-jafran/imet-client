@@ -23,7 +23,7 @@ export async function generateMetadata({
 }) {
   const machine = await getMachine((await params).slug);
   return {
-    title: `${machine.name} | iMet Machinery`,
+    title: `${machine.name} | Machinmate`,
     description: machine.description.slice(0, 160),
   };
 }
