@@ -153,8 +153,8 @@ export default function AuthForm({
   return (
     <section className="surface mx-auto max-w-md p-6 sm:p-8">
       <p className="eyebrow mb-3">Machinmate account</p>
-      <h1 className="text-3xl font-bold text-navy">{titles[mode]}</h1>
-      <p className="mt-2 text-sm leading-6 text-slate-500">
+      <h1 className="text-page font-bold text-primary">{titles[mode]}</h1>
+      <p className="mt-2 text-nav leading-6 text-muted-foreground">
         {mode === 'signin'
           ? 'Welcome back. Sign in to your workspace.'
           : mode === 'signup'
@@ -175,7 +175,7 @@ export default function AuthForm({
           const error = (errors as Record<string, { message?: string }>)[field];
           return (
             <div key={field}>
-              <label htmlFor={field} className="mb-1 block text-sm font-medium">
+              <label htmlFor={field} className="mb-1 block text-nav font-medium">
                 {labels[field]}
               </label>
               <Input
@@ -199,11 +199,11 @@ export default function AuthForm({
                 {...register(field as keyof Values)}
                 aria-invalid={!!error}
                 aria-describedby={error ? `${field}-error` : undefined}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 focus-visible:outline-2 focus-visible:outline-secondary"
+                className="w-full rounded-lg border border-border-strong px-3 py-2 focus-visible:outline-2 focus-visible:outline-secondary"
                 disabled={isSubmitting}
               />
               {error && (
-                <p id={`${field}-error`} className="mt-1 text-sm text-red-700">
+                <p id={`${field}-error`} className="mt-1 text-nav text-danger-foreground">
                   {error.message}
                 </p>
               )}
@@ -211,7 +211,7 @@ export default function AuthForm({
           );
         })}
         {mode !== 'signin' && fields.includes('password') && (
-          <p className="text-sm text-slate-600">
+          <p className="text-nav text-secondary">
             Use at least 12 characters with uppercase and lowercase letters and
             a number.
           </p>
@@ -222,12 +222,12 @@ export default function AuthForm({
           </p>
         )}
         {failure && (
-          <p role="alert" className="text-red-700">
+          <p role="alert" className="text-danger-foreground">
             {failure}
           </p>
         )}
         {message && (
-          <p role="status" className="text-green-800">
+          <p role="status" className="text-success-foreground">
             {message}
           </p>
         )}
@@ -262,7 +262,7 @@ export default function AuthForm({
             {googleBusy ? 'Connecting…' : 'Continue with Google'}
           </Button>
           {!googleEnabled && (
-            <p className="text-xs text-slate-500">
+            <p className="text-meta text-muted-foreground">
               Google Sign-In is temporarily unavailable. You can use email and
               password.
             </p>
@@ -270,7 +270,7 @@ export default function AuthForm({
         </div>
       )}
       <nav
-        className="mt-6 flex flex-wrap gap-x-4 gap-y-2 border-t border-slate-100 pt-5 text-xs font-medium text-secondary"
+        className="mt-6 flex flex-wrap gap-x-4 gap-y-2 border-t border-surface-muted pt-5 text-meta font-medium text-secondary"
         aria-label="Authentication"
       >
         <Link href="/auth/signin">Sign in</Link>

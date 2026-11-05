@@ -7,7 +7,7 @@ export default function HomeSectionError({ label }: { label: string }) {
   const [pending, startTransition] = useTransition();
   return (
     <div role="alert" className="surface p-5">
-      <p className="text-sm text-slate-600">
+      <p className="text-nav text-secondary">
         {label} is temporarily unavailable. You can still explore the rest of
         Machinmate.
       </p>

@@ -35,7 +35,7 @@ export default function SignOutButton() {
         disabled={busy}
         onClick={() => void logout()}
         aria-describedby={error ? 'dashboard-signout-error' : undefined}
-        className="flex min-h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary disabled:cursor-wait disabled:opacity-60"
+        className="flex min-h-10 items-center justify-center gap-2 rounded-lg border border-border bg-surface px-3 text-meta font-semibold text-foreground transition-colors hover:bg-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary disabled:cursor-wait disabled:opacity-60"
       >
         {busy ? (
           <LoaderCircle
@@ -52,7 +52,7 @@ export default function SignOutButton() {
         <p
           id="dashboard-signout-error"
           role="alert"
-          className="absolute right-0 top-full z-50 mt-2 w-60 rounded-lg border border-red-200 bg-white p-3 text-xs text-red-700 shadow-lg"
+          className="absolute right-0 top-full z-50 mt-2 w-60 rounded-lg border border-danger/25 bg-surface p-3 text-meta text-danger-foreground shadow-surface"
         >
           {error}
         </p>

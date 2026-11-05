@@ -40,7 +40,7 @@ export default function SupplierAssetFile({
     };
   }, [token, assetId, attempt]);
   return (
-    <div className="my-2 text-sm">
+    <div className="my-2 text-nav">
       {error ? (
         <p role="status">
           {error}{' '}
@@ -65,7 +65,7 @@ export default function SupplierAssetFile({
           <a
             href={url}
             download={name}
-            className="font-medium text-blue-700 underline"
+            className="font-medium text-info-foreground underline"
           >
             Download {name}
           </a>

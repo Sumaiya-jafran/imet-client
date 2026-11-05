@@ -127,7 +127,7 @@ export default function TranslatedText({
             current?.data?.status ?? '',
           )) && (
           <small
-            className="mt-2 block text-xs font-normal text-slate-500"
+            className="mt-2 block text-meta font-normal text-muted-foreground"
             role="status"
           >
             Translation unavailable. Showing original text.

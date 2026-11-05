@@ -35,7 +35,7 @@ export default async function MachinePage({
   const machine = await getMachine((await params).slug);
   return (
     <article className="min-w-0">
-      <Link href="/machinery" className="secondary-link text-sm">
+      <Link href="/machinery" className="secondary-link text-nav">
         Back to catalogue
       </Link>
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
@@ -59,36 +59,36 @@ export default async function MachinePage({
           )}
 
           <Link
-            className="break-words text-sm text-secondary underline"
+            className="break-words text-nav text-secondary underline"
             href={`/machinery?category=${machine.category.slug}`}
           >
             {machine.category.name}
           </Link>
-          <h1 className="mt-3 break-words text-3xl font-bold sm:text-4xl text-navy">
+          <h1 className="mt-3 break-words text-page font-bold sm:text-page text-primary">
             <TranslatedText
               resource={{ type: 'MACHINERY', id: machine.id, field: 'NAME' }}
               original={machine.name}
             />
           </h1>
-          <dl className="mt-6 grid grid-cols-2 gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+          <dl className="mt-6 grid grid-cols-2 gap-4 rounded-lg border border-border bg-background p-4">
             <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">
+              <dt className="text-meta font-medium uppercase tracking-wide text-muted-foreground">
                 Manufacturer
               </dt>
-              <dd className="break-words text-slate-600">
+              <dd className="break-words text-secondary">
                 {machine.manufacturer}
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">
+              <dt className="text-meta font-medium uppercase tracking-wide text-muted-foreground">
                 Model
               </dt>
-              <dd className="break-words text-slate-600">{machine.model}</dd>
+              <dd className="break-words text-secondary">{machine.model}</dd>
             </div>
           </dl>
-          <div className="mt-6 rounded-lg border border-orange/15 bg-orange/5 p-4">
-            <h2 className="text-lg font-semibold">Price on request</h2>
-            <p className="mt-2 text-slate-600">
+          <div className="mt-6 rounded-lg border border-accent/15 bg-accent/5 p-4">
+            <h2 className="text-card font-semibold">Price on request</h2>
+            <p className="mt-2 text-secondary">
               Send your requirements to receive private supplier quotes.
             </p>
             <Link
@@ -101,8 +101,8 @@ export default async function MachinePage({
         </section>
       </div>
       <section className="surface mt-6 p-5 sm:p-7">
-        <h2 className="text-lg font-semibold text-navy">About this machine</h2>
-        <p className="mt-4 whitespace-pre-wrap break-words leading-7 text-slate-600">
+        <h2 className="text-card font-semibold text-primary">About this machine</h2>
+        <p className="mt-4 whitespace-pre-wrap break-words leading-7 text-secondary">
           <TranslatedText
             resource={{
               type: 'MACHINERY',
@@ -115,15 +115,15 @@ export default async function MachinePage({
         </p>
       </section>
       <section className="surface mt-6 p-5 sm:p-7">
-        <h2 className="text-lg font-semibold text-navy">
+        <h2 className="text-card font-semibold text-primary">
           Technical specifications
         </h2>
         {machine.specifications.length ? (
-          <dl className="mt-4 divide-y divide-slate-200 rounded-xl border border-slate-200">
+          <dl className="mt-4 divide-y divide-border rounded-xl border border-border">
             {machine.specifications.map((spec) => (
               <div
                 key={spec.id}
-                className="grid gap-2 bg-white px-4 py-3 odd:bg-slate-50 sm:grid-cols-2"
+                className="grid gap-2 bg-surface px-4 py-3 odd:bg-background sm:grid-cols-2"
               >
                 <dt className="break-words font-medium">
                   <TranslatedText
@@ -135,19 +135,19 @@ export default async function MachinePage({
                     original={spec.label}
                   />
                 </dt>
-                <dd className="break-words text-slate-600">{spec.value}</dd>
+                <dd className="break-words text-secondary">{spec.value}</dd>
               </div>
             ))}
           </dl>
         ) : (
-          <p className="mt-4 text-slate-600">
+          <p className="mt-4 text-secondary">
             Technical specifications have not been provided.
           </p>
         )}
       </section>
       <section className="surface mt-6 p-5">
         <h2 className="font-semibold">Need after-sales service?</h2>
-        <p className="mt-2 text-sm text-slate-600">
+        <p className="mt-2 text-nav text-secondary">
           Submit a service request for your completed purchase of this
           machinery.
         </p>

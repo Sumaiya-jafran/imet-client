@@ -61,16 +61,16 @@ export default function PurchaseReviews({ saleId }: { saleId: string }) {
     <section className="surface space-y-5 p-5">
       <div>
         <p className="eyebrow">Verified purchase feedback</p>
-        <h2 className="mt-2 text-lg font-semibold">
+        <h2 className="mt-2 text-card font-semibold">
           Review your completed purchase
         </h2>
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="mt-2 text-nav text-muted-foreground">
           Rate the winning supplier and linked machinery. Buyers need no
           subscription.
         </p>
       </div>
       {error && (
-        <div role="alert" className="text-sm text-red-700">
+        <div role="alert" className="text-nav text-danger-foreground">
           {error}
           <Button variant="secondary" onClick={() => setRevision((n) => n + 1)}>
             Reload reviews
@@ -78,14 +78,14 @@ export default function PurchaseReviews({ saleId }: { saleId: string }) {
         </div>
       )}
       {notice && (
-        <p role="status" className="text-sm text-emerald-800">
+        <p role="status" className="text-nav text-success-foreground">
           {notice}
         </p>
       )}
       {!data && !error && <LoadingState label="Loading review eligibility…" />}
       {data && !data.eligible && <p>{data.reason}</p>}
       {data?.eligible && !data.targets.length && (
-        <p className="text-sm text-slate-500">
+        <p className="text-nav text-muted-foreground">
           This sale has no supplier profile or linked machinery available for
           review.
         </p>
@@ -105,7 +105,7 @@ export default function PurchaseReviews({ saleId }: { saleId: string }) {
           return (
             <article
               key={target.target}
-              className="min-w-0 rounded-lg border border-slate-200 p-4"
+              className="min-w-0 rounded-lg border border-border p-4"
             >
               <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <h3 className="break-words font-semibold">
@@ -117,11 +117,11 @@ export default function PurchaseReviews({ saleId }: { saleId: string }) {
               {existing && !editing && (
                 <>
                   <RatingStars rating={existing.rating} />
-                  <p className="mt-3 whitespace-pre-wrap break-words text-sm">
+                  <p className="mt-3 whitespace-pre-wrap break-words text-nav">
                     {existing.body}
                   </p>
                   {existing.moderationNote && (
-                    <p className="mt-3 text-sm text-amber-900">
+                    <p className="mt-3 text-nav text-warning-foreground">
                       Moderator feedback: {existing.moderationNote}
                     </p>
                   )}

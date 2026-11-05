@@ -30,7 +30,7 @@ export default function SalesNotesForm({
       <label htmlFor="sales-internal-notes" className="block font-semibold">
         Internal sales notes
       </label>
-      <p id="sales-notes-help" className="text-xs text-slate-500">
+      <p id="sales-notes-help" className="text-meta text-muted-foreground">
         Private to the assigned recipient and administrators. Buyers cannot see
         these notes.
       </p>
@@ -44,7 +44,7 @@ export default function SalesNotesForm({
         aria-invalid={!!errors.internalNotes}
         aria-describedby="sales-notes-help sales-notes-error"
       />
-      <p id="sales-notes-error" className="text-xs text-red-700">
+      <p id="sales-notes-error" className="text-meta text-danger-foreground">
         {errors.internalNotes?.message}
       </p>
       <Button type="submit" disabled={busy || isSubmitting || readOnly}>

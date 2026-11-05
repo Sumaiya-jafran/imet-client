@@ -120,7 +120,7 @@ export default function TranslationWorkspace() {
         description="Prepare English, Bangla and Chinese versions of public marketplace content. Originals and technical values stay unchanged."
       />
       {data && !data.providerConfigured && (
-        <div className="surface border-amber-200 p-4 text-sm text-amber-900">
+        <div className="surface border-warning/25 p-4 text-nav text-warning-foreground">
           OpenAI is not configured on the server. Add AI_TRANSLATION_API_KEY
           securely in environment settings. Existing cached translations and
           original content remain readable.
@@ -168,7 +168,7 @@ export default function TranslationWorkspace() {
       </form>
       {error && (
         <div role="alert" className="surface space-y-3 p-4">
-          <p className="break-words text-sm text-red-700">{error}</p>
+          <p className="break-words text-nav text-danger-foreground">{error}</p>
           <Button
             variant="secondary"
             disabled={busy}
@@ -183,7 +183,7 @@ export default function TranslationWorkspace() {
         </div>
       )}
       {notice && (
-        <p role="status" className="text-sm text-emerald-800">
+        <p role="status" className="text-nav text-success-foreground">
           {notice}
         </p>
       )}
@@ -195,7 +195,7 @@ export default function TranslationWorkspace() {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {data.resources.map((r) => (
                 <article className="surface min-w-0 p-4" key={r.id}>
-                  <p className="break-words text-sm font-semibold">{r.title}</p>
+                  <p className="break-words text-nav font-semibold">{r.title}</p>
                   <Button
                     className="mt-3"
                     variant="secondary"
@@ -230,7 +230,7 @@ export default function TranslationWorkspace() {
                 >
                   Previous
                 </Button>
-                <span className="text-sm">
+                <span className="text-nav">
                   Page {data.pagination.page} of {data.pagination.totalPages}
                 </span>
                 <Button
@@ -258,7 +258,7 @@ export default function TranslationWorkspace() {
           aria-label="Selected content translations"
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="break-words text-lg font-semibold">
+            <h2 className="break-words text-card font-semibold">
               {selected.title}
             </h2>
             <Button

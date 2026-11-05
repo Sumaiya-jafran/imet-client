@@ -15,7 +15,7 @@ const PasswordInput = forwardRef<
         disabled={disabled}
         type={visible ? 'text' : 'password'}
         className={cn(
-          'w-full rounded-lg border border-slate-300 px-3 py-2 pr-12 focus-visible:outline-2 focus-visible:outline-secondary',
+          'w-full rounded-lg border border-border-strong px-3 py-2 pr-12 focus-visible:outline-2 focus-visible:outline-secondary',
           className,
         )}
       />
@@ -26,7 +26,7 @@ const PasswordInput = forwardRef<
         aria-controls={props.id}
         aria-pressed={visible}
         onClick={() => setVisible((value) => !value)}
-        className="absolute right-1 top-1 flex size-9 items-center justify-center rounded text-slate-600 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-secondary"
+        className="absolute right-1 top-1 flex size-9 items-center justify-center rounded text-secondary hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-secondary"
       >
         {visible ? (
           <EyeOff size={18} aria-hidden="true" />

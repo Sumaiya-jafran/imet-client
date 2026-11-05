@@ -14,7 +14,7 @@ export default function RatingStars({ rating }: { rating: number }) {
           className={
             star <= Math.round(rating)
               ? 'fill-warning text-warning'
-              : 'text-slate-300'
+              : 'text-border-strong'
           }
         />
       ))}

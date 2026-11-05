@@ -134,14 +134,14 @@ export default function MachineryMediaManagement({
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-semibold">3D & 360° media</h2>
-          <p className="break-words text-sm text-slate-600">{name}</p>
+          <h2 className="text-section font-semibold">3D & 360° media</h2>
+          <p className="break-words text-nav text-secondary">{name}</p>
         </div>
         <Button variant="secondary" disabled={busy} onClick={onClose}>
           Back to machines
         </Button>
       </div>
-      <p className="text-sm text-slate-600">
+      <p className="text-nav text-secondary">
         Up to 5 advanced assets. Upload self-contained static GLB 2.0 models (25
         MB) or 2:1 JPEG/PNG panoramas (10 MB, up to 8192×4096). Models must
         embed all textures and use no compression extensions. Existing machinery
@@ -151,7 +151,7 @@ export default function MachineryMediaManagement({
       {error && (
         <div
           role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+          className="rounded-lg border border-danger/25 bg-danger/5 p-3 text-nav text-danger-foreground"
         >
           {error}
           <Button
@@ -166,7 +166,7 @@ export default function MachineryMediaManagement({
         </div>
       )}
       {notice && (
-        <p role="status" className="text-sm text-emerald-800">
+        <p role="status" className="text-nav text-success-foreground">
           {notice}
         </p>
       )}
@@ -178,7 +178,7 @@ export default function MachineryMediaManagement({
             {!data.configured && (
               <p
                 role="status"
-                className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900"
+                className="rounded-lg border border-warning/25 bg-warning/5 p-3 text-nav text-warning-foreground"
               >
                 Bunny Storage is not configured on the backend. Add the storage
                 zone and access key securely in environment settings to enable
@@ -187,12 +187,12 @@ export default function MachineryMediaManagement({
             )}
             <form
               onSubmit={upload}
-              className="grid items-end gap-3 rounded-lg bg-slate-50 p-4 sm:grid-cols-2"
+              className="grid items-end gap-3 rounded-lg bg-background p-4 sm:grid-cols-2"
             >
               <div>
                 <label
                   htmlFor="media-type"
-                  className="block text-sm font-medium"
+                  className="block text-nav font-medium"
                 >
                   Media type
                 </label>
@@ -208,7 +208,7 @@ export default function MachineryMediaManagement({
               <div>
                 <label
                   htmlFor="media-title"
-                  className="block text-sm font-medium"
+                  className="block text-nav font-medium"
                 >
                   Media title
                 </label>
@@ -223,7 +223,7 @@ export default function MachineryMediaManagement({
               <div>
                 <label
                   htmlFor="media-file"
-                  className="block text-sm font-medium"
+                  className="block text-nav font-medium"
                 >
                   Media file
                 </label>
@@ -233,7 +233,7 @@ export default function MachineryMediaManagement({
                   type="file"
                   accept=".glb,.jpg,.jpeg,.png"
                   required
-                  className="mt-1 w-full text-sm"
+                  className="mt-1 w-full text-nav"
                 />
               </div>
               <Button
@@ -251,7 +251,7 @@ export default function MachineryMediaManagement({
                 >
                   <div className="min-w-0">
                     <h3 className="break-words font-semibold">{item.title}</h3>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-nav text-secondary">
                       {item.type === 'MODEL_3D' ? '3D model' : '360° panorama'}{' '}
                       · {(item.fileSize / (1024 * 1024)).toFixed(1)} MB
                       {item.state === 'DELETING'

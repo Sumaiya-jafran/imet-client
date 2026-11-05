@@ -12,10 +12,10 @@ export default function Button({
   const variants = {
     primary:
       'border-transparent bg-accent text-foreground hover:bg-accent-hover',
-    secondary: 'border-slate-300 bg-white text-navy hover:border-navy',
-    danger: 'border-red-200 bg-red-50 text-red-800 hover:bg-red-100',
+    secondary: 'border-border-strong bg-surface text-primary hover:border-primary',
+    danger: 'border-danger/25 bg-danger/5 text-danger-foreground hover:bg-danger/10',
     ghost:
-      'border-transparent bg-transparent text-slate-600 hover:bg-slate-100',
+      'border-transparent bg-transparent text-secondary hover:bg-surface-muted',
   };
   return (
     <button

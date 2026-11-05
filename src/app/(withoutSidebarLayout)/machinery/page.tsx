@@ -84,7 +84,7 @@ export default async function CataloguePage({
         title="Machinery catalogue"
         description="Find equipment for your next production line. Explore specifications and request a private quote."
         actions={
-          <span className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-navy">
+          <span className="rounded-full border border-border bg-surface px-3 py-2 text-meta font-medium text-primary">
             Industrial equipment · Price on request
           </span>
         }
@@ -94,7 +94,7 @@ export default async function CataloguePage({
         className="filter-bar my-6 grid gap-4 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_auto]"
       >
         {supplier && <input type="hidden" name="supplier" value={supplier} />}
-        <label className="min-w-0 text-sm font-medium">
+        <label className="min-w-0 text-nav font-medium">
           <span className="flex items-center gap-2">
             <Search size={15} aria-hidden="true" /> Search machinery
           </span>
@@ -104,10 +104,10 @@ export default async function CataloguePage({
             maxLength={100}
             defaultValue={q}
             placeholder="Name, manufacturer or model"
-            className="mt-2 w-full rounded border border-slate-300 bg-white p-3"
+            className="mt-2 w-full rounded border border-border-strong bg-surface p-3"
           />
         </label>
-        <label className="min-w-0 text-sm font-medium">
+        <label className="min-w-0 text-nav font-medium">
           <span className="flex items-center gap-2">
             <SlidersHorizontal size={15} aria-hidden="true" /> Category
           </span>
@@ -115,7 +115,7 @@ export default async function CataloguePage({
             name="category"
             disabled={categoriesUnavailable}
             defaultValue={category || ''}
-            className="mt-2 w-full rounded border border-slate-300 bg-white p-3"
+            className="mt-2 w-full rounded border border-border-strong bg-surface p-3"
           >
             <option value="">All categories</option>
             {category && !categories.some((c) => c.slug === category) && (
@@ -136,7 +136,7 @@ export default async function CataloguePage({
       {categoriesUnavailable && (
         <p
           role="status"
-          className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900"
+          className="mb-4 rounded-lg border border-warning/25 bg-warning/5 p-3 text-nav text-warning-foreground"
         >
           Category filters could not load. You can still search machinery.{' '}
           <Link className="font-semibold underline" href={href(page)}>
@@ -163,7 +163,7 @@ export default async function CataloguePage({
                 key={item.key}
                 href={removeFilter(item.key)}
                 aria-label={`Remove ${item.label}`}
-                className="flex max-w-full items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700 hover:border-slate-400"
+                className="flex max-w-full items-center gap-2 rounded-full border border-border bg-surface px-3 py-2 text-meta text-foreground hover:border-subtle"
               >
                 <span className="break-words [overflow-wrap:anywhere]">
                   {item.label}
@@ -173,9 +173,9 @@ export default async function CataloguePage({
             ))}
         </div>
       )}
-      <div className="mb-5 flex flex-wrap justify-between gap-3 text-xs text-slate-600">
+      <div className="mb-5 flex flex-wrap justify-between gap-3 text-meta text-secondary">
         <p role="status">
-          <span className="font-semibold text-navy">
+          <span className="font-semibold text-primary">
             {result.pagination.total}{' '}
             {result.pagination.total === 1 ? 'machine' : 'machines'}
           </span>
@@ -219,14 +219,14 @@ export default async function CataloguePage({
       {result.pagination.totalPages > 0 && !outOfRange && (
         <nav
           aria-label="Catalogue pagination"
-          className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-5 text-sm"
+          className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5 text-nav"
         >
           {page > 1 && (
             <Link className="secondary-link" rel="prev" href={href(page - 1)}>
               <ArrowLeft size={15} aria-hidden="true" /> Previous
             </Link>
           )}
-          <span className="text-xs text-slate-600">
+          <span className="text-meta text-secondary">
             Page {page} of {result.pagination.totalPages}
           </span>
           {page < result.pagination.totalPages && (

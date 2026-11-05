@@ -165,7 +165,7 @@ export default function RfqForm({
     >
       {error && (
         <div role="alert">
-          <p className="text-red-700">{error}</p>
+          <p className="text-danger-foreground">{error}</p>
           <Button
             variant="secondary"
             onClick={() => {
@@ -177,7 +177,7 @@ export default function RfqForm({
           </Button>
         </div>
       )}
-      <p className="text-sm text-slate-500">
+      <p className="text-nav text-muted-foreground">
         Save a draft first. You can review details and add private attachments
         before submitting. Your budget is visible only to you and
         administrators.
@@ -286,7 +286,7 @@ export default function RfqForm({
               />
             )}{' '}
             {errors[key] && (
-              <p id={`rfq-${key}-error`} className="mt-1 text-xs text-red-700">
+              <p id={`rfq-${key}-error`} className="mt-1 text-meta text-danger-foreground">
                 {errors[key]?.message}
               </p>
             )}
@@ -300,7 +300,7 @@ export default function RfqForm({
             <option value="zh">Chinese</option>
           </select>
         </label>
-        <div className="flex flex-wrap gap-2 border-t border-slate-200 pt-4 md:col-span-2">
+        <div className="flex flex-wrap gap-2 border-t border-border pt-4 md:col-span-2">
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Saving…' : 'Save RFQ draft'}
           </Button>

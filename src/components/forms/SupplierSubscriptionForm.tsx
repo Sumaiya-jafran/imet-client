@@ -108,8 +108,8 @@ export default function SupplierSubscriptionForm({
   };
   return (
     <section className="surface p-5">
-      <h2 className="text-2xl font-semibold">Manual subscription management</h2>
-      <p className="my-3 text-sm text-slate-600">
+      <h2 className="text-section font-semibold">Manual subscription management</h2>
+      <p className="my-3 text-nav text-secondary">
         No payment is processed. Assign or renew using current plan terms, or
         extend/suspend/cancel the current term while keeping its assigned
         limits. Dates use your local timezone; the backend stores UTC.
@@ -117,9 +117,9 @@ export default function SupplierSubscriptionForm({
       {supplier.subscriptions.map((term) => (
         <div
           key={term.id}
-          className="my-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4"
+          className="my-3 rounded-lg border border-border bg-background/60 p-4"
         >
-          <p className="text-xs text-slate-500">
+          <p className="text-meta text-muted-foreground">
             RFQ leads: {term.rfqEnabled ? 'Enabled' : 'Disabled'} · Monthly cap:{' '}
             {term.leadLimitPerMonth ?? 'Unlimited'} · Contact reveal:{' '}
             {term.canRevealContacts ? 'Allowed after acceptance' : 'Disabled'}
@@ -169,7 +169,7 @@ export default function SupplierSubscriptionForm({
         )}
       </div>
       {error && (
-        <p role="alert" className="mb-3 text-red-700">
+        <p role="alert" className="mb-3 text-danger-foreground">
           {error}
         </p>
       )}
@@ -204,7 +204,7 @@ export default function SupplierSubscriptionForm({
                 ))}
               </select>
               {fieldErrors.planId && (
-                <p id="term-plan-error" className="text-sm text-red-700">
+                <p id="term-plan-error" className="text-nav text-danger-foreground">
                   {fieldErrors.planId}
                 </p>
               )}
@@ -224,7 +224,7 @@ export default function SupplierSubscriptionForm({
             />
           </label>
           {fieldErrors.startsAt && (
-            <p id="term-start-error" className="text-sm text-red-700">
+            <p id="term-start-error" className="text-nav text-danger-foreground">
               {fieldErrors.startsAt}
             </p>
           )}
@@ -242,7 +242,7 @@ export default function SupplierSubscriptionForm({
             />
           </label>
           {fieldErrors.endsAt && (
-            <p id="term-end-error" className="text-sm text-red-700">
+            <p id="term-end-error" className="text-nav text-danger-foreground">
               {fieldErrors.endsAt}
             </p>
           )}

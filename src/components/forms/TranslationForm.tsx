@@ -48,8 +48,8 @@ export default function TranslationForm({
             ? 'Specification label'
             : field.resource.field.toLowerCase()}
         </p>
-        <h2 className="mt-2 text-sm font-semibold">Original content</h2>
-        <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6">
+        <h2 className="mt-2 text-nav font-semibold">Original content</h2>
+        <p className="mt-2 whitespace-pre-wrap break-words text-nav leading-6">
           {field.original}
         </p>
       </div>
@@ -57,9 +57,9 @@ export default function TranslationForm({
         {field.translations.map((t) => (
           <div
             key={t.targetLanguage}
-            className="min-w-0 rounded-lg border border-slate-200 p-3"
+            className="min-w-0 rounded-lg border border-border p-3"
           >
-            <div className="flex flex-wrap items-center gap-2 text-xs">
+            <div className="flex flex-wrap items-center gap-2 text-meta">
               <span lang={t.targetLanguage}>
                 {languages.find((l) => l.code === t.targetLanguage)?.label}
               </span>
@@ -67,7 +67,7 @@ export default function TranslationForm({
                 {t.status}
               </Badge>
               {t.sourceLanguage && (
-                <span className="text-slate-500">
+                <span className="text-muted-foreground">
                   Source: {t.sourceLanguage}
                 </span>
               )}
@@ -75,13 +75,13 @@ export default function TranslationForm({
             {t.text && (
               <p
                 lang={t.targetLanguage}
-                className="mt-2 whitespace-pre-wrap break-words text-sm leading-6"
+                className="mt-2 whitespace-pre-wrap break-words text-nav leading-6"
               >
                 {t.text}
               </p>
             )}
             {t.status === 'STALE' && (
-              <p className="mt-2 text-xs text-slate-500">
+              <p className="mt-2 text-meta text-muted-foreground">
                 Original content changed. Generate a current translation.
               </p>
             )}
@@ -94,7 +94,7 @@ export default function TranslationForm({
         )}
         className="grid grid-cols-1 items-end gap-3 sm:grid-cols-2"
       >
-        <div className="text-xs font-semibold">
+        <div className="text-meta font-semibold">
           <label htmlFor={`source-${controlId}`}>Original language</label>
           <select
             id={`source-${controlId}`}
@@ -112,12 +112,12 @@ export default function TranslationForm({
             ))}
           </select>
           {errors.source && (
-            <span role="alert" className="text-red-700">
+            <span role="alert" className="text-danger-foreground">
               {errors.source.message}
             </span>
           )}
         </div>
-        <div className="text-xs font-semibold">
+        <div className="text-meta font-semibold">
           <label htmlFor={`target-${controlId}`}>Translate to</label>
           <select
             id={`target-${controlId}`}
@@ -146,13 +146,13 @@ export default function TranslationForm({
             Regenerate / retry
           </Button>
         </div>
-        <p className="text-xs text-slate-500 sm:col-span-2">
+        <p className="text-meta text-muted-foreground sm:col-span-2">
           Select the actual source language; existing content is not assumed to
           be English. Regeneration uses the daily AI allowance. Same-language
           requests return the original without AI.
         </p>
         {field.original.length > maxCharacters && (
-          <p role="status" className="text-xs text-amber-900 sm:col-span-2">
+          <p role="status" className="text-meta text-warning-foreground sm:col-span-2">
             This field exceeds the {maxCharacters}-character translation limit.
             Its original remains available.
           </p>

@@ -140,17 +140,17 @@ export default function AnalyticsWorkspace({
           setQuery(q);
         }}
       >
-        <label className="text-sm font-medium">
+        <label className="text-nav font-medium">
           From date
           <input name="from" type="date" className="mt-1 w-full" />
         </label>
-        <label className="text-sm font-medium">
+        <label className="text-nav font-medium">
           To date
           <input name="to" type="date" className="mt-1 w-full" />
         </label>
         {audit && (
           <>
-            <label className="text-sm font-medium">
+            <label className="text-nav font-medium">
               Source
               <select aria-label="Source" name="source" className="mt-1 w-full">
                 <option value="">All sources</option>
@@ -159,7 +159,7 @@ export default function AnalyticsWorkspace({
                 ))}
               </select>
             </label>
-            <label className="text-sm font-medium">
+            <label className="text-nav font-medium">
               Action code
               <input
                 name="action"
@@ -169,7 +169,7 @@ export default function AnalyticsWorkspace({
                 className="mt-1 w-full"
               />
             </label>
-            <label className="text-sm font-medium">
+            <label className="text-nav font-medium">
               Resource type
               <select
                 aria-label="Resource type"
@@ -195,7 +195,7 @@ export default function AnalyticsWorkspace({
                 ))}
               </select>
             </label>
-            <label className="text-sm font-medium">
+            <label className="text-nav font-medium">
               Resource ID
               <input
                 name="resourceId"
@@ -204,7 +204,7 @@ export default function AnalyticsWorkspace({
                 className="mt-1 w-full"
               />
             </label>
-            <label className="text-sm font-medium">
+            <label className="text-nav font-medium">
               Actor ID
               <input
                 name="actorId"
@@ -216,7 +216,7 @@ export default function AnalyticsWorkspace({
           </>
         )}
         <Button type="submit">Apply filters</Button>
-        <p className="text-xs leading-5 text-slate-500 sm:col-span-2 xl:col-span-4">
+        <p className="text-meta leading-5 text-muted-foreground sm:col-span-2 xl:col-span-4">
           Asia/Dhaka calendar days · default last 30 days · maximum{' '}
           {audit ? 366 : 90} days
         </p>
@@ -224,7 +224,7 @@ export default function AnalyticsWorkspace({
       {error && (
         <div
           role="alert"
-          className="surface border-red-200 p-4 text-sm text-red-800"
+          className="surface border-danger/25 p-4 text-nav text-danger-foreground"
         >
           {error}{' '}
           <Button
@@ -245,7 +245,7 @@ export default function AnalyticsWorkspace({
           <>
             {!audit && overview && (
               <>
-                <p className="text-xs text-slate-500">
+                <p className="text-meta text-muted-foreground">
                   Current snapshot as of {time(overview.asOf)} (Asia/Dhaka).
                   Includes all stored records, including drafts and inactive
                   accounts.
@@ -257,13 +257,13 @@ export default function AnalyticsWorkspace({
                       className="surface p-4"
                       aria-label={labels[key] ?? key}
                     >
-                      <h2 className="text-sm font-semibold text-slate-600">
+                      <h2 className="text-nav font-semibold text-secondary">
                         {labels[key] ?? key}
                       </h2>
-                      <p className="mt-2 text-3xl font-semibold tracking-tight text-navy">
+                      <p className="mt-2 text-page font-semibold tracking-tight text-primary">
                         {group.total.toLocaleString()}
                       </p>
-                      <dl className="mt-3 space-y-2 text-xs">
+                      <dl className="mt-3 space-y-2 text-meta">
                         {Object.entries(group.counts)
                           .sort(([a], [b]) => a.localeCompare(b))
                           .map(([status, count]) => (
@@ -279,18 +279,18 @@ export default function AnalyticsWorkspace({
                           ))}
                       </dl>
                       {!group.total && (
-                        <p className="mt-3 text-xs text-slate-500">
+                        <p className="mt-3 text-meta text-muted-foreground">
                           No records yet.
                         </p>
                       )}
                       {key === 'userRoles' && (
-                        <p className="mt-3 text-xs text-slate-500">
+                        <p className="mt-3 text-meta text-muted-foreground">
                           Accounts may have multiple roles. This total counts
                           assignments.
                         </p>
                       )}
                       {key.endsWith('Emails') && (
-                        <p className="mt-3 text-xs text-slate-500">
+                        <p className="mt-3 text-meta text-muted-foreground">
                           Sent means accepted by the email provider, not
                           confirmed inbox delivery.
                         </p>
@@ -300,7 +300,7 @@ export default function AnalyticsWorkspace({
                 </div>
                 <section className="surface min-w-0 p-4">
                   <h2 className="font-semibold">Daily creation activity</h2>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-meta text-muted-foreground">
                     {overview.activity.from} to {overview.activity.to} · new
                     records only; status changes are not counted.
                   </p>
@@ -309,7 +309,7 @@ export default function AnalyticsWorkspace({
                     tabIndex={0}
                     aria-label="Daily creation activity table"
                   >
-                    <table className="w-full min-w-[700px] text-left text-xs">
+                    <table className="w-full min-w-[700px] text-left text-meta">
                       <caption className="sr-only">
                         Daily new record counts in Asia/Dhaka
                       </caption>
@@ -329,7 +329,7 @@ export default function AnalyticsWorkspace({
                         {overview.activity.days.map((d) => (
                           <tr
                             key={d.date}
-                            className="border-t border-slate-100"
+                            className="border-t border-surface-muted"
                           >
                             <th
                               scope="row"
@@ -355,7 +355,7 @@ export default function AnalyticsWorkspace({
             )}
             {audit && logs && (
               <>
-                <p className="text-xs text-slate-500">
+                <p className="text-meta text-muted-foreground">
                   {logs.pagination.total.toLocaleString()} events ·{' '}
                   {logs.range.from} to {logs.range.to} · Asia/Dhaka. Historical
                   actor names reflect current accounts.
@@ -370,22 +370,22 @@ export default function AnalyticsWorkspace({
                     {logs.entries.map((entry) => (
                       <li key={entry.id} className="surface min-w-0 p-4">
                         <div className="flex flex-wrap justify-between gap-2">
-                          <h2 className="break-all text-sm font-semibold">
+                          <h2 className="break-all text-nav font-semibold">
                             {humanize(entry.action)}
                           </h2>
                           <time
                             dateTime={entry.createdAt}
-                            className="text-xs text-slate-500"
+                            className="text-meta text-muted-foreground"
                           >
                             {time(entry.createdAt)}
                           </time>
                         </div>
-                        <p className="mt-1 text-xs text-slate-500">
+                        <p className="mt-1 text-meta text-muted-foreground">
                           {entry.source} · {humanize(entry.resourceType)}
                         </p>
-                        <dl className="mt-3 grid min-w-0 gap-2 text-xs sm:grid-cols-2">
+                        <dl className="mt-3 grid min-w-0 gap-2 text-meta sm:grid-cols-2">
                           <div>
-                            <dt className="font-medium text-slate-500">
+                            <dt className="font-medium text-muted-foreground">
                               Resource ID
                             </dt>
                             <dd className="mt-1 break-all font-sans">
@@ -393,7 +393,7 @@ export default function AnalyticsWorkspace({
                             </dd>
                           </div>
                           <div>
-                            <dt className="font-medium text-slate-500">
+                            <dt className="font-medium text-muted-foreground">
                               Actor
                             </dt>
                             <dd className="mt-1 break-words">
@@ -401,21 +401,21 @@ export default function AnalyticsWorkspace({
                                 'System / unavailable'}
                             </dd>
                             {entry.actor.id && (
-                              <dd className="mt-1 break-all font-sans text-slate-500">
+                              <dd className="mt-1 break-all font-sans text-muted-foreground">
                                 {entry.actor.id}
                               </dd>
                             )}
                           </div>
                         </dl>
                         {!!entry.context.changedFields.length && (
-                          <p className="mt-3 break-words text-xs text-slate-600">
+                          <p className="mt-3 break-words text-meta text-secondary">
                             Changed fields:{' '}
                             {entry.context.changedFields.join(', ')}
                           </p>
                         )}
                         {(Object.keys(entry.context.before).length > 0 ||
                           Object.keys(entry.context.after).length > 0) && (
-                          <details className="mt-3 text-xs">
+                          <details className="mt-3 text-meta">
                             <summary className="cursor-pointer font-medium focus-visible:outline-2 focus-visible:outline-secondary">
                               Safe state changes
                             </summary>
@@ -429,7 +429,7 @@ export default function AnalyticsWorkspace({
                                     {Object.entries(entry.context[k]).map(
                                       ([field, v]) => (
                                         <div key={field} className="break-all">
-                                          <dt className="inline text-slate-500">
+                                          <dt className="inline text-muted-foreground">
                                             {humanize(field)}:{' '}
                                           </dt>
                                           <dd className="inline">
@@ -461,7 +461,7 @@ export default function AnalyticsWorkspace({
                   >
                     Previous
                   </Button>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-meta text-muted-foreground">
                     Page {logs.pagination.page} of{' '}
                     {Math.max(1, logs.pagination.totalPages)}
                   </span>

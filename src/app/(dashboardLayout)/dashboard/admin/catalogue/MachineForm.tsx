@@ -284,26 +284,26 @@ export default function MachineForm({
         .catch(() => undefined);
     onCancel();
   };
-  const input = 'mt-1 w-full rounded border border-slate-300 bg-white p-2';
+  const input = 'mt-1 w-full rounded border border-border-strong bg-surface p-2';
   return (
     <section className="surface p-5">
-      <h2 className="text-2xl font-semibold">
+      <h2 className="text-section font-semibold">
         {machine ? 'Edit machine' : 'Create machine'}
       </h2>
-      <p className="my-3 text-sm text-slate-600">
+      <p className="my-3 text-nav text-secondary">
         Drafts are private and can be used to archive a listing. Published
         listings appear publicly only when their owner and subscription are
         eligible. Image and specification rows appear in the order shown.
       </p>
       {supplierMode && (
-        <p className="mb-3 text-sm text-slate-600">
+        <p className="mb-3 text-nav text-secondary">
           Current plan: up to {limits.images} images and {limits.specifications}{' '}
           specifications per listing. Subscription eligibility is checked again
           when saving.
         </p>
       )}
       {error && (
-        <p role="alert" className="mb-4 text-red-700">
+        <p role="alert" className="mb-4 text-danger-foreground">
           {error}{' '}
           {machine &&
             'Cancel and reopen the machine to reload its latest version.'}
@@ -315,7 +315,7 @@ export default function MachineForm({
           className="grid gap-4 md:grid-cols-2"
         >
           {!supplierMode && (
-            <section className="rounded-lg border border-slate-200 bg-slate-50 p-4 md:col-span-2">
+            <section className="rounded-lg border border-border bg-background p-4 md:col-span-2">
               <label className="block">
                 Find supplier company
                 <input
@@ -348,7 +348,7 @@ export default function MachineForm({
                   ))}
                 </select>
               </label>
-              <p className="mt-2 text-sm text-slate-600">
+              <p className="mt-2 text-nav text-secondary">
                 Supplier-owned listings require applicable active subscription
                 entitlements. Search by company name to select a supplier.
               </p>
@@ -380,7 +380,7 @@ export default function MachineForm({
               {errors[field] && (
                 <p
                   id={`machine-${field}-error`}
-                  className="text-sm text-red-700"
+                  className="text-nav text-danger-foreground"
                 >
                   {errors[field]?.message}
                 </p>
@@ -405,7 +405,7 @@ export default function MachineForm({
               <p
                 id="machine-description-error"
                 role="alert"
-                className="text-sm text-red-700"
+                className="text-nav text-danger-foreground"
               >
                 {errors.description.message}
               </p>
@@ -435,7 +435,7 @@ export default function MachineForm({
               <p
                 id="machine-category-error"
                 role="alert"
-                className="text-sm text-red-700"
+                className="text-nav text-danger-foreground"
               >
                 {errors.categoryId.message}
               </p>
@@ -456,18 +456,18 @@ export default function MachineForm({
           </div>
           <section
             aria-label="Machine images"
-            className="border-t border-slate-200 pt-5 md:col-span-2"
+            className="border-t border-border pt-5 md:col-span-2"
           >
             <h3 className="font-semibold">Images</h3>
             {
-              <div className="my-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
+              <div className="my-3 rounded-xl border border-dashed border-border-strong bg-background p-4">
                 <label
                   htmlFor="machine-image-file"
-                  className="block text-sm font-semibold"
+                  className="block text-nav font-semibold"
                 >
                   Upload machinery image
                 </label>
-                <p className="mt-1 text-xs text-slate-600">
+                <p className="mt-1 text-meta text-secondary">
                   JPEG or PNG, up to 10 MB. Add a meaningful description and
                   arrange images below.
                 </p>
@@ -478,7 +478,7 @@ export default function MachineForm({
                   disabled={
                     storage !== 'ready' || images.fields.length >= limits.images
                   }
-                  className="mt-3 block w-full text-sm"
+                  className="mt-3 block w-full text-nav"
                   onChange={(event) => {
                     const file = event.target.files?.[0];
                     event.target.value = '';
@@ -486,24 +486,24 @@ export default function MachineForm({
                   }}
                 />
                 {uploading && (
-                  <p role="status" className="mt-2 text-sm">
+                  <p role="status" className="mt-2 text-nav">
                     Uploading image…
                   </p>
                 )}
                 {storage === 'loading' && (
-                  <p role="status" className="mt-2 text-sm">
+                  <p role="status" className="mt-2 text-nav">
                     Checking image storage…
                   </p>
                 )}
                 {storage === 'missing' && (
-                  <p role="status" className="mt-2 text-sm text-amber-900">
+                  <p role="status" className="mt-2 text-nav text-warning-foreground">
                     Uploads are unavailable until Bunny storage is configured on
                     the server. Existing images and URL editing remain
                     available.
                   </p>
                 )}
                 {storage === 'error' && (
-                  <p role="alert" className="mt-2 text-sm text-red-700">
+                  <p role="alert" className="mt-2 text-nav text-danger-foreground">
                     Unable to check image storage.
                   </p>
                 )}
@@ -523,7 +523,7 @@ export default function MachineForm({
             {images.fields.map((field, index) => (
               <div
                 key={field.id}
-                className="my-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4"
+                className="my-3 rounded-lg border border-border bg-background/60 p-4"
               >
                 {field.assetId && (
                   <CatalogueImagePreview
@@ -548,7 +548,7 @@ export default function MachineForm({
                   />
                 </label>
                 {errors.images?.[index]?.url && (
-                  <p className="text-sm text-red-700">
+                  <p className="text-nav text-danger-foreground">
                     {errors.images[index]?.url?.message}
                   </p>
                 )}
@@ -569,7 +569,7 @@ export default function MachineForm({
                   <p
                     id={`image-${index}-alt-error`}
                     role="alert"
-                    className="text-sm text-red-700"
+                    className="text-nav text-danger-foreground"
                   >
                     {errors.images[index]?.alt?.message}
                   </p>
@@ -608,13 +608,13 @@ export default function MachineForm({
           </section>
           <section
             aria-label="Technical specifications"
-            className="border-t border-slate-200 pt-5 md:col-span-2"
+            className="border-t border-border pt-5 md:col-span-2"
           >
             <h3 className="font-semibold">Technical specifications</h3>
             {specs.fields.map((field, index) => (
               <div
                 key={field.id}
-                className="my-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4"
+                className="my-3 rounded-lg border border-border bg-background/60 p-4"
               >
                 <label className="block">
                   Specification label {index + 1}
@@ -633,7 +633,7 @@ export default function MachineForm({
                   <p
                     id={`specification-${index}-label-error`}
                     role="alert"
-                    className="text-sm text-red-700"
+                    className="text-nav text-danger-foreground"
                   >
                     {errors.specifications[index]?.label?.message}
                   </p>
@@ -655,7 +655,7 @@ export default function MachineForm({
                   <p
                     id={`specification-${index}-value-error`}
                     role="alert"
-                    className="text-sm text-red-700"
+                    className="text-nav text-danger-foreground"
                   >
                     {errors.specifications[index]?.value?.message}
                   </p>

@@ -36,7 +36,7 @@ export default async function Page({
           }
         />
         <section className="min-w-0">
-          <h1 className="break-words text-3xl font-bold sm:text-4xl text-navy">
+          <h1 className="break-words text-page font-bold sm:text-page text-primary">
             {supplier.companyName}
           </h1>
           <p className="mt-4">
@@ -74,7 +74,7 @@ export default async function Page({
           >
             Browse this supplier’s machinery
           </Link>
-          <p className="mt-4 text-sm text-slate-600">
+          <p className="mt-4 text-nav text-secondary">
             Private contact details are managed through Machinmate.
           </p>
         </section>

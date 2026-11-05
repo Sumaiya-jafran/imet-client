@@ -65,7 +65,7 @@ export default function SupplierDashboard() {
       />
       {error && (
         <div role="alert">
-          <p className="text-red-700">{error}</p>
+          <p className="text-danger-foreground">{error}</p>
           <Button variant="secondary" onClick={reload}>
             Reload supplier account
           </Button>
@@ -92,7 +92,7 @@ export default function SupplierDashboard() {
       ) : (
         <>
           <section className="surface p-5">
-            <h2 className="text-lg font-semibold">{supplier.companyName}</h2>
+            <h2 className="text-card font-semibold">{supplier.companyName}</h2>
             <p className="mt-3">
               Application status:{' '}
               <Badge
@@ -114,7 +114,7 @@ export default function SupplierDashboard() {
               <p className="my-3">Administrator note: {supplier.reviewNote}</p>
             )}
             {supplier.status === 'PENDING' && (
-              <p className="mt-3 text-slate-600">
+              <p className="mt-3 text-secondary">
                 Your application is awaiting administrator review. Your buyer
                 account remains available.
               </p>
@@ -138,7 +138,7 @@ export default function SupplierDashboard() {
           </section>
           {!!supplier.documents.length && (
             <section className="surface p-5">
-              <h2 className="text-lg font-semibold">
+              <h2 className="text-card font-semibold">
                 Your private verification documents
               </h2>
               {supplier.documents.map((document, index) =>
@@ -176,8 +176,8 @@ export default function SupplierDashboard() {
             </section>
           )}
           <section className="surface p-5">
-            <h2 className="text-lg font-semibold">Subscriptions</h2>
-            <p className="my-3 text-sm text-slate-600">
+            <h2 className="text-card font-semibold">Subscriptions</h2>
+            <p className="my-3 text-nav text-secondary">
               An approved account and applicable active subscription are
               required for supplier listings. Activate through verified
               SSLCOMMERZ checkout or contact an administrator for a manual term.
@@ -186,9 +186,9 @@ export default function SupplierDashboard() {
               supplier.subscriptions.map((term) => (
                 <div
                   key={term.id}
-                  className="my-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4 text-sm"
+                  className="my-3 rounded-lg border border-border bg-background/60 p-4 text-nav"
                 >
-                  <p className="text-xs text-slate-500">
+                  <p className="text-meta text-muted-foreground">
                     RFQ leads: {term.rfqEnabled ? 'Enabled' : 'Disabled'} ·
                     Monthly cap: {term.leadLimitPerMonth ?? 'Unlimited'} ·
                     Contact reveal:{' '}
@@ -223,15 +223,15 @@ export default function SupplierDashboard() {
         </>
       )}
       <section className="surface p-5">
-        <h2 className="text-lg font-semibold">Available plans</h2>
-        <p className="my-3 text-sm text-slate-600">
+        <h2 className="text-card font-semibold">Available plans</h2>
+        <p className="my-3 text-nav text-secondary">
           Plan prices are supplier subscription fees. No online payments are
           collected.
         </p>
         {plans.map((plan) => (
           <article
             key={plan.id}
-            className="my-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4 text-sm"
+            className="my-3 rounded-lg border border-border bg-background/60 p-4 text-nav"
           >
             <h3 className="font-semibold">{plan.name}</h3>
             <p>

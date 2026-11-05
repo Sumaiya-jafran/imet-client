@@ -91,16 +91,16 @@ export default function SubscriptionPlanForm({
   ];
   return (
     <form onSubmit={handleSubmit(save)} noValidate className="space-y-4">
-      <h2 className="text-2xl font-semibold">
+      <h2 className="text-section font-semibold">
         {plan ? 'Edit subscription plan' : 'Create subscription plan'}
       </h2>
-      <p className="text-sm text-slate-600">
+      <p className="text-nav text-secondary">
         All amounts, durations and limits are administrator-defined. Changes
         apply to future assignments; existing terms keep their assigned
         conditions. Deactivating a plan prevents new assignments.
       </p>
       {error && (
-        <p role="alert" className="text-red-700">
+        <p role="alert" className="text-danger-foreground">
           {error}
         </p>
       )}
@@ -124,17 +124,17 @@ export default function SubscriptionPlanForm({
                   field,
                   numeric.includes(field) ? { valueAsNumber: true } : {},
                 )}
-                className="mt-1 w-full rounded border bg-white p-2"
+                className="mt-1 w-full rounded border bg-surface p-2"
               />
               {errors[field] && (
-                <p id={`plan-${field}-error`} className="text-red-700">
+                <p id={`plan-${field}-error`} className="text-danger-foreground">
                   {errors[field]?.message}
                 </p>
               )}
             </div>
           );
         })}
-        <fieldset className="rounded-lg border border-slate-200 bg-slate-50 p-4 sm:col-span-2">
+        <fieldset className="rounded-lg border border-border bg-background p-4 sm:col-span-2">
           <legend className="font-medium">Eligible supplier types</legend>
           <label className="mt-2 block">
             <input
@@ -153,7 +153,7 @@ export default function SubscriptionPlanForm({
             International manufacturers
           </label>
           {errors.eligibleTypes && (
-            <p className="text-red-700">{errors.eligibleTypes.message}</p>
+            <p className="text-danger-foreground">{errors.eligibleTypes.message}</p>
           )}
         </fieldset>
         <label className="block">
@@ -182,7 +182,7 @@ export default function SubscriptionPlanForm({
             className="mt-1 w-full"
           />
           {errors.leadLimitPerMonth && (
-            <p className="text-red-700">{errors.leadLimitPerMonth.message}</p>
+            <p className="text-danger-foreground">{errors.leadLimitPerMonth.message}</p>
           )}
         </div>
         <label className="block">
@@ -196,14 +196,14 @@ export default function SubscriptionPlanForm({
           <select
             id="plan-visibility"
             {...register('visibility')}
-            className="mt-1 w-full rounded border bg-white p-2"
+            className="mt-1 w-full rounded border bg-surface p-2"
           >
             <option value="HIDDEN">Hidden</option>
             <option value="STANDARD">Standard</option>
             <option value="FEATURED">Featured badge</option>
           </select>
         </div>
-        <div className="flex flex-wrap gap-3 border-t border-slate-200 pt-4 sm:col-span-2">
+        <div className="flex flex-wrap gap-3 border-t border-border pt-4 sm:col-span-2">
           <Button type="submit">
             {isSubmitting ? 'Saving…' : 'Save plan'}
           </Button>

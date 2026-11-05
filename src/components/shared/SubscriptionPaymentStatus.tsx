@@ -78,7 +78,7 @@ export default function SubscriptionPaymentStatus({ id }: { id: string }) {
   if (!token || session?.error)
     return (
       <section className="surface p-6">
-        <h1 className="text-xl font-semibold">Sign in to view your payment</h1>
+        <h1 className="text-section font-semibold">Sign in to view your payment</h1>
         <Link
           href={`/auth/signin?callbackUrl=${encodeURIComponent(`/payments/${id}`)}`}
           className="text-secondary"
@@ -93,42 +93,42 @@ export default function SubscriptionPaymentStatus({ id }: { id: string }) {
       aria-live="polite"
     >
       <p className="eyebrow">Secure subscription activation</p>
-      <h1 className="text-2xl font-semibold">
+      <h1 className="text-section font-semibold">
         {payment ? labels[payment.status][0] : 'Checking payment…'}
       </h1>
       {error && (
-        <p role="alert" className="text-red-800">
+        <p role="alert" className="text-danger-foreground">
           {error}
         </p>
       )}
       {payment && (
         <>
-          <p className="text-sm text-slate-600">{labels[payment.status][1]}</p>
-          <dl className="grid gap-4 border-y border-slate-200 py-5 sm:grid-cols-2">
+          <p className="text-nav text-secondary">{labels[payment.status][1]}</p>
+          <dl className="grid gap-4 border-y border-border py-5 sm:grid-cols-2">
             <div>
-              <dt className="text-xs text-slate-500">Company / plan</dt>
+              <dt className="text-meta text-muted-foreground">Company / plan</dt>
               <dd className="mt-1 font-semibold">
                 {payment.companyName} · {payment.planName}
               </dd>
             </div>
             <div>
-              <dt className="text-xs text-slate-500">Amount</dt>
+              <dt className="text-meta text-muted-foreground">Amount</dt>
               <dd className="mt-1 font-semibold">
                 {payment.amount} {payment.currency}
               </dd>
             </div>
             <div className="sm:col-span-2">
-              <dt className="text-xs text-slate-500">Transaction reference</dt>
-              <dd className="mt-1 break-all font-sans text-sm">
+              <dt className="text-meta text-muted-foreground">Transaction reference</dt>
+              <dd className="mt-1 break-all font-sans text-nav">
                 {payment.transactionId}
               </dd>
             </div>
           </dl>
           {payment.status === 'REVIEW' && (
-            <p className="text-sm">{payment.reviewReason}</p>
+            <p className="text-nav">{payment.reviewReason}</p>
           )}
           {payment.status === 'PAID' && (
-            <p className="text-sm">
+            <p className="text-nav">
               Current subscription: {payment.subscriptionStatus}. Payment
               history remains available after expiry.
             </p>
@@ -150,7 +150,7 @@ export default function SubscriptionPaymentStatus({ id }: { id: string }) {
         {payment?.status === 'PENDING' && payment.gatewayUrl && (
           <a
             href={payment.gatewayUrl}
-            className="inline-flex items-center rounded-lg bg-orange px-4 py-2 text-sm font-semibold text-foreground"
+            className="inline-flex items-center rounded-lg bg-accent px-4 py-2 text-nav font-semibold text-foreground"
           >
             Continue checkout
           </a>
@@ -159,7 +159,7 @@ export default function SubscriptionPaymentStatus({ id }: { id: string }) {
           href={
             payment?.status === 'PAID' ? '/dashboard/supplier' : '/subscription'
           }
-          className="inline-flex items-center px-3 text-sm font-semibold text-secondary"
+          className="inline-flex items-center px-3 text-nav font-semibold text-secondary"
         >
           {payment?.status === 'PAID'
             ? 'Open supplier dashboard'

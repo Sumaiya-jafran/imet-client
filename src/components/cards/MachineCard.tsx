@@ -6,7 +6,7 @@ import MachineImage from './MachineImage';
 import Badge from '@/components/shared/Badge';
 export default function MachineCard({ machine }: { machine: MachineSummary }) {
   return (
-    <article className="group flex min-w-0 flex-col overflow-hidden border border-slate-200 bg-white p-3 transition hover:border-slate-300 hover:shadow-xl hover:shadow-navy/5 [&_img]:transition-transform [&_img]:duration-500 motion-safe:hover:[&_img]:scale-105">
+    <article className="group flex min-w-0 flex-col overflow-hidden border border-border bg-surface p-3 transition hover:border-border-strong hover:shadow-surface hover:shadow-primary/5 [&_img]:transition-transform [&_img]:duration-500 motion-safe:hover:[&_img]:scale-105">
       <Link
         href={`/machinery/${machine.slug}`}
         aria-label={`View ${machine.name}`}
@@ -27,15 +27,15 @@ export default function MachineCard({ machine }: { machine: MachineSummary }) {
             />
           </Link>
         </h2>
-        <p className="mb-4 mt-2 break-words text-xs text-slate-500">
+        <p className="mb-4 mt-2 break-words text-meta text-muted-foreground">
           {machine.manufacturer} · {machine.model}
         </p>
         {machine.supplier && (
-          <p className="mb-4 flex items-start gap-1.5 text-xs text-slate-600">
+          <p className="mb-4 flex items-start gap-1.5 text-meta text-secondary">
             {machine.supplier.isVerified && (
               <BadgeCheck
                 size={15}
-                className="shrink-0 text-emerald-700"
+                className="shrink-0 text-success-foreground"
                 aria-label="Verified supplier"
               />
             )}
@@ -47,14 +47,14 @@ export default function MachineCard({ machine }: { machine: MachineSummary }) {
             </Link>
           </p>
         )}
-        <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-3">
-          <span className="text-xs font-semibold text-navy">
+        <div className="mt-auto flex items-center justify-between border-t border-surface-muted pt-3">
+          <span className="text-meta font-semibold text-primary">
             Price on request
           </span>
           <Link
             href={`/machinery/${machine.slug}`}
             aria-label={`View details for ${machine.name}`}
-            className="flex size-11 items-center justify-center rounded-md bg-slate-100 text-slate-600 group-hover:bg-navy group-hover:text-white"
+            className="flex size-11 items-center justify-center rounded-md bg-surface-muted text-secondary group-hover:bg-primary group-hover:text-inverse"
           >
             <ArrowUpRight size={16} aria-hidden="true" />
           </Link>

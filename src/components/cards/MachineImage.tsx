@@ -23,12 +23,12 @@ export default function MachineImage({
   } catch {}
   if (image && isCatalogueAssetPath(image.url)) safe = true;
   return (
-    <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-lg border border-slate-200/70 bg-slate-100">
+    <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-lg border border-border/70 bg-surface-muted">
       {image && safe && failedUrl !== image.url ? (
         <>
           {loadedUrl !== image.url && (
             <LoaderCircle
-              className="absolute text-slate-400 motion-safe:animate-spin"
+              className="absolute text-subtle motion-safe:animate-spin"
               size={22}
               aria-hidden="true"
             />
@@ -46,7 +46,7 @@ export default function MachineImage({
           />
         </>
       ) : (
-        <div className="flex flex-col items-center gap-3 text-xs text-slate-500">
+        <div className="flex flex-col items-center gap-3 text-meta text-muted-foreground">
           <Factory
             aria-hidden="true"
             size={compact ? 20 : 36}

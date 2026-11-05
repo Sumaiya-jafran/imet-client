@@ -25,8 +25,8 @@ export default function VerifyEmail({ token }: { token?: string }) {
   return (
     <section className="surface mx-auto max-w-md space-y-4 p-6 sm:p-8">
       <p className="eyebrow">Account verification</p>
-      <h1 className="text-2xl font-bold">Verify your email</h1>
-      <p className="text-sm text-slate-600">
+      <h1 className="text-section font-bold">Verify your email</h1>
+      <p className="text-nav text-secondary">
         Confirm your email address to access your Machinmate account.
       </p>
       {invalidLink && (
@@ -35,7 +35,7 @@ export default function VerifyEmail({ token }: { token?: string }) {
         </p>
       )}
       {failure && (
-        <p role="alert" className="text-red-700">
+        <p role="alert" className="text-danger-foreground">
           {failure}
         </p>
       )}
@@ -46,7 +46,7 @@ export default function VerifyEmail({ token }: { token?: string }) {
           {busy ? 'Verifying…' : 'Verify email'}
         </Button>
       )}
-      <nav className="flex flex-wrap gap-4 border-t border-slate-100 pt-4 text-xs font-medium text-secondary">
+      <nav className="flex flex-wrap gap-4 border-t border-surface-muted pt-4 text-meta font-medium text-secondary">
         <Link href="/auth/signin">Sign in</Link>
         <Link href="/auth/resend-verification">Request a new link</Link>
       </nav>

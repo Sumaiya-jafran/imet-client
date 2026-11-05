@@ -215,7 +215,7 @@ export default function CatalogueManagement({
         }
       />
       {error && (
-        <div role="alert" className="text-red-700">
+        <div role="alert" className="text-danger-foreground">
           <p>{error}</p>
           <Button variant="secondary" onClick={reload}>
             Reload catalogue
@@ -223,7 +223,7 @@ export default function CatalogueManagement({
         </div>
       )}
       {supplierMode && (
-        <p role="status" className="surface p-4 text-sm">
+        <p role="status" className="surface p-4 text-nav">
           {entitlement
             ? `${entitlement.used} of ${entitlement.limit} machinery listings used. ${entitlement.active ? 'Your current term is active.' : 'An approved supplier and active applicable subscription are required for changes.'}`
             : 'Loading subscription eligibility. Reload if this takes longer than expected.'}
@@ -253,7 +253,7 @@ export default function CatalogueManagement({
       ) : (
         <section className="surface p-5">
           <div className="flex flex-wrap justify-between gap-4">
-            <h2 className="text-2xl font-semibold">Machines</h2>
+            <h2 className="text-section font-semibold">Machines</h2>
             <Button
               disabled={
                 busy ||
@@ -272,7 +272,7 @@ export default function CatalogueManagement({
             </Button>
           </div>
           <form
-            className="my-5 grid items-end gap-3 rounded-lg bg-slate-50 p-4 sm:grid-cols-2 xl:grid-cols-4"
+            className="my-5 grid items-end gap-3 rounded-lg bg-background p-4 sm:grid-cols-2 xl:grid-cols-4"
             onSubmit={(event) => {
               event.preventDefault();
               const form = new FormData(event.currentTarget);
@@ -341,7 +341,7 @@ export default function CatalogueManagement({
                         <h3 className="break-words font-semibold">
                           {machine.name}
                         </h3>
-                        <p className="break-words text-sm text-slate-600">
+                        <p className="break-words text-nav text-secondary">
                           {machine.category.name} ·{' '}
                           <Badge
                             tone={
@@ -355,7 +355,7 @@ export default function CatalogueManagement({
                         </p>
                         {machine.status === 'PUBLISHED' && (
                           <Link
-                            className="text-sm underline"
+                            className="text-nav underline"
                             href={`/machinery/${machine.slug}`}
                           >
                             View machine

@@ -306,7 +306,7 @@ export default function AdvancedMediaViewer({
     };
   }, [source, type, title, onError]);
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+    <div className="overflow-hidden rounded-xl border border-border bg-background">
       <div className="relative">
         <div
           ref={mount}
@@ -328,13 +328,13 @@ export default function AdvancedMediaViewer({
           aria-label={`${title} viewer. Arrow keys rotate. Use zoom and reset controls below.`}
         />
         {!ready && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
+          <div className="absolute inset-0 flex items-center justify-center bg-background">
             <LoadingState label="Loading interactive media…" />
           </div>
         )}
       </div>
-      <div className="space-y-3 border-t border-slate-200 p-3">
-        <p className="text-sm text-slate-600">
+      <div className="space-y-3 border-t border-border p-3">
+        <p className="text-nav text-secondary">
           {type === 'MODEL_3D'
             ? 'Drag to rotate. Pinch or scroll to zoom.'
             : 'Drag to look around the 360° panorama.'}{' '}
@@ -377,7 +377,7 @@ export default function AdvancedMediaViewer({
           )}
         </div>
         {vrError && (
-          <p role="alert" className="text-sm text-amber-900">
+          <p role="alert" className="text-nav text-warning-foreground">
             {vrError}
           </p>
         )}

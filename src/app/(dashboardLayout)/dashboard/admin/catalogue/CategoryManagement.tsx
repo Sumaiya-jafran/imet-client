@@ -87,13 +87,13 @@ export default function CategoryManagement({
   };
   return (
     <section className="surface p-5">
-      <h2 className="text-2xl font-semibold">Categories</h2>
-      <p className="my-3 text-sm text-slate-600">
+      <h2 className="text-section font-semibold">Categories</h2>
+      <p className="my-3 text-nav text-secondary">
         Categories have one level. Categories containing machines cannot be
         deleted.
       </p>
       {error && (
-        <p role="alert" className="mb-4 text-red-700">
+        <p role="alert" className="mb-4 text-danger-foreground">
           {error}
         </p>
       )}
@@ -113,7 +113,7 @@ export default function CategoryManagement({
             <p
               id="category-name-error"
               role="alert"
-              className="text-sm text-red-700"
+              className="text-nav text-danger-foreground"
             >
               {errors.name.message}
             </p>
@@ -132,7 +132,7 @@ export default function CategoryManagement({
             <p
               id="category-slug-error"
               role="alert"
-              className="text-sm text-red-700"
+              className="text-nav text-danger-foreground"
             >
               {errors.slug.message}
             </p>
@@ -161,7 +161,7 @@ export default function CategoryManagement({
           >
             <div className="min-w-0">
               <p className="break-words font-medium">{category.name}</p>
-              <p className="break-all text-sm text-slate-500">
+              <p className="break-all text-nav text-muted-foreground">
                 {category.slug} · {category._count?.machines ?? 0} machines
               </p>
             </div>
@@ -192,7 +192,7 @@ export default function CategoryManagement({
         ))}
       </ul>
       {!categories.length && (
-        <p className="mt-4 text-slate-600">
+        <p className="mt-4 text-secondary">
           No categories yet. Create a category before adding machinery.
         </p>
       )}

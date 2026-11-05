@@ -275,7 +275,7 @@ export default function PrimaryNavigation({ roles }: { roles?: UserRole[] }) {
             >
               <Plus size={22} strokeWidth={2.6} aria-hidden="true" />
             </Link>
-            <span className="mt-1 text-xs font-semibold leading-none text-slate-500">
+            <span className="mt-1 text-meta font-semibold leading-none text-muted-foreground">
               Post RFQ
             </span>
           </li>

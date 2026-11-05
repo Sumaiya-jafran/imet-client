@@ -32,7 +32,7 @@ function Moderation({
   });
   if (review.status === 'WITHDRAWN')
     return (
-      <p className="mt-4 text-xs text-slate-500">
+      <p className="mt-4 text-meta text-muted-foreground">
         Withdrawn by the buyer. The buyer must resubmit before moderation.
       </p>
     );
@@ -41,7 +41,7 @@ function Moderation({
       onSubmit={handleSubmit((data) => onSave(data.status, data.note))}
       className="mt-4 grid grid-cols-1 items-end gap-3 sm:grid-cols-2"
     >
-      <label className="text-xs font-semibold">
+      <label className="text-meta font-semibold">
         Moderation decision
         <select className="mt-1 w-full" {...register('status')} disabled={busy}>
           <option value="PUBLISHED">Publish</option>
@@ -49,7 +49,7 @@ function Moderation({
           <option value="HIDDEN">Hide from public display</option>
         </select>
       </label>
-      <label className="text-xs font-semibold">
+      <label className="text-meta font-semibold">
         Feedback to buyer (optional)
         <textarea
           rows={2}
@@ -61,7 +61,7 @@ function Moderation({
           disabled={busy}
         />
         {errors.note && (
-          <span className="text-red-700">{errors.note.message}</span>
+          <span className="text-danger-foreground">{errors.note.message}</span>
         )}
       </label>
       <Button type="submit" disabled={busy}>
@@ -206,7 +206,7 @@ export default function ReviewWorkspace({
       </form>
       {error && (
         <div role="alert" className="surface p-4">
-          <p className="text-sm text-red-700">{error}</p>
+          <p className="text-nav text-danger-foreground">{error}</p>
           <Button
             variant="secondary"
             onClick={() => {
@@ -219,7 +219,7 @@ export default function ReviewWorkspace({
         </div>
       )}
       {notice && (
-        <p role="status" className="text-sm text-emerald-800">
+        <p role="status" className="text-nav text-success-foreground">
           {notice}
         </p>
       )}
@@ -228,7 +228,7 @@ export default function ReviewWorkspace({
       ) : (
         data && (
           <>
-            <p className="text-xs text-slate-500">
+            <p className="text-meta text-muted-foreground">
               {data.pagination.total} reviews
             </p>
             {!data.reviews.length && (
@@ -259,7 +259,7 @@ export default function ReviewWorkspace({
                     <h2 className="mt-2 break-words font-semibold">
                       {r.machine?.name ?? r.supplier?.companyName}
                     </h2>
-                    <p className="mt-2 break-words text-xs text-slate-500">
+                    <p className="mt-2 break-words text-meta text-muted-foreground">
                       {r.author.displayName} ·{' '}
                       {r.sale.opportunity.recipient.rfq.rfqNumber} ·{' '}
                       {new Date(r.createdAt).toLocaleDateString()}
@@ -280,11 +280,11 @@ export default function ReviewWorkspace({
                 <div className="mt-3">
                   <RatingStars rating={r.rating} />
                 </div>
-                <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6">
+                <p className="mt-3 whitespace-pre-wrap break-words text-nav leading-6">
                   {r.body}
                 </p>
                 {r.moderationNote && (
-                  <p className="mt-3 break-words text-sm text-amber-900">
+                  <p className="mt-3 break-words text-nav text-warning-foreground">
                     Moderator feedback: {r.moderationNote}
                   </p>
                 )}
@@ -321,7 +321,7 @@ export default function ReviewWorkspace({
                 >
                   Previous
                 </Button>
-                <span className="text-sm">
+                <span className="text-nav">
                   Page {data.pagination.page} of {data.pagination.totalPages}
                 </span>
                 <Button

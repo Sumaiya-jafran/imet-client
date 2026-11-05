@@ -119,7 +119,7 @@ export default function SalesWorkspace({
               type="button"
               key={stage}
               aria-pressed={query.get('stage') === stage}
-              className={`surface p-4 text-left hover:border-orange/40 ${query.get('stage') === stage ? 'border-orange/50 bg-orange/5' : ''}`}
+              className={`surface p-4 text-left hover:border-accent/40 ${query.get('stage') === stage ? 'border-accent/50 bg-accent/5' : ''}`}
               onClick={() => {
                 const q = new URLSearchParams(query);
                 q.set('stage', stage);
@@ -127,10 +127,10 @@ export default function SalesWorkspace({
                 apply(q);
               }}
             >
-              <span className="text-xs font-semibold tracking-wide text-slate-500">
+              <span className="text-meta font-semibold tracking-wide text-muted-foreground">
                 {stage}
               </span>
-              <span className="mt-2 block text-2xl font-semibold">
+              <span className="mt-2 block text-section font-semibold">
                 {pipeline.counts[stage] ?? 0}
               </span>
             </button>
@@ -237,7 +237,7 @@ export default function SalesWorkspace({
       </form>
       {error && (
         <div role="alert" className="surface p-4">
-          <p className="text-red-700">{error}</p>
+          <p className="text-danger-foreground">{error}</p>
           <Button
             variant="secondary"
             onClick={() => {
@@ -254,7 +254,7 @@ export default function SalesWorkspace({
       ) : (
         !error && (
           <>
-            <p className="text-xs text-slate-500">
+            <p className="text-meta text-muted-foreground">
               {pagination?.total ?? 0}{' '}
               {records ? 'sale records' : 'opportunities'}
             </p>
@@ -270,23 +270,23 @@ export default function SalesWorkspace({
                       <h2 className="mt-1 break-words font-semibold">
                         {o.rfq.title}
                       </h2>
-                      <p className="mt-2 break-words text-xs text-slate-500">
+                      <p className="mt-2 break-words text-meta text-muted-foreground">
                         {o.rfq.buyer.displayName} · {o.rfq.quantity}{' '}
                         {o.rfq.unit} · Updated{' '}
                         {new Date(o.updatedAt).toLocaleDateString()}
                       </p>
                       {o.rfq.machine && (
-                        <p className="mt-1 break-words text-xs text-slate-500">
+                        <p className="mt-1 break-words text-meta text-muted-foreground">
                           Machinery · {o.rfq.machine.name}
                         </p>
                       )}
                       {admin && (
-                        <p className="mt-1 text-xs">
+                        <p className="mt-1 text-meta">
                           Assigned to {o.ownerName}
                         </p>
                       )}
                       {o.assignmentRemoved && (
-                        <p className="mt-1 text-xs text-amber-800">
+                        <p className="mt-1 text-meta text-warning-foreground">
                           Assignment removed · History retained
                         </p>
                       )}
@@ -324,12 +324,12 @@ export default function SalesWorkspace({
                       <h2 className="mt-1 break-words font-semibold">
                         {s.rfq.title}
                       </h2>
-                      <p className="mt-2 break-words text-xs text-slate-500">
+                      <p className="mt-2 break-words text-meta text-muted-foreground">
                         {s.sellerName} · {s.rfq.quantity} {s.rfq.unit}
                       </p>
                       <p className="mt-2 break-words font-semibold">
                         {s.totalAmount} {s.quote.currency}
-                        <span className="ml-2 text-xs font-normal text-slate-500">
+                        <span className="ml-2 text-meta font-normal text-muted-foreground">
                           Quoted total
                         </span>
                       </p>
@@ -389,7 +389,7 @@ export default function SalesWorkspace({
                 >
                   Previous
                 </Button>
-                <span className="text-sm">
+                <span className="text-nav">
                   Page {pagination.page} of {pagination.totalPages}
                 </span>
                 <Button

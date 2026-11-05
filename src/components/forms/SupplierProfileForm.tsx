@@ -204,16 +204,16 @@ export default function SupplierProfileForm({
     ].includes(field);
   return (
     <form onSubmit={handleSubmit(save)} noValidate className="space-y-4">
-      <h2 className="text-2xl font-semibold">
+      <h2 className="text-section font-semibold">
         {mode === 'application' ? 'Supplier application' : 'Company profile'}
       </h2>
-      <p className="text-sm text-slate-600">
+      <p className="text-nav text-secondary">
         Private business contacts, street address and verification documents are
         visible only to you and administrators. Keep public descriptions free of
         private contact details.
       </p>
       {error && (
-        <p role="alert" className="text-red-700">
+        <p role="alert" className="text-danger-foreground">
           {error} Reload the profile if it changed.
         </p>
       )}
@@ -243,7 +243,7 @@ export default function SupplierProfileForm({
                   }
                   rows={5}
                   {...register(key)}
-                  className="mt-1 w-full rounded border bg-white p-2"
+                  className="mt-1 w-full rounded border bg-surface p-2"
                 />
               ) : (
                 <input
@@ -260,13 +260,13 @@ export default function SupplierProfileForm({
                       ? { setValueAs: (value: string) => value?.trim() || null }
                       : {}),
                   })}
-                  className="mt-1 w-full rounded border bg-white p-2 read-only:bg-slate-100"
+                  className="mt-1 w-full rounded border bg-surface p-2 read-only:bg-surface-muted"
                 />
               )}
               {errors[key] && (
                 <p
                   id={`supplier-${key}-error`}
-                  className="text-sm text-red-700"
+                  className="text-nav text-danger-foreground"
                 >
                   {errors[key]?.message}
                 </p>
@@ -274,11 +274,11 @@ export default function SupplierProfileForm({
             </div>
           );
         })}
-        <section className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 md:col-span-2">
+        <section className="rounded-xl border border-dashed border-border-strong bg-background p-4 md:col-span-2">
           <label htmlFor="supplier-logo-file" className="font-semibold">
             Upload company logo
           </label>
-          <p className="my-2 text-xs text-slate-600">
+          <p className="my-2 text-meta text-secondary">
             JPEG or PNG, up to 10 MB. Managed logos become public only for
             eligible marketplace suppliers.
           </p>
@@ -291,7 +291,7 @@ export default function SupplierProfileForm({
               void uploadFile('LOGO', e.target.files?.[0]);
               e.target.value = '';
             }}
-            className="block w-full text-sm"
+            className="block w-full text-nav"
           />
           {logoId && (
             <>
@@ -313,7 +313,7 @@ export default function SupplierProfileForm({
             </>
           )}
           {storage !== 'ready' && (
-            <p role="status" className="mt-2 text-sm">
+            <p role="status" className="mt-2 text-nav">
               {storage === 'missing'
                 ? token
                   ? 'Uploads require Bunny Storage configuration on the server.'
@@ -333,7 +333,7 @@ export default function SupplierProfileForm({
             </p>
           )}
           {uploading && (
-            <p role="status" className="mt-2 text-sm">
+            <p role="status" className="mt-2 text-nav">
               Uploading file…
             </p>
           )}
@@ -350,7 +350,7 @@ export default function SupplierProfileForm({
                 value={
                   supplierTypeLabels[supplier?.type ?? 'INTERNATIONAL']
                 }
-                className="mt-1 w-full rounded border bg-slate-100 p-2"
+                className="mt-1 w-full rounded border bg-surface-muted p-2"
               />
               <input
                 type="hidden"
@@ -371,23 +371,23 @@ export default function SupplierProfileForm({
                     event.target.value as 'LOCAL' | 'INTERNATIONAL',
                   ),
               })}
-              className="mt-1 w-full rounded border bg-white p-2"
+              className="mt-1 w-full rounded border bg-surface p-2"
             >
               <option value="LOCAL">Local supplier / dealer</option>
               <option value="INTERNATIONAL">International manufacturer</option>
             </select>
           )}
         </div>
-        <section className="mt-2 border-t border-slate-200 pt-5 md:col-span-2">
+        <section className="mt-2 border-t border-border pt-5 md:col-span-2">
           <h3 className="font-semibold">Verification documents</h3>
-          <p className="my-2 text-sm text-slate-600">
+          <p className="my-2 text-nav text-secondary">
             Upload private PDF, JPEG or PNG verification files up to 10 MB. Only
             your account and administrators can download managed files. Existing
             external links remain supported and require protection at their
             host.
           </p>
           {mode !== 'owner' && (
-            <label className="my-3 block text-sm font-medium">
+            <label className="my-3 block text-nav font-medium">
               Upload verification document
               <input
                 type="file"
@@ -404,7 +404,7 @@ export default function SupplierProfileForm({
           {documents.fields.map((field, index) => (
             <div
               key={field.id}
-              className="my-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4"
+              className="my-3 rounded-lg border border-border bg-background/60 p-4"
             >
               <label className="block">
                 Document name {index + 1}
@@ -421,7 +421,7 @@ export default function SupplierProfileForm({
                 />
               </label>
               {errors.documents?.[index]?.name && (
-                <p id={`document-${index}-name-error`} className="text-red-700">
+                <p id={`document-${index}-name-error`} className="text-danger-foreground">
                   {errors.documents[index]?.name?.message}
                 </p>
               )}
@@ -440,7 +440,7 @@ export default function SupplierProfileForm({
                 />
               </label>
               {errors.documents?.[index]?.url && (
-                <p id={`document-${index}-url-error`} className="text-red-700">
+                <p id={`document-${index}-url-error`} className="text-danger-foreground">
                   {errors.documents[index]?.url?.message}
                 </p>
               )}
@@ -473,12 +473,12 @@ export default function SupplierProfileForm({
           )}
         </section>
         {mode === 'owner' && (
-          <p className="text-sm text-slate-600 md:col-span-2">
+          <p className="text-nav text-secondary md:col-span-2">
             Company identity, location, type and documents require administrator
             changes. Approval and verification are controlled by administrators.
           </p>
         )}
-        <div className="flex flex-wrap gap-3 border-t border-slate-200 pt-4 md:col-span-2">
+        <div className="flex flex-wrap gap-3 border-t border-border pt-4 md:col-span-2">
           <Button type="submit">
             {isSubmitting
               ? 'Saving…'

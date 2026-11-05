@@ -22,11 +22,11 @@ export function Eyebrow({ children, dark = false }: { children: ReactNode; dark?
   return (
     <p
       className={cn(
-        'flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em]',
+        'flex items-center gap-3 text-meta font-bold uppercase tracking-[0.2em]',
         dark ? 'text-accent' : 'text-secondary',
       )}
     >
-      <span className={cn('h-px w-8', dark ? 'bg-orange-light' : 'bg-orange')} aria-hidden="true" />
+      <span className={cn('h-px w-8', dark ? 'bg-accent' : 'bg-accent')} aria-hidden="true" />
       {children}
     </p>
   );
@@ -53,14 +53,14 @@ export function SectionHeading({
         <Eyebrow dark={dark}>{eyebrow}</Eyebrow>
         <h2
           className={cn(
-            'mt-4 font-display text-section font-semibold leading-tight tracking-tight',
-            dark ? 'text-white' : 'text-navy',
+            'mt-4 font-sans text-section font-semibold leading-tight tracking-tight',
+            dark ? 'text-inverse' : 'text-primary',
           )}
         >
           {title}
         </h2>
         {description && (
-          <p className={cn('mt-4 text-base leading-7', dark ? 'text-slate-300' : 'text-slate-600')}>
+          <p className={cn('mt-4 text-body leading-7', dark ? 'text-border-strong' : 'text-secondary')}>
             {description}
           </p>
         )}
@@ -69,8 +69,8 @@ export function SectionHeading({
         <Link
           href={href}
           className={cn(
-            'group inline-flex min-h-11 items-center gap-2 border-b-2 border-orange pb-1 text-sm font-semibold',
-            dark ? 'text-white' : 'text-navy',
+            'group inline-flex min-h-11 items-center gap-2 border-b-2 border-accent pb-1 text-nav font-semibold',
+            dark ? 'text-inverse' : 'text-primary',
           )}
         >
           {label}
@@ -110,25 +110,25 @@ export async function HomeCategories() {
           label="Full catalogue"
         />
         {categories.length ? (
-          <ul className="grid grid-cols-2 border-l border-t border-slate-200 lg:grid-cols-4">
+          <ul className="grid grid-cols-2 border-l border-t border-border lg:grid-cols-4">
             {categories.slice(0, 8).map((c, i) => (
-              <li key={c.slug} className="border-b border-r border-slate-200">
+              <li key={c.slug} className="border-b border-r border-border">
                 <Reveal delay={(i % 4) * 80} className="h-full">
                   <Link
                     href={`/machinery?category=${c.slug}`}
-                    className="group flex h-full min-h-32 flex-col justify-between gap-6 bg-white p-4 transition-colors hover:bg-navy sm:min-h-40 sm:p-6"
+                    className="group flex h-full min-h-32 flex-col justify-between gap-6 bg-surface p-4 transition-colors hover:bg-primary sm:min-h-40 sm:p-6"
                   >
                     <span className="flex items-center justify-between">
-                      <span className="font-display text-sm font-bold text-secondary group-hover:text-accent">
+                      <span className="font-sans text-nav font-bold text-secondary group-hover:text-accent">
                         {String(i + 1).padStart(2, '0')}
                       </span>
                       <ArrowUpRight
                         size={20}
                         aria-hidden="true"
-                        className="text-slate-400 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-white"
+                        className="text-subtle transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-inverse"
                       />
                     </span>
-                    <span className="break-words font-display text-base font-bold leading-tight text-navy group-hover:text-white sm:text-xl">
+                    <span className="break-words font-sans text-body font-bold leading-tight text-primary group-hover:text-inverse sm:text-section">
                       {c.name}
                     </span>
                   </Link>
@@ -155,7 +155,7 @@ export async function HomeMachinery() {
     return <SectionError label="Machinery catalogue" />;
   }
   return (
-    <section aria-label="Latest machinery" className="border-y border-slate-200 bg-white py-20 lg:py-28">
+    <section aria-label="Latest machinery" className="border-y border-border bg-surface py-20 lg:py-28">
       <Container>
         <SectionHeading
           eyebrow="Latest in the catalogue"
@@ -208,30 +208,30 @@ export async function HomeSuppliers() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {suppliers.map((s, i) => (
               <Reveal key={s.id} delay={i * 100} className="flex">
-                <article className="group relative flex w-full min-w-0 flex-col border border-slate-200 bg-white p-7 transition-shadow hover:shadow-xl hover:shadow-navy/5">
+                <article className="group relative flex w-full min-w-0 flex-col border border-border bg-surface p-7 transition-shadow hover:shadow-surface hover:shadow-primary/5">
                   <span
-                    className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-orange transition-transform duration-300 group-hover:scale-x-100"
+                    className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-accent transition-transform duration-300 group-hover:scale-x-100"
                     aria-hidden="true"
                   />
                   <div>
                     <Badge>{supplierTypeLabels[s.type]}</Badge>
                   </div>
-                  <h3 className="mt-5 break-words font-display text-xl font-bold">
+                  <h3 className="mt-5 break-words font-sans text-section font-bold">
                     <Link href={`/suppliers/${s.id}`} className="hover:text-secondary">
                       {s.companyName}
                     </Link>
                   </h3>
-                  <p className="mt-2 flex items-center gap-1.5 break-words text-xs text-slate-500">
+                  <p className="mt-2 flex items-center gap-1.5 break-words text-meta text-muted-foreground">
                     <MapPin size={14} aria-hidden="true" />
                     {s.city}, {s.country}
                   </p>
                   {s.isVerified && (
-                    <p className="mt-3 flex items-center gap-2 text-xs font-semibold text-emerald-800">
+                    <p className="mt-3 flex items-center gap-2 text-meta font-semibold text-success-foreground">
                       <BadgeCheck size={15} aria-hidden="true" />
                       Verified supplier
                     </p>
                   )}
-                  <p className="mt-4 line-clamp-3 break-words text-sm leading-6 text-slate-600">
+                  <p className="mt-4 line-clamp-3 break-words text-nav leading-6 text-secondary">
                     <TranslatedText
                       resource={{ type: 'SUPPLIER', id: s.id, field: 'DESCRIPTION' }}
                       original={s.description}
@@ -239,7 +239,7 @@ export async function HomeSuppliers() {
                   </p>
                   <Link
                     href={`/suppliers/${s.id}`}
-                    className="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-semibold text-navy"
+                    className="mt-auto inline-flex items-center gap-2 pt-6 text-nav font-semibold text-primary"
                   >
                     View company
                     <ArrowRight size={15} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
@@ -269,7 +269,7 @@ export async function HomeReviews() {
     return <SectionError label="Buyer reviews" />;
   }
   return (
-    <section aria-label="Recent buyer reviews" className="border-t border-slate-200 bg-white py-20 lg:py-28">
+    <section aria-label="Recent buyer reviews" className="border-t border-border bg-surface py-20 lg:py-28">
       <Container>
         <SectionHeading
           eyebrow="Purchase-backed feedback"
@@ -280,19 +280,19 @@ export async function HomeReviews() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {reviews.map((r, i) => (
               <Reveal key={r.id} delay={i * 100} className="flex">
-                <figure className="relative flex w-full min-w-0 flex-col border-l-4 border-orange bg-slate-50 p-7">
-                  <Quote size={36} aria-hidden="true" className="absolute right-6 top-6 text-slate-200" />
+                <figure className="relative flex w-full min-w-0 flex-col border-l-4 border-accent bg-background p-7">
+                  <Quote size={36} aria-hidden="true" className="absolute right-6 top-6 text-border" />
                   <RatingStars rating={r.rating} />
-                  <blockquote className="mt-5 line-clamp-6 whitespace-pre-wrap break-words text-base leading-7 text-navy">
+                  <blockquote className="mt-5 line-clamp-6 whitespace-pre-wrap break-words text-body leading-7 text-primary">
                     <TranslatedText
                       resource={{ type: 'REVIEW', id: r.id, field: 'BODY' }}
                       original={r.body}
                     />
                   </blockquote>
-                  <figcaption className="mt-auto border-t border-slate-200 pt-5">
-                    <p className="break-words font-display font-bold text-navy">{r.author.displayName}</p>
+                  <figcaption className="mt-auto border-t border-border pt-5">
+                    <p className="break-words font-sans font-bold text-primary">{r.author.displayName}</p>
                     <Link
-                      className="mt-1 block break-words text-xs text-slate-600 underline underline-offset-2 hover:text-secondary"
+                      className="mt-1 block break-words text-meta text-secondary underline underline-offset-2 hover:text-secondary"
                       href={r.machine ? `/machinery/${r.machine.slug}` : `/suppliers/${r.supplier!.id}`}
                     >
                       {r.machine ? (
@@ -360,7 +360,7 @@ export async function HomePlans() {
                   <article
                     className={cn(
                       'flex w-full min-w-0 flex-col border p-7',
-                      featured ? 'border-navy bg-navy text-white' : 'border-slate-200 bg-white',
+                      featured ? 'border-primary bg-primary text-inverse' : 'border-border bg-surface',
                     )}
                   >
                     <div className="flex flex-wrap gap-2">
@@ -368,21 +368,21 @@ export async function HomePlans() {
                         <Badge key={t}>{supplierTypePluralLabels[t]}</Badge>
                       ))}
                     </div>
-                    <h3 className={cn('mt-5 break-words font-display text-xl font-bold', featured && 'text-white')}>
+                    <h3 className={cn('mt-5 break-words font-sans text-section font-bold', featured && 'text-inverse')}>
                       {p.name}
                     </h3>
-                    <p className="mt-4 break-words font-display text-4xl font-extrabold tracking-tight">
+                    <p className="mt-4 break-words font-sans text-page font-bold tracking-tight">
                       {p.price}{' '}
-                      <span className={cn('text-sm font-medium', featured ? 'text-slate-300' : 'text-slate-500')}>
+                      <span className={cn('text-nav font-medium', featured ? 'text-border-strong' : 'text-muted-foreground')}>
                         {p.currency}
                       </span>
                     </p>
-                    <p className={cn('mt-1 text-xs', featured ? 'text-slate-300' : 'text-slate-500')}>
+                    <p className={cn('mt-1 text-meta', featured ? 'text-border-strong' : 'text-muted-foreground')}>
                       {p.durationDays} days · Supplier subscription
                     </p>
-                    <ul className={cn('my-6 space-y-3 border-t pt-6', featured ? 'border-white/15' : 'border-slate-100')}>
+                    <ul className={cn('my-6 space-y-3 border-t pt-6', featured ? 'border-surface/15' : 'border-surface-muted')}>
                       {features.map((f) => (
-                        <li key={f} className="flex items-start gap-2.5 text-sm">
+                        <li key={f} className="flex items-start gap-2.5 text-nav">
                           <Check
                             size={16}
                             aria-hidden="true"
@@ -395,10 +395,10 @@ export async function HomePlans() {
                     <Link
                       href={`/auth/signup?type=supplier&planId=${p.id}`}
                       className={cn(
-                        'mt-auto inline-flex min-h-11 items-center justify-center gap-2 border text-sm font-semibold',
+                        'mt-auto inline-flex min-h-11 items-center justify-center gap-2 border text-nav font-semibold',
                         featured
-                          ? 'border-orange bg-orange text-foreground hover:bg-orange-dark'
-                          : 'border-navy text-navy hover:bg-navy hover:text-white',
+                          ? 'border-accent bg-accent text-foreground hover:bg-accent-hover'
+                          : 'border-primary text-primary hover:bg-primary hover:text-inverse',
                       )}
                     >
                       Choose this plan

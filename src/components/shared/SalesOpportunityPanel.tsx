@@ -111,7 +111,7 @@ export default function SalesOpportunityPanel({
         )}
       </div>
       {error && (
-        <p role="alert" className="rounded-lg bg-red-50 p-3 text-red-700">
+        <p role="alert" className="rounded-lg bg-danger/5 p-3 text-danger-foreground">
           {error}
           <button
             type="button"
@@ -125,7 +125,7 @@ export default function SalesOpportunityPanel({
       {notice && (
         <p
           role="status"
-          className="rounded-lg bg-emerald-50 p-3 text-emerald-900"
+          className="rounded-lg bg-success/5 p-3 text-success-foreground"
         >
           {notice}
         </p>
@@ -133,7 +133,7 @@ export default function SalesOpportunityPanel({
       {o.readOnlyReason && (
         <p
           role="status"
-          className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900"
+          className="rounded-lg border border-warning/25 bg-warning/5 p-3 text-nav text-warning-foreground"
         >
           {o.readOnlyReason}
         </p>
@@ -145,14 +145,14 @@ export default function SalesOpportunityPanel({
             (stage) => (
               <li
                 key={stage}
-                className={`rounded-lg border p-3 text-xs font-semibold ${o.stage === stage ? 'border-orange/40 bg-orange/5 text-secondary' : 'border-slate-200 text-slate-500'}`}
+                className={`rounded-lg border p-3 text-meta font-semibold ${o.stage === stage ? 'border-accent/40 bg-accent/5 text-secondary' : 'border-border text-muted-foreground'}`}
               >
                 {stage}
               </li>
             ),
           )}
         </ol>
-        <p className="text-sm text-slate-500">
+        <p className="text-nav text-muted-foreground">
           Quote submission sets Quoted. Buyer acceptance sets Won; competing and
           closed unsuccessful opportunities become Lost. Qualification and
           negotiation are private sales stages.
@@ -215,45 +215,45 @@ export default function SalesOpportunityPanel({
           )}
         </div>
         {o.assignmentRemoved && (
-          <p className="text-sm text-amber-800">
+          <p className="text-nav text-warning-foreground">
             This assignment was removed. History remains available; changes are
             restricted.
           </p>
         )}
         {o.rfq.isFlagged && (
-          <p className="text-sm text-amber-800">
+          <p className="text-nav text-warning-foreground">
             RFQ is flagged for review. Sales changes are paused.
           </p>
         )}
-        <p className="text-xs text-slate-500">
+        <p className="text-meta text-muted-foreground">
           Suppliers need an approved profile and active RFQ subscription for
           changes. Expired subscriptions retain read-only history.
         </p>
       </section>
       <section className="surface p-5">
         <h2 className="mb-4 font-semibold">Buyer requirements</h2>
-        <p className="whitespace-pre-wrap break-words text-sm">
+        <p className="whitespace-pre-wrap break-words text-nav">
           {o.rfq.description}
         </p>
-        <dl className="mt-4 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
+        <dl className="mt-4 grid grid-cols-1 gap-4 text-nav sm:grid-cols-2">
           <div>
-            <dt className="text-slate-500">Machinery</dt>
+            <dt className="text-muted-foreground">Machinery</dt>
             <dd>{o.rfq.machine?.name ?? o.rfq.title}</dd>
           </div>
           <div>
-            <dt className="text-slate-500">Quantity</dt>
+            <dt className="text-muted-foreground">Quantity</dt>
             <dd>
               {o.rfq.quantity} {o.rfq.unit}
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Delivery</dt>
+            <dt className="text-muted-foreground">Delivery</dt>
             <dd>
               {o.rfq.deliveryLocation} · {o.rfq.deliveryTimeline}
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">RFQ status / expiry</dt>
+            <dt className="text-muted-foreground">RFQ status / expiry</dt>
             <dd>
               {o.rfq.status} ·{' '}
               {o.rfq.expiresAt
@@ -266,7 +266,7 @@ export default function SalesOpportunityPanel({
       <section className="surface p-5">
         <h2 className="mb-4 font-semibold">Recipient quotations</h2>
         {!o.quotes.length && (
-          <p className="text-sm text-slate-500">
+          <p className="text-nav text-muted-foreground">
             No quote yet. Open the lead to prepare a quotation.
           </p>
         )}
@@ -274,7 +274,7 @@ export default function SalesOpportunityPanel({
           {o.quotes.map((q) => (
             <article
               key={q.id}
-              className="min-w-0 rounded-lg border border-slate-200 p-4"
+              className="min-w-0 rounded-lg border border-border p-4"
             >
               <div className="flex flex-wrap justify-between gap-2">
                 <p className="break-words font-semibold">
@@ -282,11 +282,11 @@ export default function SalesOpportunityPanel({
                 </p>
                 <Badge>{q.status}</Badge>
               </div>
-              <p className="mt-2 text-xs text-slate-500">
+              <p className="mt-2 text-meta text-muted-foreground">
                 MOQ {q.moq} · {q.leadTimeDays} days lead time · Valid until{' '}
                 {new Date(q.validUntil).toLocaleDateString()}
               </p>
-              <p className="mt-3 whitespace-pre-wrap break-words text-sm">
+              <p className="mt-3 whitespace-pre-wrap break-words text-nav">
                 {q.notes}
               </p>
             </article>
@@ -311,13 +311,13 @@ export default function SalesOpportunityPanel({
       />
       <section className="surface p-5">
         <h2 className="mb-4 font-semibold">Sales activity</h2>
-        <ol className="space-y-3 text-sm">
+        <ol className="space-y-3 text-nav">
           {o.events.map((e) => (
             <li key={e.id}>
               <p className="font-medium">
                 {e.eventType.replaceAll('_', ' ').toLowerCase()}
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-meta text-muted-foreground">
                 {e.actor?.displayName ?? 'System'} ·{' '}
                 {new Date(e.createdAt).toLocaleString()}
               </p>
@@ -325,7 +325,7 @@ export default function SalesOpportunityPanel({
                 e.metadata !== null &&
                 'from' in e.metadata &&
                 'to' in e.metadata && (
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-meta text-muted-foreground">
                     {String(e.metadata.from)} → {String(e.metadata.to)}
                   </p>
                 )}

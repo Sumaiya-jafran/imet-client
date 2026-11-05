@@ -66,7 +66,7 @@ export default function Page() {
           setRows(null);
         }}
       >
-        <label className="flex-1 text-sm">
+        <label className="flex-1 text-nav">
           Search suppliers
           <input name="q" maxLength={100} className="mt-1 w-full" />
         </label>
@@ -83,25 +83,25 @@ export default function Page() {
         {rows?.map((r) => (
           <article key={r.id} className="surface p-5">
             <h2 className="font-semibold">{r.companyName}</h2>
-            <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+            <dl className="mt-3 grid grid-cols-2 gap-3 text-nav">
               <div>
-                <dt className="text-slate-500">Allocated leads</dt>
+                <dt className="text-muted-foreground">Allocated leads</dt>
                 <dd>{r.totalLeads}</dd>
               </div>
               <div>
-                <dt className="text-slate-500">Responses</dt>
+                <dt className="text-muted-foreground">Responses</dt>
                 <dd>
                   {r.responses} ({r.responseRate}%)
                 </dd>
               </div>
               <div>
-                <dt className="text-slate-500">Monthly usage / cap</dt>
+                <dt className="text-muted-foreground">Monthly usage / cap</dt>
                 <dd>
                   {r.monthlyUsage} / {r.leadLimitPerMonth ?? 'Unlimited'}
                 </dd>
               </div>
               <div>
-                <dt className="text-slate-500">RFQ entitlement</dt>
+                <dt className="text-muted-foreground">RFQ entitlement</dt>
                 <dd>{r.rfqEnabled ? 'Enabled' : 'Disabled'}</dd>
               </div>
             </dl>
@@ -120,7 +120,7 @@ export default function Page() {
           >
             Previous
           </Button>
-          <span className="text-sm">
+          <span className="text-nav">
             Page {pagination.page} of {Math.max(1, pagination.totalPages)} ·{' '}
             {pagination.total} suppliers
           </span>

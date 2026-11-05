@@ -56,7 +56,7 @@ export default function SupplierSignup({
   }, [supplier, attempt]);
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6 p-4 sm:p-8">
-      <p className="text-sm text-slate-600">
+      <p className="text-nav text-secondary">
         Already registered?{' '}
         <Link
           className="font-semibold text-secondary"
@@ -85,7 +85,7 @@ export default function SupplierSignup({
         <AuthForm mode="signup" {...auth} />
       ) : done ? (
         <section className="surface space-y-4 p-6">
-          <h1 className="text-2xl font-semibold">Verify your email</h1>
+          <h1 className="text-section font-semibold">Verify your email</h1>
           <p>
             If your address is eligible, a verification link has been sent. Your
             supplier account stays pending until subscription activation.
@@ -105,16 +105,16 @@ export default function SupplierSignup({
         <section className="surface space-y-5 p-5 sm:p-8">
           <header>
             <p className="eyebrow">Supplier onboarding</p>
-            <h1 className="text-2xl font-semibold">
+            <h1 className="text-section font-semibold">
               Build your marketplace presence
             </h1>
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-nav text-secondary">
               Company details → email verification → subscription activation.
               Buyers never need a plan.
             </p>
           </header>
           {error && (
-            <div role="alert" className="text-red-700">
+            <div role="alert" className="text-danger-foreground">
               {error}{' '}
               <Button
                 variant="secondary"
@@ -130,7 +130,7 @@ export default function SupplierSignup({
               className="space-y-4"
             >
               {(['displayName', 'email'] as const).map((k) => (
-                <label key={k} className="block text-sm font-medium">
+                <label key={k} className="block text-nav font-medium">
                   {k === 'email' ? 'Email address' : 'Your name'}
                   <input
                     className="mt-1 w-full rounded-lg border p-3"
@@ -140,7 +140,7 @@ export default function SupplierSignup({
                     aria-invalid={!!form.formState.errors[k]}
                   />
                   {form.formState.errors[k] && (
-                    <span role="alert" className="text-red-700">
+                    <span role="alert" className="text-danger-foreground">
                       {form.formState.errors[k]?.message}
                     </span>
                   )}
@@ -150,7 +150,7 @@ export default function SupplierSignup({
                 <div key={k}>
                   <label
                     htmlFor={`supplier-signup-${k}`}
-                    className="mb-1 block text-sm font-medium"
+                    className="mb-1 block text-nav font-medium"
                   >
                     {k === 'password' ? 'Password' : 'Confirm password'}
                   </label>
@@ -160,7 +160,7 @@ export default function SupplierSignup({
                     {...form.register(k)}
                   />
                   {form.formState.errors[k] && (
-                    <p role="alert" className="text-red-700">
+                    <p role="alert" className="text-danger-foreground">
                       {form.formState.errors[k]?.message}
                     </p>
                   )}
@@ -173,7 +173,7 @@ export default function SupplierSignup({
               <Button variant="ghost" onClick={() => setAccount(undefined)}>
                 Edit account details
               </Button>
-              <label className="block text-sm font-medium">
+              <label className="block text-nav font-medium">
                 Choose an administrator-defined plan
                 <select
                   required

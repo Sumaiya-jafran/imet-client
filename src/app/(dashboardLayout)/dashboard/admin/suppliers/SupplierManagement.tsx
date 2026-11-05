@@ -64,9 +64,9 @@ function ReviewForm({
       })}
       className="space-y-4 surface p-5"
     >
-      <h2 className="text-2xl font-semibold">Application review</h2>
+      <h2 className="text-section font-semibold">Application review</h2>
       {error && (
-        <p role="alert" className="text-red-700">
+        <p role="alert" className="text-danger-foreground">
           {error}
         </p>
       )}
@@ -114,7 +114,7 @@ function ReviewForm({
           <p
             id="review-note-error"
             role="alert"
-            className="text-sm text-red-700"
+            className="text-nav text-danger-foreground"
           >
             {errors.reviewNote.message}
           </p>
@@ -202,7 +202,7 @@ export default function SupplierManagement() {
       </Link>
       {error && (
         <div role="alert">
-          <p className="text-red-700">{error}</p>
+          <p className="text-danger-foreground">{error}</p>
           <Button variant="secondary" onClick={reload}>
             Reload suppliers
           </Button>
@@ -219,10 +219,10 @@ export default function SupplierManagement() {
             Back to suppliers
           </Button>
           <section className="surface p-5">
-            <h2 className="break-words text-2xl font-semibold">
+            <h2 className="break-words text-section font-semibold">
               {selected.companyName}
             </h2>
-            <dl className="my-4 grid gap-4 rounded-lg bg-slate-50 p-4 sm:grid-cols-2">
+            <dl className="my-4 grid gap-4 rounded-lg bg-background p-4 sm:grid-cols-2">
               <div>
                 <dt className="font-semibold">Supplier type</dt>
                 <dd>{selected.type}</dd>
@@ -282,7 +282,7 @@ export default function SupplierManagement() {
           </section>
           {profileEdit && (
             <section className="surface p-5">
-              <p className="mb-3 text-sm text-slate-600">
+              <p className="mb-3 text-nav text-secondary">
                 Administrative profile edits reset verification. Review and
                 verify the updated information afterwards.
               </p>
@@ -377,10 +377,10 @@ export default function SupplierManagement() {
                     className="surface flex flex-wrap items-center justify-between gap-4 p-5"
                   >
                     <div className="min-w-0">
-                      <h2 className="break-words text-base font-semibold">
+                      <h2 className="break-words text-body font-semibold">
                         {supplier.companyName}
                       </h2>
-                      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                      <div className="mt-2 flex flex-wrap items-center gap-2 text-meta text-muted-foreground">
                         <span>
                           {supplierTypeLabels[supplier.type]}
                         </span>

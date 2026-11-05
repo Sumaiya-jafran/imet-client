@@ -41,7 +41,7 @@ export default function MachineryMediaGallery({
       {failed && (
         <div
           role="alert"
-          className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900"
+          className="rounded-lg border border-warning/25 bg-warning/5 p-3 text-nav text-warning-foreground"
         >
           <p>
             Interactive media is unavailable on this device or could not load.
@@ -88,7 +88,7 @@ export default function MachineryMediaGallery({
       )}
       {(!selected || failed) && images.length > 1 && (
         <div>
-          <p className="mb-3 text-xs text-slate-600" role="status">
+          <p className="mb-3 text-meta text-secondary" role="status">
             Image {photo + 1} of {images.length}
           </p>
           <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
@@ -98,7 +98,7 @@ export default function MachineryMediaGallery({
                 key={`${image.url}-${i}`}
                 aria-label={`View image ${i + 1} of ${name}`}
                 aria-pressed={photo === i}
-                className={`rounded-lg p-1 transition ${photo === i ? 'bg-navy ring-2 ring-navy ring-offset-2' : 'bg-white hover:bg-slate-200'}`}
+                className={`rounded-lg p-1 transition ${photo === i ? 'bg-primary ring-2 ring-primary ring-offset-2' : 'bg-surface hover:bg-border'}`}
                 onClick={() => setPhoto(i)}
               >
                 <MachineImage

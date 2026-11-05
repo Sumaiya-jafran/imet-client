@@ -44,17 +44,17 @@ export default function DashboardShell({
         href="/"
         aria-label="Machinmate home"
         className={cn(
-          'mb-6 flex h-12 shrink-0 items-center gap-3 px-2 font-display text-xl font-extrabold text-white',
+          'mb-6 flex h-12 shrink-0 items-center gap-3 px-2 font-sans text-section font-bold text-inverse',
           compact && 'justify-center px-0',
         )}
       >
-        <span className="flex size-9 shrink-0 items-center justify-center bg-orange text-foreground">
+        <span className="flex size-9 shrink-0 items-center justify-center bg-accent text-foreground">
           <Factory size={19} aria-hidden="true" />
         </span>
         {!compact && (
           <span>
             Machinmate
-            <span className="block font-sans text-xs font-medium text-slate-400">Workspace</span>
+            <span className="block font-sans text-meta font-medium text-subtle">Workspace</span>
           </span>
         )}
       </Link>
@@ -63,9 +63,9 @@ export default function DashboardShell({
         {groups.map((group) => (
           <div key={group.title}>
             {compact ? (
-              <hr className="mx-3 mb-3 border-white/10" />
+              <hr className="mx-3 mb-3 border-surface/10" />
             ) : (
-              <p className="mb-2 px-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+              <p className="mb-2 px-3 text-meta font-bold uppercase tracking-[0.18em] text-subtle">
                 {group.title}
               </p>
             )}
@@ -81,11 +81,11 @@ export default function DashboardShell({
                       aria-label={compact ? label : undefined}
                       aria-current={current ? 'page' : undefined}
                       className={cn(
-                        'relative flex min-h-10 items-center gap-3 rounded px-3 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white',
+                        'relative flex min-h-10 items-center gap-3 rounded px-3 py-2 text-nav font-medium focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-surface',
                         compact && 'justify-center px-0',
                         current
-                          ? 'bg-white/10 text-white before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:bg-orange-light'
-                          : 'text-slate-300 hover:bg-white/5 hover:text-white',
+                          ? 'bg-surface/10 text-inverse before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:bg-accent'
+                          : 'text-border-strong hover:bg-surface/5 hover:text-inverse',
                       )}
                     >
                       <Icon size={18} aria-hidden="true" className={cn('shrink-0', current && 'text-accent')} />
@@ -104,7 +104,7 @@ export default function DashboardShell({
         href="/machinery"
         aria-label={compact ? 'Browse marketplace' : undefined}
         className={cn(
-          'mt-4 flex min-h-10 shrink-0 items-center gap-3 rounded border border-white/10 px-3 text-xs font-medium text-slate-300 hover:border-white/25 hover:text-white focus-visible:outline-2 focus-visible:outline-white',
+          'mt-4 flex min-h-10 shrink-0 items-center gap-3 rounded border border-surface/10 px-3 text-meta font-medium text-border-strong hover:border-surface/25 hover:text-inverse focus-visible:outline-2 focus-visible:outline-surface',
           compact && 'justify-center px-0',
         )}
       >
@@ -115,17 +115,17 @@ export default function DashboardShell({
   );
 
   return (
-    <div className="dashboard-shell min-h-screen bg-slate-100/70 lg:flex">
+    <div className="dashboard-shell min-h-screen bg-surface-muted/70 lg:flex">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:bg-white focus:p-3 focus:font-semibold"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:bg-surface focus:p-3 focus:font-semibold"
       >
         Skip to content
       </a>
 
       <aside
         className={cn(
-          'sticky top-0 hidden h-dvh shrink-0 flex-col bg-navy p-3 transition-[width] duration-200 lg:flex',
+          'sticky top-0 hidden h-dvh shrink-0 flex-col bg-primary p-3 transition-[width] duration-200 lg:flex',
           collapsed ? 'w-20' : 'w-64',
         )}
       >
@@ -136,7 +136,7 @@ export default function DashboardShell({
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           aria-expanded={!collapsed}
           className={cn(
-            'mt-2 flex min-h-10 shrink-0 items-center gap-3 rounded px-3 text-slate-400 hover:bg-white/5 hover:text-white focus-visible:outline-2 focus-visible:outline-white',
+            'mt-2 flex min-h-10 shrink-0 items-center gap-3 rounded px-3 text-subtle hover:bg-surface/5 hover:text-inverse focus-visible:outline-2 focus-visible:outline-surface',
             collapsed && 'justify-center px-0',
           )}
         >
@@ -145,14 +145,14 @@ export default function DashboardShell({
           ) : (
             <>
               <PanelLeftClose size={18} aria-hidden="true" className="shrink-0" />
-              <span className="text-xs">Collapse sidebar</span>
+              <span className="text-meta">Collapse sidebar</span>
             </>
           )}
         </button>
       </aside>
 
       <div className="min-w-0 flex-1">
-        <header className="border-b border-slate-200 bg-white/95 backdrop-blur">
+        <header className="border-b border-border bg-surface/95 backdrop-blur">
           <div className="flex min-h-16 items-center gap-3 px-4 sm:px-6 lg:px-8">
             <button
               ref={trigger}
@@ -160,15 +160,15 @@ export default function DashboardShell({
               onClick={() => drawer.current?.showModal()}
               aria-label="Open dashboard navigation"
               aria-haspopup="dialog"
-              className="flex size-10 items-center justify-center rounded border border-slate-200 text-navy lg:hidden"
+              className="flex size-10 items-center justify-center rounded border border-border text-primary lg:hidden"
             >
               <Menu size={20} aria-hidden="true" />
             </button>
             <div className="min-w-0">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-secondary">
+              <p className="text-meta font-bold uppercase tracking-[0.18em] text-secondary">
                 {active?.group ?? 'Workspace'}
               </p>
-              <p className="truncate font-display text-base font-bold text-navy">
+              <p className="truncate font-sans text-body font-bold text-primary">
                 {active?.label ?? 'Dashboard'}
               </p>
             </div>
@@ -178,7 +178,7 @@ export default function DashboardShell({
                 <Link
                   prefetch={false}
                   href={QUOTE_HREF}
-                  className="hidden min-h-10 items-center gap-2 rounded bg-orange px-4 text-xs font-semibold text-foreground hover:bg-orange-dark sm:inline-flex"
+                  className="hidden min-h-10 items-center gap-2 rounded bg-accent px-4 text-meta font-semibold text-foreground hover:bg-accent-hover sm:inline-flex"
                 >
                   Request a quote
                   <ArrowUpRight size={15} aria-hidden="true" />
@@ -193,7 +193,7 @@ export default function DashboardShell({
                 href="/dashboard/account"
                 aria-label={`Your account: ${user.displayName}`}
                 title={user.displayName}
-                className="flex size-10 shrink-0 items-center justify-center rounded-full bg-navy font-display text-sm font-bold text-white hover:bg-secondary"
+                className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary font-sans text-nav font-bold text-inverse hover:bg-secondary"
               >
                 {initial}
               </Link>
@@ -218,19 +218,19 @@ export default function DashboardShell({
         onClick={(e) => {
           if (e.target === e.currentTarget) drawer.current?.close();
         }}
-        className="fixed inset-y-0 left-0 m-0 h-dvh max-h-none w-72 max-w-[85vw] border-0 bg-navy p-4 text-white backdrop:bg-navy-deep/60"
+        className="fixed inset-y-0 left-0 m-0 h-dvh max-h-none w-72 max-w-[85vw] border-0 bg-primary p-4 text-inverse backdrop:bg-primary/60"
       >
         <button
           type="button"
           onClick={() => drawer.current?.close()}
           aria-label="Close dashboard navigation"
-          className="absolute right-3 top-5 flex size-10 items-center justify-center rounded text-slate-300 hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white"
+          className="absolute right-3 top-5 flex size-10 items-center justify-center rounded text-border-strong hover:bg-surface/10 focus-visible:outline-2 focus-visible:outline-surface"
         >
           <X size={20} aria-hidden="true" />
         </button>
         <div className="flex h-full min-h-0 flex-col">
           {navigation()}
-          <div className="mt-4 rounded bg-white p-3">
+          <div className="mt-4 rounded bg-surface p-3">
             <LanguageSelector />
           </div>
         </div>

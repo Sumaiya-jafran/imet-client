@@ -97,7 +97,7 @@ export default function ServiceTicketWorkspace({
         }}
       >
         <div>
-          <label htmlFor="ticket-search" className="block text-sm font-medium">
+          <label htmlFor="ticket-search" className="block text-nav font-medium">
             Search issue or machinery
           </label>
           <input
@@ -110,7 +110,7 @@ export default function ServiceTicketWorkspace({
         <div>
           <label
             htmlFor="ticket-filter-status"
-            className="block text-sm font-medium"
+            className="block text-nav font-medium"
           >
             Ticket status
           </label>
@@ -139,7 +139,7 @@ export default function ServiceTicketWorkspace({
         </Button>
       </form>
       {error && (
-        <div role="alert" className="surface p-4 text-red-800">
+        <div role="alert" className="surface p-4 text-danger-foreground">
           {error}
           <Button
             variant="secondary"
@@ -156,7 +156,7 @@ export default function ServiceTicketWorkspace({
         <LoadingState label="Loading service tickets…" />
       ) : data?.tickets.length ? (
         <section className="space-y-3" aria-label="Service tickets">
-          <p className="text-sm text-slate-600">
+          <p className="text-nav text-secondary">
             {data.pagination.total} tickets
           </p>
           {data.tickets.map((t) => (
@@ -165,7 +165,7 @@ export default function ServiceTicketWorkspace({
               className="surface flex flex-wrap items-center justify-between gap-3 p-4"
             >
               <div className="min-w-0">
-                <p className="text-xs text-slate-500">
+                <p className="text-meta text-muted-foreground">
                   {t.reference} · {new Date(t.createdAt).toLocaleDateString()}
                 </p>
                 <h2 className="break-words font-semibold">
@@ -173,10 +173,10 @@ export default function ServiceTicketWorkspace({
                     {t.subject}
                   </Link>
                 </h2>
-                <p className="break-words text-sm text-slate-600">
+                <p className="break-words text-nav text-secondary">
                   {t.machine.name} · {t.customer.displayName}
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-meta text-muted-foreground">
                   Assigned: {t.assignedTo?.displayName ?? 'Awaiting assignment'}
                 </p>
               </div>

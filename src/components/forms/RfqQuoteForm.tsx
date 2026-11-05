@@ -78,10 +78,10 @@ export default function RfqQuoteForm({
       noValidate
       className="surface space-y-4 p-5"
     >
-      <h2 className="text-lg font-semibold">
+      <h2 className="text-card font-semibold">
         {quote ? 'Edit your quote' : 'Submit a quote'}
       </h2>
-      <p className="text-xs text-slate-500">
+      <p className="text-meta text-muted-foreground">
         Your quote is private to you, the buyer and administrators. No online
         payment is collected.
       </p>
@@ -120,7 +120,7 @@ export default function RfqQuoteForm({
               />
             )}{' '}
             {errors[key] && (
-              <p id={`quote-${key}-error`} className="text-xs text-red-700">
+              <p id={`quote-${key}-error`} className="text-meta text-danger-foreground">
                 {errors[key]?.message}
               </p>
             )}

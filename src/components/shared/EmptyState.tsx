@@ -10,13 +10,13 @@ export default function EmptyState({
   children?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center rounded-md border border-dashed border-slate-300 bg-white px-5 py-14 text-center">
-      <span className="mb-5 flex size-12 items-center justify-center bg-navy text-white">
+    <div className="flex flex-col items-center rounded-md border border-dashed border-border-strong bg-surface px-5 py-14 text-center">
+      <span className="mb-5 flex size-12 items-center justify-center bg-primary text-inverse">
         <PackageSearch size={23} aria-hidden="true" />
       </span>
-      <h2 className="font-display text-lg font-semibold">{title}</h2>
+      <h2 className="font-sans text-card font-semibold">{title}</h2>
       {description && (
-        <p className="mt-2 max-w-md text-sm leading-6 text-slate-600">
+        <p className="mt-2 max-w-md text-nav leading-6 text-secondary">
           {description}
         </p>
       )}

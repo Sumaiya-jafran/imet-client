@@ -6,7 +6,7 @@ export default function LanguageSelector() {
   const id = useId();
   const { language, setLanguage, originals, setOriginals } = useLanguage();
   return (
-    <div className="flex min-w-0 flex-wrap items-center gap-2 text-xs">
+    <div className="flex min-w-0 flex-wrap items-center gap-2 text-meta">
       <label htmlFor={id} className="sr-only">
         Marketplace content language
       </label>
@@ -27,7 +27,7 @@ export default function LanguageSelector() {
         type="button"
         aria-pressed={originals}
         onClick={() => setOriginals(!originals)}
-        className="min-h-9 rounded border border-slate-200 px-2 py-1 font-medium text-slate-600 hover:bg-slate-50"
+        className="min-h-9 rounded border border-border px-2 py-1 font-medium text-secondary hover:bg-background"
       >
         {originals ? 'Show translations' : 'Show originals'}
       </button>

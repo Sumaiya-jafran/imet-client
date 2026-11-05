@@ -31,19 +31,19 @@ const columns = [
 
 export default function Footer() {
   return (
-    <footer className="bg-navy-deep text-slate-300">
+    <footer className="bg-primary text-border-strong">
       <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.4fr_repeat(3,1fr)] lg:px-8">
         <div>
           <Link
             href="/"
-            className="flex items-center gap-2.5 font-display text-xl font-extrabold text-white"
+            className="flex items-center gap-2.5 font-sans text-section font-bold text-inverse"
           >
-            <span className="flex size-9 items-center justify-center bg-orange text-foreground">
+            <span className="flex size-9 items-center justify-center bg-accent text-foreground">
               <Factory size={19} aria-hidden="true" />
             </span>
-            Machinmate <span className="text-sm font-medium text-slate-400">Machinery</span>
+            Machinmate <span className="text-nav font-medium text-subtle">Machinery</span>
           </Link>
-          <p className="mt-5 max-w-xs text-sm leading-6 text-slate-400">
+          <p className="mt-5 max-w-xs text-nav leading-6 text-subtle">
             An industrial machinery marketplace connecting buyers with local
             dealers and international manufacturers.
           </p>
@@ -51,10 +51,10 @@ export default function Footer() {
         </div>
         {columns.map((col) => (
           <nav key={col.title} aria-label={col.title}>
-            <h2 className="font-display text-sm font-bold uppercase tracking-[0.15em] text-white">
+            <h2 className="font-sans text-nav font-bold uppercase tracking-[0.15em] text-inverse">
               {col.title}
             </h2>
-            <ul className="mt-5 space-y-3 text-sm">
+            <ul className="mt-5 space-y-3 text-nav">
               {col.links.map((l) => (
                 <li key={l.href}>
                   <Link href={l.href} className="hover:text-accent">
@@ -66,8 +66,8 @@ export default function Footer() {
           </nav>
         ))}
       </div>
-      <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-3 px-4 py-6 text-xs text-slate-400 sm:px-6 lg:px-8">
+      <div className="border-t border-surface/10">
+        <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-3 px-4 py-6 text-meta text-subtle sm:px-6 lg:px-8">
           <p>© {new Date().getFullYear()} Machinmate. All rights reserved.</p>
           <p>Machinery · Suppliers · Manufacturing</p>
         </div>

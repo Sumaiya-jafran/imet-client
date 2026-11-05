@@ -105,7 +105,7 @@ export default function ServiceTicketForm({
         My service tickets
       </Link>
       {error && (
-        <div role="alert" className="surface p-4 text-red-800">
+        <div role="alert" className="surface p-4 text-danger-foreground">
           {error}
           <Button
             variant="secondary"
@@ -146,7 +146,7 @@ export default function ServiceTicketForm({
                 </option>
               ))}
             </select>
-            <p id="ticket-sale-error" className="text-sm text-red-700">
+            <p id="ticket-sale-error" className="text-nav text-danger-foreground">
               {errors.saleId?.message}
             </p>
           </div>
@@ -162,7 +162,7 @@ export default function ServiceTicketForm({
               aria-describedby="ticket-subject-error"
               className="mt-1 w-full"
             />
-            <p id="ticket-subject-error" className="text-sm text-red-700">
+            <p id="ticket-subject-error" className="text-nav text-danger-foreground">
               {errors.subject?.message}
             </p>
           </div>
@@ -179,15 +179,15 @@ export default function ServiceTicketForm({
               aria-describedby="ticket-description-error"
               className="mt-1 w-full"
             />
-            <p id="ticket-description-error" className="text-sm text-red-700">
+            <p id="ticket-description-error" className="text-nav text-danger-foreground">
               {errors.description?.message}
             </p>
           </div>
-          <label className="flex items-start gap-2 text-sm">
+          <label className="flex items-start gap-2 text-nav">
             <input type="checkbox" {...register('warrantyRequested')} />
             Request manual warranty review
           </label>
-          <p className="text-xs text-slate-500">
+          <p className="text-meta text-muted-foreground">
             Warranty requests are reviewed by an administrator. No automatic
             coverage or service pricing is implied. Do not include passwords or
             unnecessary personal information.

@@ -55,12 +55,12 @@ export default async function Page({
             name="q"
             defaultValue={q}
             maxLength={100}
-            className="mt-1 w-full rounded border bg-white p-3"
+            className="mt-1 w-full rounded border bg-surface p-3"
           />
         </label>
         <button className="action-link self-end">Search suppliers</button>
       </form>
-      <p className="mb-4 text-xs text-slate-600">
+      <p className="mb-4 text-meta text-secondary">
         {result.pagination.total} suppliers found
       </p>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -73,7 +73,7 @@ export default async function Page({
                   : undefined
               }
             />
-            <h2 className="mt-4 break-words text-lg font-semibold">
+            <h2 className="mt-4 break-words text-card font-semibold">
               <Link
                 className="hover:underline"
                 href={`/suppliers/${supplier.id}`}
@@ -81,10 +81,10 @@ export default async function Page({
                 {supplier.companyName}
               </Link>
             </h2>
-            <p className="mt-2 text-xs text-slate-600">
+            <p className="mt-2 text-meta text-secondary">
               {supplierTypeLabels[supplier.type]}
             </p>
-            <p className="mt-2 flex items-center gap-1.5 break-words text-xs text-slate-500">
+            <p className="mt-2 flex items-center gap-1.5 break-words text-meta text-muted-foreground">
               <MapPin size={13} aria-hidden="true" />
               {supplier.city}, {supplier.country}
             </p>

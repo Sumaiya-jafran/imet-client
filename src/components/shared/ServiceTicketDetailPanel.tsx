@@ -176,7 +176,7 @@ export default function ServiceTicketDetailPanel({
         Back to service tickets
       </Link>
       {error && (
-        <div role="alert" className="surface p-4 text-red-800">
+        <div role="alert" className="surface p-4 text-danger-foreground">
           {error}
           <Button variant="secondary" onClick={reload}>
             Reload ticket
@@ -184,61 +184,61 @@ export default function ServiceTicketDetailPanel({
         </div>
       )}
       {notice && (
-        <p role="status" className="text-sm text-emerald-800">
+        <p role="status" className="text-nav text-success-foreground">
           {notice}
         </p>
       )}
       {p.readOnlyReason && (
-        <p className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        <p className="rounded-lg border border-warning/25 bg-warning/5 p-3 text-nav text-warning-foreground">
           Read-only: {p.readOnlyReason}
         </p>
       )}
       <section className="surface space-y-4 p-5">
         <h2 className="font-semibold">Service request</h2>
-        <p className="whitespace-pre-wrap break-words text-sm text-slate-700">
+        <p className="whitespace-pre-wrap break-words text-nav text-foreground">
           {ticket.description}
         </p>
-        <dl className="grid gap-4 text-sm sm:grid-cols-2">
+        <dl className="grid gap-4 text-nav sm:grid-cols-2">
           <div>
-            <dt className="text-slate-500">Customer</dt>
+            <dt className="text-muted-foreground">Customer</dt>
             <dd className="break-words font-medium">
               {ticket.customer.displayName}
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Service party</dt>
+            <dt className="text-muted-foreground">Service party</dt>
             <dd className="break-words font-medium">
               {ticket.assignedTo?.displayName ?? 'Awaiting assignment'}
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Submitted</dt>
+            <dt className="text-muted-foreground">Submitted</dt>
             <dd>{new Date(ticket.createdAt).toLocaleString()}</dd>
           </div>
           <div>
-            <dt className="text-slate-500">Updated</dt>
+            <dt className="text-muted-foreground">Updated</dt>
             <dd>{new Date(ticket.updatedAt).toLocaleString()}</dd>
           </div>
           {ticket.resolvedAt && (
             <div>
-              <dt className="text-slate-500">Resolved</dt>
+              <dt className="text-muted-foreground">Resolved</dt>
               <dd>{new Date(ticket.resolvedAt).toLocaleString()}</dd>
             </div>
           )}
           {ticket.closedAt && (
             <div>
-              <dt className="text-slate-500">Closed</dt>
+              <dt className="text-muted-foreground">Closed</dt>
               <dd>{new Date(ticket.closedAt).toLocaleString()}</dd>
             </div>
           )}
         </dl>
         <Link
           href={`/machinery/${ticket.machine.slug}`}
-          className="text-sm underline"
+          className="text-nav underline"
         >
           View machinery catalogue page
         </Link>
-        <p className="text-xs text-slate-500">
+        <p className="text-meta text-muted-foreground">
           Machinery may no longer be publicly listed; your service history
           remains available.
         </p>
@@ -253,11 +253,11 @@ export default function ServiceTicketDetailPanel({
           {ticket.warrantyAssessment.replaceAll('_', ' ')}
         </Badge>
         {ticket.warrantyNote && (
-          <p className="whitespace-pre-wrap break-words text-sm">
+          <p className="whitespace-pre-wrap break-words text-nav">
             {ticket.warrantyNote}
           </p>
         )}
-        <p className="text-xs text-slate-500">
+        <p className="text-meta text-muted-foreground">
           Manual administrative assessment. No automatic warranty duration,
           coverage or service pricing is calculated.
         </p>
@@ -289,7 +289,7 @@ export default function ServiceTicketDetailPanel({
       {ticket.resolution && (
         <section className="surface space-y-3 p-5">
           <h2 className="font-semibold">Resolution</h2>
-          <p className="whitespace-pre-wrap break-words text-sm">
+          <p className="whitespace-pre-wrap break-words text-nav">
             {ticket.resolution}
           </p>
         </section>
@@ -380,7 +380,7 @@ export default function ServiceTicketDetailPanel({
             >
               <label
                 htmlFor="ticket-assignee"
-                className="block text-sm font-medium"
+                className="block text-nav font-medium"
               >
                 Assign service party
               </label>
@@ -407,7 +407,7 @@ export default function ServiceTicketDetailPanel({
               {candidates
                 .filter((c) => !c.eligible)
                 .map((c) => (
-                  <p key={c.id} className="text-xs text-amber-900">
+                  <p key={c.id} className="text-meta text-warning-foreground">
                     {c.displayName}: {c.reason}
                   </p>
                 ))}
@@ -447,7 +447,7 @@ export default function ServiceTicketDetailPanel({
             aria-describedby="ticket-action-error"
             className="w-full"
           />
-          <p id="ticket-action-error" className="text-sm text-red-700">
+          <p id="ticket-action-error" className="text-nav text-danger-foreground">
             {detail.formState.errors.note?.message}
           </p>
           <div className="flex flex-wrap gap-2">
@@ -495,14 +495,14 @@ export default function ServiceTicketDetailPanel({
             aria-describedby="ticket-note-error"
             className="w-full"
           />
-          <p id="ticket-note-error" className="text-sm text-red-700">
+          <p id="ticket-note-error" className="text-nav text-danger-foreground">
             {notes.formState.errors.note?.message}
           </p>
           {p.canInternalNote ? (
             <div>
               <label
                 htmlFor="ticket-note-visibility"
-                className="block text-sm font-medium"
+                className="block text-nav font-medium"
               >
                 Update visibility
               </label>
@@ -518,7 +518,7 @@ export default function ServiceTicketDetailPanel({
               </select>
             </div>
           ) : (
-            <p className="text-xs text-slate-500">
+            <p className="text-meta text-muted-foreground">
               Your comment is visible to the customer and authorized service
               staff.
             </p>
@@ -531,27 +531,27 @@ export default function ServiceTicketDetailPanel({
       <section className="surface space-y-4 p-5" aria-label="Ticket activity">
         <h2 className="font-semibold">Service progress & history</h2>
         {history?.events.map((e) => (
-          <article key={e.id} className="border-l-2 border-slate-200 pl-3">
+          <article key={e.id} className="border-l-2 border-border pl-3">
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-sm font-semibold">
+              <h3 className="text-nav font-semibold">
                 {e.type.replaceAll('_', ' ')}
               </h3>
               {e.visibility === 'INTERNAL' && <Badge>Internal</Badge>}
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-meta text-muted-foreground">
               {e.actor.displayName} · {new Date(e.createdAt).toLocaleString()}
             </p>
             {e.assignedTo && (
-              <p className="text-sm">Assigned to {e.assignedTo.displayName}</p>
+              <p className="text-nav">Assigned to {e.assignedTo.displayName}</p>
             )}
             {e.toStatus && (
-              <p className="text-xs text-slate-600">
+              <p className="text-meta text-secondary">
                 {e.fromStatus?.replaceAll('_', ' ')} →{' '}
                 {e.toStatus.replaceAll('_', ' ')}
               </p>
             )}
             {e.note && (
-              <p className="mt-2 whitespace-pre-wrap break-words text-sm">
+              <p className="mt-2 whitespace-pre-wrap break-words text-nav">
                 {e.note}
               </p>
             )}

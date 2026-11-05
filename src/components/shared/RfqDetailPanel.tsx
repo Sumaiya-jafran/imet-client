@@ -119,7 +119,7 @@ export default function RfqDetailPanel({
         <li key={f.id}>
           <button
             type="button"
-            className="text-sm font-medium text-secondary underline"
+            className="text-nav font-medium text-secondary underline"
             onClick={() => void run(() => rfqApi.download(token, f, isQuote))}
           >
             {f.fileName} · {Math.ceil(f.fileSize / 1024)} KB
@@ -143,17 +143,17 @@ export default function RfqDetailPanel({
               ? '/dashboard/leads'
               : '/dashboard/rfqs'
         }
-        className="text-sm underline"
+        className="text-nav underline"
       >
         Back to {lead ? 'leads' : 'RFQs'}
       </Link>
       {error && (
-        <p role="alert" className="rounded-lg bg-red-50 p-3 text-red-700">
+        <p role="alert" className="rounded-lg bg-danger/5 p-3 text-danger-foreground">
           {error}
         </p>
       )}
       {rfq.isFlagged && (
-        <p role="status" className="rounded-lg bg-amber-50 p-3 text-amber-900">
+        <p role="status" className="rounded-lg bg-warning/5 p-3 text-warning-foreground">
           This RFQ is flagged for review. Responses are paused.
           {admin && ` ${rfq.flagReason ?? ''}`}
         </p>
@@ -257,7 +257,7 @@ export default function RfqDetailPanel({
       {owner && rfq.recipients.some((r) => r.quotes.length) && (
         <section className="surface p-5">
           <h2 className="mb-3 font-semibold">Compare quotes</h2>
-          <p className="mb-4 text-xs text-slate-500">
+          <p className="mb-4 text-meta text-muted-foreground">
             Prices use each quote’s currency. Compare commercial terms before
             accepting.
           </p>
@@ -266,24 +266,24 @@ export default function RfqDetailPanel({
               r.quotes.map((q) => (
                 <div
                   key={q.id}
-                  className="rounded-lg border border-slate-200 p-4"
+                  className="rounded-lg border border-border p-4"
                 >
                   <h3 className="font-semibold">{r.name}</h3>
-                  <dl className="mt-3 space-y-2 text-sm">
+                  <dl className="mt-3 space-y-2 text-nav">
                     <div>
-                      <dt className="text-slate-500">Unit price</dt>
+                      <dt className="text-muted-foreground">Unit price</dt>
                       <dd>
                         {q.unitPrice} {q.currency}
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-slate-500">MOQ / lead time</dt>
+                      <dt className="text-muted-foreground">MOQ / lead time</dt>
                       <dd>
                         {q.moq} / {q.leadTimeDays} days
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-slate-500">Validity / status</dt>
+                      <dt className="text-muted-foreground">Validity / status</dt>
                       <dd>
                         {new Date(q.validUntil).toLocaleDateString()} /{' '}
                         {q.status}
@@ -308,22 +308,22 @@ export default function RfqDetailPanel({
       )}
       <section className="surface space-y-4 p-5">
         <h2 className="font-semibold">Request details</h2>
-        <p className="whitespace-pre-wrap text-sm">{rfq.description}</p>
-        <dl className="grid gap-4 text-sm sm:grid-cols-2">
+        <p className="whitespace-pre-wrap text-nav">{rfq.description}</p>
+        <dl className="grid gap-4 text-nav sm:grid-cols-2">
           <div>
-            <dt className="text-slate-500">Quantity</dt>
+            <dt className="text-muted-foreground">Quantity</dt>
             <dd>
               {rfq.quantity} {rfq.unit}
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Machinery / category</dt>
+            <dt className="text-muted-foreground">Machinery / category</dt>
             <dd>
               {rfq.machine?.name ?? rfq.category?.name ?? 'General request'}
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Delivery</dt>
+            <dt className="text-muted-foreground">Delivery</dt>
             <dd>
               {rfq.deliveryLocation}
               <br />
@@ -331,7 +331,7 @@ export default function RfqDetailPanel({
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Expires</dt>
+            <dt className="text-muted-foreground">Expires</dt>
             <dd>
               {rfq.expiresAt
                 ? new Date(rfq.expiresAt).toLocaleString()
@@ -339,14 +339,14 @@ export default function RfqDetailPanel({
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Supplier preference / language</dt>
+            <dt className="text-muted-foreground">Supplier preference / language</dt>
             <dd>
               {rfq.supplierCountry ?? 'Any country'} / {rfq.preferredLanguage}
             </dd>
           </div>
           {'targetBudget' in rfq && (
             <div>
-              <dt className="text-slate-500">Private target budget</dt>
+              <dt className="text-muted-foreground">Private target budget</dt>
               <dd>
                 {rfq.targetBudget
                   ? `${rfq.targetBudget} ${rfq.budgetCurrency}`
@@ -358,10 +358,10 @@ export default function RfqDetailPanel({
         <h3 className="font-medium">Private attachments</h3>
         {files(rfq.attachments)}
         {!rfq.attachments.length && (
-          <p className="text-sm text-slate-500">No attachments.</p>
+          <p className="text-nav text-muted-foreground">No attachments.</p>
         )}
         {owner && rfq.status === 'DRAFT' && (
-          <label className="block text-sm">
+          <label className="block text-nav">
             Add PDF, PNG or JPEG (up to 10 MB)
             <input
               type="file"
@@ -394,13 +394,13 @@ export default function RfqDetailPanel({
         </section>
       )}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">
+        <h2 className="text-card font-semibold">
           {lead
             ? 'Your quotes and conversation'
             : 'Recipients and quote comparison'}
         </h2>
         {!rfq.recipients.length && (
-          <p className="surface p-5 text-sm text-slate-500">
+          <p className="surface p-5 text-nav text-muted-foreground">
             {rfq.status === 'DRAFT'
               ? 'Recipients are assigned on submission.'
               : 'No recipients assigned. An administrator can review routing.'}
@@ -412,13 +412,13 @@ export default function RfqDetailPanel({
               <h3 className="font-semibold">
                 {r.name} {r.isVerified ? '· Verified' : ''}
               </h3>
-              <span className="text-xs text-slate-500">
+              <span className="text-meta text-muted-foreground">
                 {r.recipientRole} · {r.leadStatus}
                 {r.removedAt ? ' · Removed' : ''}
               </span>
             </div>
             {r.contact && (
-              <div className="rounded-lg bg-emerald-50 p-3 text-sm">
+              <div className="rounded-lg bg-success/5 p-3 text-nav">
                 <h4 className="font-semibold">Approved supplier contact</h4>
                 <p>
                   {r.contact.contactName} · {r.contact.email} ·{' '}
@@ -428,36 +428,36 @@ export default function RfqDetailPanel({
               </div>
             )}
             {r.buyerContact && (
-              <p className="text-sm">Buyer contact: {r.buyerContact.email}</p>
+              <p className="text-nav">Buyer contact: {r.buyerContact.email}</p>
             )}
             {!r.contact && !lead && (
-              <p className="text-xs text-slate-500">
+              <p className="text-meta text-muted-foreground">
                 Private contact is revealed only for the accepted quote when
                 supplier permissions allow it.
               </p>
             )}
             {!r.quotes.length && (
-              <p className="text-sm text-slate-500">No quote received.</p>
+              <p className="text-nav text-muted-foreground">No quote received.</p>
             )}
             {r.quotes.map((q) => (
               <div
                 key={q.id}
-                className="rounded-lg border border-slate-200 p-4"
+                className="rounded-lg border border-border p-4"
               >
                 <div className="flex flex-wrap justify-between gap-2">
-                  <p className="text-lg font-semibold">
+                  <p className="text-card font-semibold">
                     {q.unitPrice}{' '}
-                    <span className="text-xs">
+                    <span className="text-meta">
                       {q.currency} / {rfq.unit}
                     </span>
                   </p>
-                  <span className="text-xs">{q.status}</span>
+                  <span className="text-meta">{q.status}</span>
                 </div>
-                <p className="mt-2 text-sm">
+                <p className="mt-2 text-nav">
                   MOQ {q.moq} · Lead time {q.leadTimeDays} days · Valid until{' '}
                   {new Date(q.validUntil).toLocaleString()}
                 </p>
-                <p className="mt-2 whitespace-pre-wrap text-sm text-slate-600">
+                <p className="mt-2 whitespace-pre-wrap text-nav text-secondary">
                   {q.notes}
                 </p>
                 {files(q.attachments, true)}
@@ -499,7 +499,7 @@ export default function RfqDetailPanel({
                       >
                         Withdraw
                       </Button>
-                      <label className="text-sm">
+                      <label className="text-nav">
                         Attach quote document
                         <input
                           type="file"
@@ -538,8 +538,8 @@ export default function RfqDetailPanel({
               </Button>
             )}
             {thread === r.id && (
-              <div className="space-y-3 border-t border-slate-200 pt-4">
-                <p className="text-xs text-slate-500">
+              <div className="space-y-3 border-t border-border pt-4">
+                <p className="text-meta text-muted-foreground">
                   Only this recipient, the buyer, and administrators can see
                   this thread. Showing the latest 100 messages.
                 </p>
@@ -547,9 +547,9 @@ export default function RfqDetailPanel({
                   {messages.map((m) => (
                     <li
                       key={m.id}
-                      className="rounded-lg bg-slate-50 p-3 text-sm"
+                      className="rounded-lg bg-background p-3 text-nav"
                     >
-                      <p className="text-xs font-medium text-slate-500">
+                      <p className="text-meta font-medium text-muted-foreground">
                         {m.sender.displayName} ·{' '}
                         {new Date(m.createdAt).toLocaleString()}{' '}
                         {m.readAt ? '· Read' : ''}
@@ -576,7 +576,7 @@ export default function RfqDetailPanel({
                     >
                       <label
                         htmlFor={`message-${r.id}`}
-                        className="text-sm font-medium"
+                        className="text-nav font-medium"
                       >
                         Message
                       </label>
@@ -637,7 +637,7 @@ export default function RfqDetailPanel({
               });
             }}
           >
-            <label className="flex-1 text-sm">
+            <label className="flex-1 text-nav">
               Find recipient
               <input name="q" maxLength={100} className="mt-1 w-full" />
             </label>
@@ -657,11 +657,11 @@ export default function RfqDetailPanel({
               }}
             >
               <fieldset className="max-h-64 space-y-2 overflow-y-auto">
-                <legend className="text-sm font-medium">
+                <legend className="text-nav font-medium">
                   Select eligible recipients
                 </legend>
                 {candidates.map((c) => (
-                  <label key={c.id} className="block text-sm">
+                  <label key={c.id} className="block text-nav">
                     <input type="checkbox" name="recipient" value={c.id} />{' '}
                     {c.supplier?.companyName ?? c.displayName}
                   </label>
@@ -689,7 +689,7 @@ export default function RfqDetailPanel({
               }}
               className="space-y-2"
             >
-              <label className="block text-sm">
+              <label className="block text-nav">
                 Review reason
                 <textarea
                   name="reason"
@@ -698,7 +698,7 @@ export default function RfqDetailPanel({
                   className="mt-1 w-full"
                 />
               </label>
-              <label className="block text-sm">
+              <label className="block text-nav">
                 <input type="checkbox" name="block" /> Also{' '}
                 {rfq.isFlagged ? 'unblock' : 'block'} routed supplier contact
                 disclosure
@@ -712,17 +712,17 @@ export default function RfqDetailPanel({
       )}
       <section className="surface p-5">
         <h2 className="mb-3 font-semibold">Activity timeline</h2>
-        <ol className="space-y-3 text-sm">
+        <ol className="space-y-3 text-nav">
           {rfq.events.map((e) => (
             <li key={e.id}>
               <span className="font-medium">
                 {e.eventType.replaceAll('_', ' ')}
               </span>
-              <time className="ml-2 text-xs text-slate-500">
+              <time className="ml-2 text-meta text-muted-foreground">
                 {new Date(e.createdAt).toLocaleString()}
               </time>
               {admin && e.metadata != null && (
-                <pre className="mt-1 overflow-x-auto whitespace-pre-wrap break-all text-xs text-slate-500">
+                <pre className="mt-1 overflow-x-auto whitespace-pre-wrap break-all text-meta text-muted-foreground">
                   {JSON.stringify(e.metadata, null, 2)}
                 </pre>
               )}

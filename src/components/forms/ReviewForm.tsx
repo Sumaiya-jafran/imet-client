@@ -31,7 +31,7 @@ export default function ReviewForm({
   return (
     <form className="space-y-4" onSubmit={handleSubmit(onSave)}>
       <fieldset disabled={busy || isSubmitting}>
-        <legend className="text-sm font-semibold">Your rating</legend>
+        <legend className="text-nav font-semibold">Your rating</legend>
         <Controller
           name="rating"
           control={control}
@@ -40,7 +40,7 @@ export default function ReviewForm({
               {[1, 2, 3, 4, 5].map((value) => (
                 <label
                   key={value}
-                  className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm ${field.value === value ? 'border-orange-dark bg-orange/5' : 'border-slate-200'}`}
+                  className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-nav ${field.value === value ? 'border-accent-hover bg-accent/5' : 'border-border'}`}
                 >
                   <input
                     type="radio"
@@ -64,14 +64,14 @@ export default function ReviewForm({
           )}
         />
         {errors.rating && (
-          <p role="alert" className="text-xs text-red-700">
+          <p role="alert" className="text-meta text-danger-foreground">
             {errors.rating.message}
           </p>
         )}
       </fieldset>
       <div>
         <label
-          className="block text-sm font-semibold"
+          className="block text-nav font-semibold"
           htmlFor={`review-body-${id}`}
         >
           Your experience
@@ -86,15 +86,15 @@ export default function ReviewForm({
           aria-invalid={!!errors.body}
           aria-describedby={`review-help-${id} review-error-${id}`}
         />
-        <p id={`review-help-${id}`} className="mt-1 text-xs text-slate-500">
+        <p id={`review-help-${id}`} className="mt-1 text-meta text-muted-foreground">
           Describe the machinery or supplier experience. Keep contact details
           and private commercial information out of your review.
         </p>
-        <p id={`review-error-${id}`} className="text-xs text-red-700">
+        <p id={`review-error-${id}`} className="text-meta text-danger-foreground">
           {errors.body?.message}
         </p>
       </div>
-      <p className="text-xs text-slate-500">
+      <p className="text-meta text-muted-foreground">
         New and edited reviews require administrator approval before
         publication.
       </p>

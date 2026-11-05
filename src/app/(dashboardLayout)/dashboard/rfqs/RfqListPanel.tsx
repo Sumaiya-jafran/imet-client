@@ -242,7 +242,7 @@ export default function RfqListPanel({
       </form>
       {error && (
         <div role="alert">
-          <p className="text-red-700">{error}</p>
+          <p className="text-danger-foreground">{error}</p>
           <Button
             variant="secondary"
             onClick={() => {
@@ -258,7 +258,7 @@ export default function RfqListPanel({
         <LoadingState label="Loading requests…" />
       ) : result?.rfqs.length ? (
         <>
-          <p className="text-xs text-slate-500">
+          <p className="text-meta text-muted-foreground">
             {result.pagination.total} requests
           </p>
           <div className="space-y-3">
@@ -269,10 +269,10 @@ export default function RfqListPanel({
               >
                 <div className="min-w-0">
                   <p className="eyebrow">{r.rfqNumber}</p>
-                  <h2 className="mt-1 break-words text-base font-semibold">
+                  <h2 className="mt-1 break-words text-body font-semibold">
                     {r.title}
                   </h2>
-                  <p className="mt-2 text-xs text-slate-500">
+                  <p className="mt-2 text-meta text-muted-foreground">
                     {r.category?.name ?? 'General request'} ·{' '}
                     {new Date(r.createdAt).toLocaleDateString()}
                   </p>
@@ -311,7 +311,7 @@ export default function RfqListPanel({
             >
               Previous
             </Button>
-            <span className="text-xs">
+            <span className="text-meta">
               Page {page} of {Math.max(1, result.pagination.totalPages)}
             </span>
             <Button

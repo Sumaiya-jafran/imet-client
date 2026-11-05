@@ -91,16 +91,16 @@ export default function PlanManagement() {
                       {plan.isActive ? 'Active' : 'Inactive'}
                     </Badge>
                   </div>
-                  <h2 className="break-words text-lg font-semibold">
+                  <h2 className="break-words text-card font-semibold">
                     {plan.name}
                   </h2>
-                  <p className="mt-4 break-words text-2xl font-bold tracking-tight text-navy">
+                  <p className="mt-4 break-words text-section font-bold tracking-tight text-primary">
                     {plan.price}{' '}
-                    <span className="text-xs font-medium tracking-normal text-slate-500">
+                    <span className="text-meta font-medium tracking-normal text-muted-foreground">
                       {plan.currency} / {plan.durationDays} days
                     </span>
                   </p>
-                  <dl className="my-5 grid grid-cols-2 gap-3 border-y border-slate-100 py-4">
+                  <dl className="my-5 grid grid-cols-2 gap-3 border-y border-surface-muted py-4">
                     <div>
                       <dt>Listing capacity</dt>
                       <dd className="mt-1 font-semibold">
@@ -109,12 +109,12 @@ export default function PlanManagement() {
                     </div>
                     <div>
                       <dt>Visibility</dt>
-                      <dd className="mt-1 text-xs font-semibold">
+                      <dd className="mt-1 text-meta font-semibold">
                         {plan.visibility}
                       </dd>
                     </div>
                   </dl>
-                  <p className="mb-3 text-xs text-slate-500">
+                  <p className="mb-3 text-meta text-muted-foreground">
                     RFQ leads: {plan.rfqEnabled ? 'Enabled' : 'Disabled'} ·
                     Monthly cap: {plan.leadLimitPerMonth ?? 'Unlimited'} ·
                     Contact reveal:{' '}
@@ -122,7 +122,7 @@ export default function PlanManagement() {
                       ? 'Allowed after acceptance'
                       : 'Disabled'}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-meta text-muted-foreground">
                     Eligibility:{' '}
                     {plan.eligibleTypes
                       .map((type) =>

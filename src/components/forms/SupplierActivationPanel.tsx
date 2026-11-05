@@ -52,10 +52,10 @@ export default function SupplierActivationPanel({
     <section className="surface space-y-4 p-5">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-card font-semibold">
             Account activation & payments
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-nav text-secondary">
             Account: {supplier.user?.status ?? 'Unknown'} · Email{' '}
             {supplier.user?.isEmailVerified ? 'verified' : 'unverified'}
           </p>
@@ -84,7 +84,7 @@ export default function SupplierActivationPanel({
         </Button>
       </header>
       {current?.activationMethod && (
-        <p className="text-sm">
+        <p className="text-nav">
           Activated via{' '}
           {current.activationMethod === 'PAYMENT'
             ? 'verified payment'
@@ -95,7 +95,7 @@ export default function SupplierActivationPanel({
         </p>
       )}
       {error && (
-        <p role="alert" className="text-sm text-red-800">
+        <p role="alert" className="text-nav text-danger-foreground">
           {error}{' '}
           <Button variant="ghost" onClick={() => setAttempt((n) => n + 1)}>
             Reload
@@ -104,18 +104,18 @@ export default function SupplierActivationPanel({
       )}
       {!payments && !error && <p role="status">Loading payment history…</p>}
       {payments?.length === 0 && (
-        <p className="text-sm text-slate-500">
+        <p className="text-nav text-muted-foreground">
           No gateway payment attempts. Manual activation does not create a
           payment record.
         </p>
       )}
       {!!payments?.length && (
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-left text-nav">
             <caption className="sr-only">
               Read-only SSLCOMMERZ payment records
             </caption>
-            <thead className="bg-slate-50 text-xs text-slate-500">
+            <thead className="bg-background text-meta text-muted-foreground">
               <tr>
                 {[
                   'Transaction / plan',
@@ -134,7 +134,7 @@ export default function SupplierActivationPanel({
               {payments.map((p) => (
                 <tr key={p.id} className="border-t">
                   <td className="p-3">
-                    <span className="font-sans text-xs">{p.transactionId}</span>
+                    <span className="font-sans text-meta">{p.transactionId}</span>
                     <br />
                     {p.subscription.planName}
                   </td>
@@ -144,7 +144,7 @@ export default function SupplierActivationPanel({
                   <td className="p-3">
                     {p.status}
                     <br />
-                    <span className="text-xs">{p.reviewReason}</span>
+                    <span className="text-meta">{p.reviewReason}</span>
                   </td>
                   <td className="p-3">
                     {p.validationId ?? 'Not validated'}
@@ -163,7 +163,7 @@ export default function SupplierActivationPanel({
       <dialog
         ref={dialog}
         aria-labelledby="manual-activation-title"
-        className="m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-2xl p-6 backdrop:bg-slate-950/50"
+        className="m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-2xl p-6 backdrop:bg-primary/50"
         onCancel={(e) => {
           if (busy) e.preventDefault();
         }}
@@ -196,16 +196,16 @@ export default function SupplierActivationPanel({
             }
           }}
         >
-          <h2 id="manual-activation-title" className="text-xl font-semibold">
+          <h2 id="manual-activation-title" className="text-section font-semibold">
             Confirm manual account activation
           </h2>
-          <p className="text-sm text-slate-600">
+          <p className="text-nav text-secondary">
             This activates {supplier.companyName} and replaces its current
             subscription. It records your identity and reason in the audit log.
             No gateway payment will be created.
           </p>
           <fieldset disabled={busy} className="space-y-4">
-            <label className="block text-sm font-medium">
+            <label className="block text-nav font-medium">
               Plan
               <select
                 required
@@ -227,7 +227,7 @@ export default function SupplierActivationPanel({
                 ))}
               </select>
             </label>
-            <label className="block text-sm font-medium">
+            <label className="block text-nav font-medium">
               Start date
               <input
                 required
@@ -236,7 +236,7 @@ export default function SupplierActivationPanel({
                 className="mt-1 w-full rounded-lg border p-2"
               />
             </label>
-            <label className="block text-sm font-medium">
+            <label className="block text-nav font-medium">
               End date
               <input
                 required
@@ -245,7 +245,7 @@ export default function SupplierActivationPanel({
                 className="mt-1 w-full rounded-lg border p-2"
               />
             </label>
-            <label className="block text-sm font-medium">
+            <label className="block text-nav font-medium">
               Activation reason
               <textarea
                 required
@@ -256,12 +256,12 @@ export default function SupplierActivationPanel({
                 className="mt-1 w-full rounded-lg border p-2"
               />
             </label>
-            <label className="flex gap-2 text-sm">
+            <label className="flex gap-2 text-nav">
               <input type="checkbox" required />I confirm this plan, term and
               manual activation reason.
             </label>
             {error && (
-              <p role="alert" className="text-red-800">
+              <p role="alert" className="text-danger-foreground">
                 {error}
               </p>
             )}

@@ -89,14 +89,14 @@ export default function Page() {
           >
             {q.rfq?.rfqNumber} · {q.rfq?.title}
           </Link>
-          <p className="mt-2 text-sm">
+          <p className="mt-2 text-nav">
             {q.unitPrice} {q.currency} · {q.status} · Valid until{' '}
             {new Date(q.validUntil).toLocaleString()}
           </p>
         </article>
       ))}
       {result?.quotes.length === 0 && (
-        <p className="surface p-5 text-slate-500">No matching quotes.</p>
+        <p className="surface p-5 text-muted-foreground">No matching quotes.</p>
       )}
       {result && (
         <nav
@@ -110,7 +110,7 @@ export default function Page() {
           >
             Previous
           </Button>
-          <span className="text-sm">
+          <span className="text-nav">
             Page {result.pagination.page} of{' '}
             {Math.max(1, result.pagination.totalPages)} ·{' '}
             {result.pagination.total} quotes

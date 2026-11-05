@@ -15,28 +15,28 @@ export default function AuthLayout({
       >
         <aside className="hidden lg:block">
           <span className="eyebrow">Your industry. Connected.</span>
-          <h2 className="mt-4 max-w-md text-4xl font-bold leading-tight">
+          <h2 className="mt-4 max-w-md text-page font-bold leading-tight">
             A workspace for
             <br />
             your next big move.
           </h2>
-          <p className="mt-5 max-w-sm text-sm leading-7 text-slate-600">
+          <p className="mt-5 max-w-sm text-nav leading-7 text-secondary">
             Explore machinery, discover suppliers and manage your business
             profile in one industrial marketplace.
           </p>
-          <div className="mt-9 flex items-center gap-4 border-t border-slate-200 pt-6">
-            <span className="rounded-xl bg-navy p-3 text-white">
+          <div className="mt-9 flex items-center gap-4 border-t border-border pt-6">
+            <span className="rounded-xl bg-primary p-3 text-inverse">
               <Factory size={25} strokeWidth={1.5} aria-hidden="true" />
             </span>
             <div>
-              <p className="text-sm font-semibold text-navy">Machinmate</p>
-              <p className="text-xs text-slate-500">
+              <p className="text-nav font-semibold text-primary">Machinmate</p>
+              <p className="text-meta text-muted-foreground">
                 Built for buyers, suppliers and manufacturers
               </p>
             </div>
             <ArrowUpRight
               size={18}
-              className="ml-auto text-slate-400"
+              className="ml-auto text-subtle"
               aria-hidden="true"
             />
           </div>

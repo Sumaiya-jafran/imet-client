@@ -58,7 +58,7 @@ export default function ProfileForm({
         className="w-full rounded border p-2"
       />
       {errors.displayName && (
-        <p id="profile-name-error" className="text-red-700">
+        <p id="profile-name-error" className="text-danger-foreground">
           {errors.displayName.message}
         </p>
       )}

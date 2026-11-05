@@ -18,12 +18,12 @@ export default function SystemStatus() {
   return (
     <section
       aria-labelledby="status-heading"
-      className="rounded-xl border border-slate-200 bg-white p-6"
+      className="rounded-xl border border-border bg-surface p-6"
     >
-      <h2 id="status-heading" className="text-lg font-semibold text-navy">
+      <h2 id="status-heading" className="text-card font-semibold text-primary">
         System connection
       </h2>
-      <p role="status" className="mt-3 text-slate-600">
+      <p role="status" className="mt-3 text-secondary">
         {state === 'loading'
           ? 'Checking the API and database…'
           : state === 'ready'

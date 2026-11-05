@@ -1,73 +1,114 @@
-# Global design system
+# M-UI-01 — global branding implementation
 
-This UI-only update uses the existing Next.js 16.3.8 App Router, Tailwind CSS 4.2 CSS-first theme, components and layouts. No runtime dependencies, routes, auth behavior, API/data handling or backend files change.
+The existing Tailwind CSS 4.2 `@theme` in `src/app/globals.css` remains the single source of truth. Next.js 16.3.8 App Router, layouts, routing, authentication, state, interactions, data fetching and backend code are unchanged. No dependencies were added.
 
-## Tokens and usage
+## Semantic tokens
 
-The source of truth is `src/app/globals.css`. Its `@theme` defines primary #142F46, secondary/info #245B7A, accent #F28C28, accent-hover/warning #D97706, background #F4F6F8, surface #FFFFFF, foreground #17212B, muted #64748B, border #E2E8F0, success #16A34A and danger #DC2626. Inverse text, a stronger muted foreground for small text on the light-gray background, stronger status foregrounds, status tints and restrained shadows derive from these values using color-mix. Darker status foregrounds keep small status labels readable on light surfaces.
+Approved colors remain primary #142F46, secondary/info #245B7A, accent #F28C28, accent-hover/warning #D97706, background #F4F6F8, surface #FFFFFF, foreground #17212B, muted #64748B, border #E2E8F0, success #16A34A and danger #DC2626. Existing inverse, muted-foreground, status-foreground and shadow tokens are preserved. Surface-muted, border-strong and subtle now name the existing derived neutral tones directly.
 
-New components should use `bg-background`, `bg-surface`, `text-foreground`, `text-muted`, `text-primary`, `text-secondary`, `border-border` and status tokens. Primary actions use `bg-accent text-foreground hover:bg-accent-hover`; use shared Button or action-link. Normal links remain primary/secondary blue. Use text-muted on white surfaces and text-muted-foreground on the light-gray background; the official muted color alone falls slightly below 4.5:1 on that background. Keyboard focus uses secondary blue. Do not use white text on orange actions.
+Components now consume `bg-primary`, `bg-surface`, `bg-background`, `text-foreground`, `text-muted-foreground`, `text-secondary`, `text-inverse`, `border-border`, `bg-accent` and semantic status utilities. Primary actions use dark foreground on accent, with accent-hover. On gray backgrounds, use muted-foreground for readable small text; official muted is appropriate on white surfaces.
 
-Existing navy/orange, slate neutral and red/green/emerald/amber/blue utility palettes are compatibility aliases to the semantic tokens. This applies the system across all existing forms, cards, dropdowns, tables, dashboards, subscription pages, alerts, errors, loaders and empty states without rewriting component behavior. Existing white utilities also alias surface. Preserve status meaning; use `text-success-foreground`, `text-warning-foreground` or `text-danger-foreground` with tinted surfaces for small text.
+Standard Tailwind slate/red/green/emerald/amber/blue palettes and white are no longer overridden. All their previous component usages have been migrated. Status tints use utilities such as `bg-danger/5`, `border-danger/25`, `text-danger-foreground`, preserving warning/success/error meaning. Shared surfaces use `shadow-surface`; existing helper classes reuse theme utilities with @apply where appropriate. Navigation geometry remains in the existing CSS; no parallel theme or new layout system is introduced.
 
-Semantic typography utilities: `text-hero` (responsive 40–56px, 700), `text-page` (responsive 28–32px, 700), `text-section` (24px, 600), `text-card` (18px, 600), `text-body` (16px, 400), `text-nav` (15px, 500), `text-button` (14px, 600), `text-meta` (13px, 400). Existing text utilities map to the same scale. Compact mobile dock labels retain 12px sizing; decorative lettering remains oversized. Some existing form/help/table labels retain 12–13px metadata sizing. Existing font-display aliases Inter; bold/extrabold/black resolve to 700.
+Retained compatibility aliases: navy and navy-deep → primary; orange and orange-light → accent; orange-dark → accent-hover; font-display → font-sans. Current components use the semantic names directly, but these aliases remain for older consumers. The existing theme blocks use Tailwind static emission so compatibility custom properties remain available even after their last component usage is migrated. Browser checks verify their resolved colors. Standard Tailwind font size/weight scales are no longer overridden; components use the semantic scale.
 
-## Font
+## Typography
 
-Inter is served with next/font/local from `src/app/fonts/inter-latin.woff2`, with display swap and the 400–700 variable range supporting 400, 500, 600 and 700. Both body and display use one font-family. Archivo and its file were removed. The font comes from @fontsource-variable/inter 5.3.0; SIL OFL accompanies the asset. Google Fonts was blocked by this environment, so neither build nor browser now needs Google Fonts access. Non-Latin content uses system fallbacks; Bengali and CJK retain natural letter spacing.
+Inter is already configured in root layout through `next/font/local`, swap display, `--font-inter`, and variable weight range 400–700 (400/500/600/700 supported). This was retained because Google Fonts build-time downloads are blocked in the environment. Existing licensed Inter asset is reused; no additional font package or runtime request is needed. The Tailwind font-sans token resolves to that font. Non-Latin glyphs use system fallbacks.
 
-## Applied surfaces
+Existing hero/page/section/card/body/nav/button/meta tokens are reused. Caption (12px) names the existing compact dock/table/eyebrow size. Duplicate standard-size overrides were removed; CSS font-size declarations now reference semantic tokens. Components use font-sans and supported font weights. Large decorative outlined letters retain responsive arbitrary sizes because they are ornamental, not content hierarchy.
 
-Global/base controls and tables; homepage hero, sections and CTAs; desktop notch/dock and mobile header/navigation; footer; catalogue cards, filters and machine details; supplier profiles; pricing/subscriptions and payment-status display; auth forms/password controls; dashboard shell/account/supplier/admin components; badges, rating stars, loading, empty and error states. The 3D viewer reads the background token rather than a separate hardcoded canvas color. Existing layouts, controls, event handlers and business logic are preserved.
+## Migrated coverage
 
-The standalone SVG browser icon uses literal official brand colors because an external SVG cannot inherit the document CSS. Neutral translucent overlays and existing decorative grid/stroke geometry remain; the navbar's blue gradient and old teal/yellow/black brand colors were removed. Orange is reserved for primary actions and restrained highlights; broad promotional bands now use neutral/navy backgrounds.
+Homepage and category sections; desktop/mobile header and dock; footer; catalogue cards, filters, pagination and details; supplier profiles; pricing/subscriptions and existing payment-status UI; sign-in/signup/recovery/verification; dashboard shell, account, supplier and admin screens; RFQs, leads, sales, reviews, notifications, translations, analytics, service tickets; shared buttons, forms, inputs, badges, empty/loading/error states and media controls. Changes are CSS/class/style strings only.
 
-## Validation
+Remaining exceptions: standalone favicon contains official literal colors because an external SVG cannot inherit document CSS. Dynamic inline styles remain only for the existing dock-wave position, review distribution widths and reveal delays; these implement existing interactions/data, not a second color system. Decorative homepage grid/strokes now derive translucent colors from the inverse token; their existing geometry is preserved. Font family declarations are centralized in globals.css and next/font.
 
-- `npm run lint`, `npm run build`, `npm run type-check`: passed.
-- `node --test tests/*.test.mjs`: 3 passed; existing auth return-path and navigation role/nested-route checks.
-- Chromium inspected populated homepage/categories/pricing, machinery listing and details, supplier profile, sign-in/sign-up and subscription pages at 1440, 1024, 768, 390 and 320px widths. Dashboard account/forms/badges/sidebar were inspected at 1440, 1024, 768 and 390px using a fixture-authenticated session. Compact desktop navigation spacing and account shortcut min-widths were adjusted to avoid overflow without changing destinations or layout structure. Assertions check actual Inter family, official resolved tokens, populated catalogue rendering, no document overflow and no client exceptions.
-- Populated-page visual checks use temporary read-only API fixtures outside the repository, not production/backend integration. Real backend/database flows were not verified: Prisma setup remains blocked by the previously observed checksum download HTTP 403. No TLS or checksum checks were bypassed.
-- Source audit finds no Archivo declarations or the old brand hex colors in src. Official color literals remain centralized in the theme, plus the external favicon exception.
-- Orange action text has calculated contrast ratios of 6.64:1 normally and 5.11:1 on hover; secondary blue on white is 7.36:1.
-- Physical iOS/software-keyboard and screen-reader testing were not performed. No exhaustive claim is made for every data-dependent modal/table state; those inherit shared tokens and controls.
+## Verification
+
+- `npm run lint`: passed.
+- `npm run build`: passed (all application routes compiled).
+- `npm run type-check`: passed.
+- `node --test tests/*.test.mjs`: 3 passed, none failed/skipped. Existing Node module-type warning remains; package configuration was not changed for this styling task.
+- Syntax-tree comparison of all 73 changed TSX components found styling-string changes only; no non-style token changes.
+- Source search finds no legacy palette utilities, old font names, old brand hex colors or standard palette overrides in the migrated frontend. Official literals remain only in @theme and the favicon.
+- Chromium validation uses temporary read-only API fixtures outside the repositories. It covers populated homepage/categories/pricing, catalogue and machine details, supplier profile, sign-in/signup, subscription, and a fixture-authenticated dashboard. Public widths: 1440/1024/768/390/320px; dashboard widths: 1440/1024/768/390px. Checks verify Inter, official resolved tokens, compatibility aliases, populated catalogue rendering, document overflow and client exceptions.
+- These are UI checks, not real backend/auth integration. The backend remains unavailable due to the previously diagnosed Prisma checksum download restriction. Physical iOS, software keyboard and exhaustive data-dependent modal/table states were not tested.
 
 ## Modified files
 
-- `src/app/fonts/inter-latin.woff2`
 - `src/app/(dashboardLayout)/dashboard/account/AccountPanel.tsx`
+- `src/app/(dashboardLayout)/dashboard/admin/catalogue/CatalogueManagement.tsx`
+- `src/app/(dashboardLayout)/dashboard/admin/catalogue/CategoryManagement.tsx`
+- `src/app/(dashboardLayout)/dashboard/admin/catalogue/MachineForm.tsx`
+- `src/app/(dashboardLayout)/dashboard/admin/leads/page.tsx`
+- `src/app/(dashboardLayout)/dashboard/admin/subscriptions/PlanManagement.tsx`
+- `src/app/(dashboardLayout)/dashboard/admin/suppliers/SupplierManagement.tsx`
+- `src/app/(dashboardLayout)/dashboard/admin/users/UserManagement.tsx`
+- `src/app/(dashboardLayout)/dashboard/quotes/page.tsx`
+- `src/app/(dashboardLayout)/dashboard/rfqs/RfqListPanel.tsx`
 - `src/app/(dashboardLayout)/dashboard/supplier/SupplierDashboard.tsx`
 - `src/app/(home)/page.tsx`
+- `src/app/(withoutSidebarLayout)/machinery/[slug]/not-found.tsx`
 - `src/app/(withoutSidebarLayout)/machinery/[slug]/page.tsx`
+- `src/app/(withoutSidebarLayout)/machinery/error.tsx`
+- `src/app/(withoutSidebarLayout)/machinery/page.tsx`
+- `src/app/(withoutSidebarLayout)/suppliers/[id]/not-found.tsx`
 - `src/app/(withoutSidebarLayout)/suppliers/[id]/page.tsx`
-- `src/app/fonts/OFL.txt`
-- `src/app/fonts/archivo-latin.woff2`
+- `src/app/(withoutSidebarLayout)/suppliers/error.tsx`
+- `src/app/(withoutSidebarLayout)/suppliers/page.tsx`
+- `src/app/auth/layout.tsx`
+- `src/app/error.tsx`
 - `src/app/globals.css`
-- `src/app/icon.svg`
-- `src/app/layout.tsx`
 - `src/components/buttons/Button.tsx`
 - `src/components/cards/MachineCard.tsx`
+- `src/components/cards/MachineImage.tsx`
 - `src/components/forms/AuthForm.tsx`
 - `src/components/forms/PasswordInput.tsx`
+- `src/components/forms/ProfileForm.tsx`
 - `src/components/forms/ReviewForm.tsx`
+- `src/components/forms/RfqForm.tsx`
+- `src/components/forms/RfqQuoteForm.tsx`
+- `src/components/forms/SalesNotesForm.tsx`
+- `src/components/forms/ServiceTicketForm.tsx`
+- `src/components/forms/SubscriptionPlanForm.tsx`
 - `src/components/forms/SupplierActivationPanel.tsx`
+- `src/components/forms/SupplierProfileForm.tsx`
 - `src/components/forms/SupplierSignup.tsx`
+- `src/components/forms/SupplierSubscriptionForm.tsx`
+- `src/components/forms/TranslationForm.tsx`
 - `src/components/forms/VerifyEmail.tsx`
 - `src/components/shared/AdvancedMediaViewer.tsx`
 - `src/components/shared/AnalyticsWorkspace.tsx`
 - `src/components/shared/Badge.tsx`
+- `src/components/shared/CatalogueImagePreview.tsx`
 - `src/components/shared/DashboardShell.tsx`
 - `src/components/shared/EmptyState.tsx`
 - `src/components/shared/Footer.tsx`
 - `src/components/shared/Header.tsx`
 - `src/components/shared/HomeMarketplace.tsx`
+- `src/components/shared/HomeSectionError.tsx`
+- `src/components/shared/LanguageSelector.tsx`
+- `src/components/shared/LoadingState.tsx`
+- `src/components/shared/MachineryMediaGallery.tsx`
+- `src/components/shared/MachineryMediaManagement.tsx`
 - `src/components/shared/PageHeader.tsx`
 - `src/components/shared/PrimaryNavigation.tsx`
+- `src/components/shared/PublicReviews.tsx`
+- `src/components/shared/PurchaseReviews.tsx`
 - `src/components/shared/RatingStars.tsx`
+- `src/components/shared/ReviewWorkspace.tsx`
 - `src/components/shared/RfqDetailPanel.tsx`
+- `src/components/shared/SaleRecordPanel.tsx`
 - `src/components/shared/SalesOpportunityPanel.tsx`
 - `src/components/shared/SalesWorkspace.tsx`
+- `src/components/shared/ServiceTicketDetailPanel.tsx`
+- `src/components/shared/ServiceTicketWorkspace.tsx`
 - `src/components/shared/SignOutButton.tsx`
 - `src/components/shared/SubscriptionPaymentStatus.tsx`
+- `src/components/shared/SupplierAssetFile.tsx`
 - `src/components/shared/SupplierOnboarding.tsx`
+- `src/components/shared/SystemStatus.tsx`
+- `src/components/shared/TranslatedText.tsx`
+- `src/components/shared/TranslationWorkspace.tsx`
 - `docs/design-system.md` (this guide)

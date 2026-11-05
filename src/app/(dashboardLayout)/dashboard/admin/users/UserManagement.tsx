@@ -123,7 +123,7 @@ export default function UserManagement() {
         description="Manage account status and role access."
       />
       {error && (
-        <p role="alert" className="my-4 text-red-700">
+        <p role="alert" className="my-4 text-danger-foreground">
           {error}
         </p>
       )}
@@ -153,8 +153,8 @@ export default function UserManagement() {
               className="surface p-5"
             >
               <h2 className="font-semibold">{user.displayName}</h2>
-              <p className="break-all text-sm">{user.email}</p>
-              <p className="my-3 text-xs text-slate-500">
+              <p className="break-all text-nav">{user.email}</p>
+              <p className="my-3 text-meta text-muted-foreground">
                 <Badge tone={user.isEmailVerified ? 'success' : 'neutral'}>
                   Email {user.isEmailVerified ? 'verified' : 'not verified'}
                 </Badge>
@@ -192,7 +192,7 @@ export default function UserManagement() {
                 {fieldErrors[user.id]?.status && (
                   <p
                     id={`${user.id}-status-error`}
-                    className="text-sm text-red-700"
+                    className="text-nav text-danger-foreground"
                   >
                     {fieldErrors[user.id].status}
                   </p>
@@ -206,9 +206,9 @@ export default function UserManagement() {
                   }
                 >
                   <legend className="font-medium">Roles</legend>
-                  <div className="mt-2 grid gap-2 rounded-lg bg-slate-50 p-3 sm:grid-cols-2">
+                  <div className="mt-2 grid gap-2 rounded-lg bg-background p-3 sm:grid-cols-2">
                     {roles.map((role) => (
-                      <label key={role} className="flex gap-2 text-sm">
+                      <label key={role} className="flex gap-2 text-nav">
                         <input
                           aria-invalid={!!fieldErrors[user.id]?.roles}
                           aria-describedby={
@@ -229,7 +229,7 @@ export default function UserManagement() {
                 {fieldErrors[user.id]?.roles && (
                   <p
                     id={`${user.id}-roles-error`}
-                    className="text-sm text-red-700"
+                    className="text-nav text-danger-foreground"
                   >
                     {fieldErrors[user.id].roles}
                   </p>
@@ -237,7 +237,7 @@ export default function UserManagement() {
                 <Button type="submit">Save access</Button>
               </fieldset>
               {user.id === session?.account?.id && (
-                <p className="mt-3 text-sm">
+                <p className="mt-3 text-nav">
                   Another administrator must change your access.
                 </p>
               )}

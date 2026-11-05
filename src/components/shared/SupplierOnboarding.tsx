@@ -43,7 +43,7 @@ export default function SupplierOnboarding() {
   if (!token || session?.error)
     return (
       <section className="surface p-6">
-        <h1 className="text-xl font-semibold">
+        <h1 className="text-section font-semibold">
           Sign in to activate your supplier account
         </h1>
         <Link
@@ -73,7 +73,7 @@ export default function SupplierOnboarding() {
       {error && (
         <p
           role="alert"
-          className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-800"
+          className="rounded-xl border border-danger/25 bg-danger/5 p-4 text-danger-foreground"
         >
           {error}{' '}
           <Button variant="secondary" onClick={() => setAttempt((n) => n + 1)}>
@@ -87,7 +87,7 @@ export default function SupplierOnboarding() {
           <section className="surface flex flex-wrap items-center justify-between gap-4 p-5">
             <div>
               <h2 className="font-semibold">{data.supplier.companyName}</h2>
-              <p className="mt-1 text-sm text-slate-600">
+              <p className="mt-1 text-nav text-secondary">
                 {supplierTypeLabels[data.supplier.type]}{' '}
                 · {active ? 'Active subscription' : 'Activation pending'}
               </p>
@@ -130,12 +130,12 @@ export default function SupplierOnboarding() {
           {pending && (
             <section
               role="status"
-              className="rounded-xl border border-orange/30 bg-orange/5 p-5"
+              className="rounded-xl border border-accent/30 bg-accent/5 p-5"
             >
               <h2 className="font-semibold">
                 A payment is awaiting confirmation
               </h2>
-              <p className="my-2 text-sm">
+              <p className="my-2 text-nav">
                 Check its status before starting another payment.
               </p>
               <Link
@@ -149,12 +149,12 @@ export default function SupplierOnboarding() {
           {review && (
             <section
               role="status"
-              className="rounded-xl border border-amber-300 bg-amber-50 p-5"
+              className="rounded-xl border border-warning/45 bg-warning/5 p-5"
             >
               <h2 className="font-semibold">
                 A payment needs administrator review
               </h2>
-              <p className="my-2 text-sm">
+              <p className="my-2 text-nav">
                 Contact Machinmate before making another payment.
               </p>
               <Link
@@ -179,14 +179,14 @@ export default function SupplierOnboarding() {
                     key={plan.id}
                     className="surface flex flex-col gap-4 p-5"
                   >
-                    <h2 className="text-lg font-semibold">{plan.name}</h2>
-                    <p className="text-2xl font-semibold">
+                    <h2 className="text-card font-semibold">{plan.name}</h2>
+                    <p className="text-section font-semibold">
                       {plan.price}{' '}
-                      <span className="text-sm text-slate-500">
+                      <span className="text-nav text-muted-foreground">
                         {plan.currency}
                       </span>
                     </p>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-nav text-secondary">
                       {plan.durationDays} days · {plan.listingLimit} listings
                       <br />
                       {plan.rfqEnabled
@@ -237,7 +237,7 @@ export default function SupplierOnboarding() {
                     </Button>
                     {(!data.currencies.includes(plan.currency) ||
                       Number(plan.price) <= 0) && (
-                      <p className="text-xs text-slate-500">
+                      <p className="text-meta text-muted-foreground">
                         Contact Machinmate for manual activation of this plan.
                       </p>
                     )}
@@ -254,11 +254,11 @@ export default function SupplierOnboarding() {
           {!!data.payments.length && (
             <section className="surface p-5">
               <h2 className="mb-3 font-semibold">Your payment history</h2>
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-surface-muted">
                 {data.payments.map((p) => (
                   <li
                     key={p.id}
-                    className="flex flex-wrap justify-between gap-2 py-3 text-sm"
+                    className="flex flex-wrap justify-between gap-2 py-3 text-nav"
                   >
                     <Link
                       href={`/payments/${p.id}`}

@@ -40,9 +40,9 @@ export default function CatalogueImagePreview({
     };
   }, [token, assetId, attempt, supplierMode]);
   return (
-    <div className="mb-3 flex min-h-28 items-center justify-center rounded-lg border border-slate-200 bg-white p-2">
+    <div className="mb-3 flex min-h-28 items-center justify-center rounded-lg border border-border bg-surface p-2">
       {error ? (
-        <div role="status" className="text-sm text-slate-600">
+        <div role="status" className="text-nav text-secondary">
           Preview unavailable.{' '}
           <button
             type="button"
@@ -61,7 +61,7 @@ export default function CatalogueImagePreview({
           className="max-h-44 max-w-full object-contain"
         />
       ) : (
-        <span role="status" className="text-xs text-slate-500">
+        <span role="status" className="text-meta text-muted-foreground">
           Loading image preview…
         </span>
       )}

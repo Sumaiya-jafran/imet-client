@@ -139,7 +139,7 @@ export default function SaleRecordPanel({
         )}
       </div>
       {error && (
-        <p role="alert" className="rounded-lg bg-red-50 p-3 text-red-700">
+        <p role="alert" className="rounded-lg bg-danger/5 p-3 text-danger-foreground">
           {error}
           <button
             type="button"
@@ -153,7 +153,7 @@ export default function SaleRecordPanel({
       {notice && (
         <p
           role="status"
-          className="rounded-lg bg-emerald-50 p-3 text-emerald-900"
+          className="rounded-lg bg-success/5 p-3 text-success-foreground"
         >
           {notice}
         </p>
@@ -161,42 +161,42 @@ export default function SaleRecordPanel({
       {!buyer && sale.readOnlyReason && (
         <p
           role="status"
-          className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900"
+          className="rounded-lg border border-warning/25 bg-warning/5 p-3 text-nav text-warning-foreground"
         >
           {sale.readOnlyReason}
         </p>
       )}
       <section className="surface p-5">
         <p className="eyebrow">Accepted quotation</p>
-        <p className="mt-3 break-words text-3xl font-semibold tracking-tight">
+        <p className="mt-3 break-words text-page font-semibold tracking-tight">
           {sale.totalAmount}{' '}
-          <span className="text-base font-normal text-slate-500">
+          <span className="text-body font-normal text-muted-foreground">
             {sale.quote.currency}
           </span>
         </p>
-        <p className="mt-2 text-xs text-slate-500">
+        <p className="mt-2 text-meta text-muted-foreground">
           {sale.rfq.quantity} {sale.rfq.unit} × {sale.quote.unitPrice}{' '}
           {sale.quote.currency}. Quoted value only; no payment is processed.
         </p>
-        <dl className="mt-5 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
+        <dl className="mt-5 grid grid-cols-1 gap-4 text-nav sm:grid-cols-2">
           <div>
-            <dt className="text-slate-500">Delivery</dt>
+            <dt className="text-muted-foreground">Delivery</dt>
             <dd>
               {sale.rfq.deliveryLocation} · {sale.rfq.deliveryTimeline}
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Commercial terms</dt>
+            <dt className="text-muted-foreground">Commercial terms</dt>
             <dd>
               MOQ {sale.quote.moq} · Lead time {sale.quote.leadTimeDays} days
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Recorded</dt>
+            <dt className="text-muted-foreground">Recorded</dt>
             <dd>{new Date(sale.createdAt).toLocaleString()}</dd>
           </div>
           <div>
-            <dt className="text-slate-500">Completion / cancellation</dt>
+            <dt className="text-muted-foreground">Completion / cancellation</dt>
             <dd>
               {sale.completedAt
                 ? new Date(sale.completedAt).toLocaleString()
@@ -206,11 +206,11 @@ export default function SaleRecordPanel({
             </dd>
           </div>
         </dl>
-        <p className="mt-5 whitespace-pre-wrap break-words text-sm">
+        <p className="mt-5 whitespace-pre-wrap break-words text-nav">
           {sale.quote.notes}
         </p>
         {sale.cancellationReason && (
-          <p className="mt-4 break-words rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
+          <p className="mt-4 break-words rounded-lg bg-warning/5 p-3 text-nav text-warning-foreground">
             Cancellation reason: {sale.cancellationReason}
           </p>
         )}
@@ -218,7 +218,7 @@ export default function SaleRecordPanel({
       {!buyer && sale.status === 'RECORDED' && (
         <section className="surface space-y-4 p-5">
           <h2 className="font-semibold">Manage sale record</h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-meta text-muted-foreground">
             Completion and cancellation are final record states. These actions
             do not change the accepted quotation or process a payment. Supplier
             changes require an active RFQ subscription.
@@ -257,7 +257,7 @@ export default function SaleRecordPanel({
                 aria-invalid={!!errors.reason}
                 aria-describedby="sale-cancellation-error"
               />
-              <p id="sale-cancellation-error" className="text-xs text-red-700">
+              <p id="sale-cancellation-error" className="text-meta text-danger-foreground">
                 {errors.reason?.message}
               </p>
               <Button

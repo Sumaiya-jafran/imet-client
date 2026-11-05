@@ -124,16 +124,16 @@ export default function AccountPanel() {
                       <li key={href} className="min-w-0">
                         <Link
                           href={href}
-                          className="group flex min-w-0 items-center gap-3 rounded px-2 py-2 text-sm font-medium text-navy hover:bg-slate-50"
+                          className="group flex min-w-0 items-center gap-3 rounded px-2 py-2 text-nav font-medium text-primary hover:bg-background"
                         >
-                          <span className="flex size-8 shrink-0 items-center justify-center rounded bg-slate-100 text-slate-600 group-hover:bg-orange group-hover:text-foreground">
+                          <span className="flex size-8 shrink-0 items-center justify-center rounded bg-surface-muted text-secondary group-hover:bg-accent group-hover:text-foreground">
                             <Icon size={16} aria-hidden="true" />
                           </span>
                           <span className="min-w-0 flex-1 truncate">{label}</span>
                           <ArrowRight
                             size={15}
                             aria-hidden="true"
-                            className="text-slate-400 transition-transform group-hover:translate-x-0.5 group-hover:text-navy"
+                            className="text-subtle transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
                           />
                         </Link>
                       </li>
@@ -146,9 +146,9 @@ export default function AccountPanel() {
       )}
       <div className="grid items-start gap-6 xl:grid-cols-2">
         <section className="surface p-5 sm:p-6">
-          <h2 className="text-lg font-semibold">Profile & access</h2>
+          <h2 className="text-card font-semibold">Profile & access</h2>
           {error && (
-            <p role="alert" className="mt-4 text-red-700">
+            <p role="alert" className="mt-4 text-danger-foreground">
               {error}
             </p>
           )}
@@ -156,7 +156,7 @@ export default function AccountPanel() {
             <p role="alert">Your session expired. Sign in again.</p>
           )}
           {user ? (
-            <dl className="my-5 grid grid-cols-[80px_1fr] items-start gap-x-4 gap-y-3 rounded-lg bg-slate-50 p-4 text-sm">
+            <dl className="my-5 grid grid-cols-[80px_1fr] items-start gap-x-4 gap-y-3 rounded-lg bg-background p-4 text-nav">
               <dt className="font-semibold">Name</dt>
               <dd>{user.displayName}</dd>
               <dt className="font-semibold">Email</dt>
@@ -235,7 +235,7 @@ export default function AccountPanel() {
               </Link>
             </div>
           )}
-          <p className="my-3 text-sm text-slate-600">
+          <p className="my-3 text-nav text-secondary">
             Google-only accounts can use Forgot password to set a password. To
             link Google, use the same verified email as this account.
           </p>
@@ -272,8 +272,8 @@ export default function AccountPanel() {
           </div>
         </section>
         <section className="surface p-5 sm:p-6">
-          <h2 className="text-xl font-bold">Change password</h2>
-          <p className="my-3 text-sm text-slate-600">
+          <h2 className="text-section font-bold">Change password</h2>
+          <p className="my-3 text-nav text-secondary">
             Changing your password signs you out of all devices.
           </p>
           <form
@@ -315,7 +315,7 @@ export default function AccountPanel() {
                     }
                   />
                   {errors[field] && (
-                    <p id={`${field}-error`} className="text-red-700">
+                    <p id={`${field}-error`} className="text-danger-foreground">
                       {errors[field]?.message}
                     </p>
                   )}
