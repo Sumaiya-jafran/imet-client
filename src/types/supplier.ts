@@ -12,6 +12,7 @@ export const supplierTypePluralLabels: Record<SupplierType, string> = {
 export type SupplierStatus =
   'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED' | 'INACTIVE';
 export interface SupplierProfileInput {
+  slug?: string;
   companyName: string;
   type: SupplierType;
   description: string;
@@ -68,6 +69,7 @@ export interface SupplierSubscription extends PlanEntitlements {
   updatedAt: string;
 }
 export interface SupplierProfile extends SupplierProfileInput {
+  slug: string;
   user?: { id: string; status: string; isEmailVerified: boolean };
   id: string;
   status: SupplierStatus;
@@ -78,6 +80,7 @@ export interface SupplierProfile extends SupplierProfileInput {
   subscriptions: SupplierSubscription[];
 }
 export interface PublicSupplier {
+  slug: string;
   id: string;
   companyName: string;
   type: SupplierType;

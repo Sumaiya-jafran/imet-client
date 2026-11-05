@@ -165,6 +165,12 @@ export default function MachineForm({
       );
       return;
     }
+    if (!supplierMode && !supplierId) {
+      setError(
+        'Select a supplier owner before saving. Legacy unassigned records remain private.',
+      );
+      return;
+    }
     try {
       if (supplierMode) await supplierCatalogueApi.save(token, data, machine);
       else
@@ -284,7 +290,8 @@ export default function MachineForm({
         .catch(() => undefined);
     onCancel();
   };
-  const input = 'mt-1 w-full rounded border border-border-strong bg-surface p-2';
+  const input =
+    'mt-1 w-full rounded border border-border-strong bg-surface p-2';
   return (
     <section className="surface p-5">
       <h2 className="text-section font-semibold">
@@ -333,7 +340,7 @@ export default function MachineForm({
                   className="mt-1 w-full rounded border p-2"
                 >
                   <option value="">
-                    Machinmate curated catalogue (no supplier owner)
+                    Select the supplier who owns this listing
                   </option>
                   {machine?.supplier &&
                     !suppliers.some((s) => s.id === machine.supplierId) && (
@@ -496,14 +503,20 @@ export default function MachineForm({
                   </p>
                 )}
                 {storage === 'missing' && (
-                  <p role="status" className="mt-2 text-nav text-warning-foreground">
+                  <p
+                    role="status"
+                    className="mt-2 text-nav text-warning-foreground"
+                  >
                     Uploads are unavailable until Bunny storage is configured on
                     the server. Existing images and URL editing remain
                     available.
                   </p>
                 )}
                 {storage === 'error' && (
-                  <p role="alert" className="mt-2 text-nav text-danger-foreground">
+                  <p
+                    role="alert"
+                    className="mt-2 text-nav text-danger-foreground"
+                  >
                     Unable to check image storage.
                   </p>
                 )}

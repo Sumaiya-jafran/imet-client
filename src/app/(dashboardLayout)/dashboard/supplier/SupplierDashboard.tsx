@@ -119,8 +119,29 @@ export default function SupplierDashboard() {
                 account remains available.
               </p>
             )}
+            {['SUSPENDED', 'INACTIVE'].includes(supplier.status) && (
+              <p className="mt-3 text-warning-foreground">
+                Your storefront is unavailable and machinery management is
+                restricted. Contact the administrator about the review note.
+              </p>
+            )}
             {supplier.status === 'APPROVED' && (
               <div className="mt-4 flex flex-wrap gap-4">
+                {supplier.marketplaceVisible &&
+                  supplier.subscriptions.some(
+                    (term) =>
+                      term.isCurrent &&
+                      term.effectiveStatus === 'ACTIVE' &&
+                      term.supplierType === supplier.type &&
+                      term.visibility !== 'HIDDEN',
+                  ) && (
+                    <Link
+                      className="secondary-link"
+                      href={`/suppliers/${supplier.slug ?? supplier.id}`}
+                    >
+                      View public storefront
+                    </Link>
+                  )}
                 <Button
                   variant="secondary"
                   onClick={() => setEditing(!editing)}

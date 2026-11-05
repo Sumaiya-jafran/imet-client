@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { supplierTypeLabels } from '@/types/supplier';
 import SupplierActivationPanel from '@/components/forms/SupplierActivationPanel';
 import SupplierAssetFile from '@/components/shared/SupplierAssetFile';
@@ -18,7 +19,6 @@ import type {
   SupplierList,
   SubscriptionPlan,
 } from '@/types/supplier';
-import Link from 'next/link';
 function ReviewForm({
   token,
   supplier,
@@ -93,13 +93,13 @@ function ReviewForm({
           marketplace visibility (active subscription also required)
         </label>
         <label className="block">
-          Review note / rejection reason
+          Review note / rejection or suspension reason
           <textarea
             {...register('reviewNote', {
               validate: (value, values) =>
-                values.status !== 'REJECTED' ||
+                !['REJECTED', 'SUSPENDED'].includes(values.status) ||
                 !!value.trim() ||
-                'Provide a rejection reason',
+                'Provide a rejection or suspension reason',
             })}
             aria-invalid={!!errors.reviewNote}
             aria-describedby={
@@ -222,6 +222,12 @@ export default function SupplierManagement() {
             <h2 className="break-words text-section font-semibold">
               {selected.companyName}
             </h2>
+            <Link
+              className="secondary-link mt-3"
+              href={`/dashboard/admin/catalogue?supplierId=${selected.id}`}
+            >
+              View supplier machinery
+            </Link>
             <dl className="my-4 grid gap-4 rounded-lg bg-background p-4 sm:grid-cols-2">
               <div>
                 <dt className="font-semibold">Supplier type</dt>
@@ -381,9 +387,7 @@ export default function SupplierManagement() {
                         {supplier.companyName}
                       </h2>
                       <div className="mt-2 flex flex-wrap items-center gap-2 text-meta text-muted-foreground">
-                        <span>
-                          {supplierTypeLabels[supplier.type]}
-                        </span>
+                        <span>{supplierTypeLabels[supplier.type]}</span>
                         <Badge
                           tone={
                             supplier.status === 'APPROVED'

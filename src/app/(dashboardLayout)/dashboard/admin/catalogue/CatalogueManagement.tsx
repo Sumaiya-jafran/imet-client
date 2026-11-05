@@ -19,8 +19,10 @@ import MachineForm from './MachineForm';
 import CategoryManagement from './CategoryManagement';
 export default function CatalogueManagement({
   supplierMode = false,
+  supplierId,
 }: {
   supplierMode?: boolean;
+  supplierId?: string;
 }) {
   const api = supplierMode ? supplierCatalogueApi : adminApi;
   const { data: session } = useSession();
@@ -81,6 +83,7 @@ export default function CatalogueManagement({
       page: String(filters.page),
       limit: '20',
     });
+    if (!supplierMode && supplierId) query.set('supplierId', supplierId);
     if (filters.q) query.set('q', filters.q);
     if (filters.categoryId) query.set('categoryId', filters.categoryId);
     if (filters.status) query.set('status', filters.status);
@@ -103,7 +106,7 @@ export default function CatalogueManagement({
         }
       });
     return () => controller.abort();
-  }, [token, session?.error, filters, revision, api]);
+  }, [token, session?.error, filters, revision, api, supplierMode, supplierId]);
   const reload = () => {
     setLoading(true);
     setRevision((value) => value + 1);

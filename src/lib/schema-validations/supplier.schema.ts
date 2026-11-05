@@ -15,6 +15,21 @@ const url = z
   }, 'Use an HTTPS URL without embedded credentials');
 export const supplierSchema = z.object({
   companyName: text(200),
+  slug: z
+    .string()
+    .min(1)
+    .max(120)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+    .refine(
+      (value) =>
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+          value,
+        ),
+      'Choose a business slug, not a UUID',
+    )
+    .or(z.literal(''))
+    .optional()
+    .transform((value) => value || undefined),
   type: z.enum(['LOCAL', 'INTERNATIONAL']),
   description: text(20000),
   contactName: text(100),

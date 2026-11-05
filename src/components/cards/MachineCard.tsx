@@ -41,7 +41,7 @@ export default function MachineCard({ machine }: { machine: MachineSummary }) {
             )}
             <Link
               className="break-words hover:underline"
-              href={`/suppliers/${machine.supplier.id}`}
+              href={`/suppliers/${machine.supplier.slug ?? machine.supplier.id}`}
             >
               {machine.supplier.companyName}
             </Link>

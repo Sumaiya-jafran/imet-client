@@ -6,13 +6,16 @@ import Link from 'next/link';
 import { supplierApi } from '@/lib/api/supplier.service';
 import { ApiError } from '@/lib/api/client';
 import MachineImage from '@/components/cards/MachineImage';
+import MachineCard from '@/components/cards/MachineCard';
+import EmptyState from '@/components/shared/EmptyState';
+import { catalogueApi } from '@/lib/api/catalogue.service';
 export default async function Page({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/i.test(id) || id.length > 120) notFound();
   let supplier;
   try {
     supplier = (await supplierApi.publicDetail(id)).data;
@@ -22,6 +25,9 @@ export default async function Page({
     throw error;
   }
   if (!supplier) notFound();
+  const catalogue = await catalogueApi.list(
+    new URLSearchParams({ supplier: supplier.id, limit: '6' }),
+  );
   return (
     <article>
       <Link href="/suppliers" className="underline">
@@ -40,8 +46,8 @@ export default async function Page({
             {supplier.companyName}
           </h1>
           <p className="mt-4">
-            {supplierTypeLabels[supplier.type]}{' '}
-            · {supplier.city}, {supplier.country}
+            {supplierTypeLabels[supplier.type]} · {supplier.city},{' '}
+            {supplier.country}
           </p>
           <p className="mt-3 text-secondary">
             {supplier.isVerified ? 'Verified supplier' : ''}
@@ -79,6 +85,26 @@ export default async function Page({
           </p>
         </section>
       </div>
+      <section className="mt-8" aria-labelledby="supplier-machinery-title">
+        <h2
+          id="supplier-machinery-title"
+          className="mb-5 text-section font-semibold"
+        >
+          Supplier machinery
+        </h2>
+        {catalogue.machines.length ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {catalogue.machines.map((machine) => (
+              <MachineCard key={machine.id} machine={machine} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            title="No published machinery"
+            description="This supplier has no public listings at the moment."
+          />
+        )}
+      </section>
       <PublicReviews target="SUPPLIER" targetId={supplier.id} />
     </article>
   );

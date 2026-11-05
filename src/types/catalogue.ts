@@ -19,7 +19,12 @@ export interface MachineImage {
   alt: string;
 }
 export interface MachineSummary extends MachineRef {
-  supplier?: { id: string; companyName: string; isVerified: boolean } | null;
+  supplier?: {
+    id: string;
+    slug?: string;
+    companyName: string;
+    isVerified: boolean;
+  } | null;
   description: string;
   manufacturer: string;
   model: string;

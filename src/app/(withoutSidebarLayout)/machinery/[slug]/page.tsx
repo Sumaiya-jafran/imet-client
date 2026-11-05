@@ -51,7 +51,7 @@ export default async function MachinePage({
               Supplier:{' '}
               <Link
                 className="underline"
-                href={`/suppliers/${machine.supplier.id}`}
+                href={`/suppliers/${machine.supplier.slug ?? machine.supplier.id}`}
               >
                 {machine.supplier.companyName}
               </Link>
@@ -101,7 +101,9 @@ export default async function MachinePage({
         </section>
       </div>
       <section className="surface mt-6 p-5 sm:p-7">
-        <h2 className="text-card font-semibold text-primary">About this machine</h2>
+        <h2 className="text-card font-semibold text-primary">
+          About this machine
+        </h2>
         <p className="mt-4 whitespace-pre-wrap break-words leading-7 text-secondary">
           <TranslatedText
             resource={{

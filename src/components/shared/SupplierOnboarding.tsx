@@ -88,10 +88,17 @@ export default function SupplierOnboarding() {
             <div>
               <h2 className="font-semibold">{data.supplier.companyName}</h2>
               <p className="mt-1 text-nav text-secondary">
-                {supplierTypeLabels[data.supplier.type]}{' '}
-                · {active ? 'Active subscription' : 'Activation pending'}
+                {supplierTypeLabels[data.supplier.type]} ·{' '}
+                {active ? 'Active subscription' : 'Activation pending'}
               </p>
             </div>
+            {data.supplier.status === 'PENDING' && (
+              <p className="mt-3 text-nav">
+                Your supplier application awaits administrator approval. Payment
+                activation does not approve your storefront or allow
+                publication.
+              </p>
+            )}
             {data.supplier.status === 'PENDING' && (
               <Button
                 variant="secondary"
@@ -169,8 +176,8 @@ export default function SupplierOnboarding() {
             <>
               {!data.onlineAvailable && (
                 <p role="status" className="surface p-4">
-                  Online activation is currently unavailable. Contact Machinmate for
-                  manual activation.
+                  Online activation is currently unavailable. Contact Machinmate
+                  for manual activation.
                 </p>
               )}
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

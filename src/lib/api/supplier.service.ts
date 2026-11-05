@@ -47,6 +47,10 @@ export const supplierApi = {
     supplier: SupplierProfile,
   ) =>
     request<SupplierProfile>(token, '/supplier/me', 'PUT', {
+      companyName: body.companyName,
+      address: body.address,
+      city: body.city,
+      country: body.country,
       description: body.description,
       contactName: body.contactName,
       businessEmail: body.businessEmail,

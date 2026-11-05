@@ -13,6 +13,7 @@ import { supplierApi } from '@/lib/api/supplier.service';
 import type { SupplierProfile, SupplierProfileInput } from '@/types/supplier';
 const labels = {
   companyName: 'Company name',
+  slug: 'Public storefront slug',
   description: 'Company description',
   contactName: 'Contact name',
   businessEmail: 'Business email',
@@ -75,6 +76,7 @@ export default function SupplierProfileForm({
     defaultValues: supplier
       ? {
           companyName: supplier.companyName,
+          slug: supplier.slug,
           type: supplier.type,
           description: supplier.description,
           contactName: supplier.contactName,
@@ -127,6 +129,7 @@ export default function SupplierProfileForm({
           if (
             [
               'companyName',
+              'slug',
               'type',
               'description',
               'contactName',
@@ -195,6 +198,10 @@ export default function SupplierProfileForm({
   const readonly = (field: string) =>
     mode === 'owner' &&
     ![
+      'companyName',
+      'address',
+      'city',
+      'country',
       'description',
       'contactName',
       'businessEmail',
@@ -230,7 +237,9 @@ export default function SupplierProfileForm({
             >
               <label htmlFor={`supplier-${key}`} className="block font-medium">
                 {label}
-                {['registrationNumber', 'website', 'logoUrl'].includes(key)
+                {['registrationNumber', 'website', 'logoUrl', 'slug'].includes(
+                  key,
+                )
                   ? ' (optional)'
                   : ''}
               </label>
@@ -252,7 +261,11 @@ export default function SupplierProfileForm({
                   aria-describedby={
                     errors[key] ? `supplier-${key}-error` : undefined
                   }
-                  readOnly={readonly(key) || (key === 'logoUrl' && !!logoId)}
+                  readOnly={
+                    (key === 'slug' && !!supplier) ||
+                    readonly(key) ||
+                    (key === 'logoUrl' && !!logoId)
+                  }
                   {...register(key, {
                     ...(['registrationNumber', 'website', 'logoUrl'].includes(
                       key,
@@ -262,6 +275,12 @@ export default function SupplierProfileForm({
                   })}
                   className="mt-1 w-full rounded border bg-surface p-2 read-only:bg-surface-muted"
                 />
+              )}
+              {key === 'slug' && (
+                <p className="mt-1 text-meta text-muted-foreground">
+                  Use a unique lowercase business name with hyphens. Leave blank
+                  to assign one automatically. The slug is fixed after applying.
+                </p>
               )}
               {errors[key] && (
                 <p
@@ -347,9 +366,7 @@ export default function SupplierProfileForm({
               <input
                 id="supplier-type"
                 readOnly
-                value={
-                  supplierTypeLabels[supplier?.type ?? 'INTERNATIONAL']
-                }
+                value={supplierTypeLabels[supplier?.type ?? 'INTERNATIONAL']}
                 className="mt-1 w-full rounded border bg-surface-muted p-2"
               />
               <input
@@ -421,7 +438,10 @@ export default function SupplierProfileForm({
                 />
               </label>
               {errors.documents?.[index]?.name && (
-                <p id={`document-${index}-name-error`} className="text-danger-foreground">
+                <p
+                  id={`document-${index}-name-error`}
+                  className="text-danger-foreground"
+                >
                   {errors.documents[index]?.name?.message}
                 </p>
               )}
@@ -440,7 +460,10 @@ export default function SupplierProfileForm({
                 />
               </label>
               {errors.documents?.[index]?.url && (
-                <p id={`document-${index}-url-error`} className="text-danger-foreground">
+                <p
+                  id={`document-${index}-url-error`}
+                  className="text-danger-foreground"
+                >
                   {errors.documents[index]?.url?.message}
                 </p>
               )}

@@ -217,7 +217,7 @@ export async function HomeSuppliers() {
                     <Badge>{supplierTypeLabels[s.type]}</Badge>
                   </div>
                   <h3 className="mt-5 break-words font-sans text-section font-bold">
-                    <Link href={`/suppliers/${s.id}`} className="hover:text-secondary">
+                    <Link href={`/suppliers/${s.slug ?? s.id}`} className="hover:text-secondary">
                       {s.companyName}
                     </Link>
                   </h3>
@@ -238,7 +238,7 @@ export async function HomeSuppliers() {
                     />
                   </p>
                   <Link
-                    href={`/suppliers/${s.id}`}
+                    href={`/suppliers/${s.slug ?? s.id}`}
                     className="mt-auto inline-flex items-center gap-2 pt-6 text-nav font-semibold text-primary"
                   >
                     View company

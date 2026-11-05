@@ -76,7 +76,7 @@ export default async function Page({
             <h2 className="mt-4 break-words text-card font-semibold">
               <Link
                 className="hover:underline"
-                href={`/suppliers/${supplier.id}`}
+                href={`/suppliers/${supplier.slug ?? supplier.id}`}
               >
                 {supplier.companyName}
               </Link>
