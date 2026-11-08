@@ -1,4 +1,5 @@
 import { z } from 'zod';
+const email = z.string().trim().toLowerCase().pipe(z.email().max(254));
 export const passwordSchema = z
   .string()
   .min(12, 'Use at least 12 characters')
@@ -9,7 +10,7 @@ export const passwordSchema = z
 export const signupSchema = z
   .object({
     displayName: z.string().trim().min(2).max(100),
-    email: z.email(),
+    email,
     password: passwordSchema,
     confirmPassword: z.string(),
   })
@@ -18,10 +19,10 @@ export const signupSchema = z
     message: 'Passwords must match',
   });
 export const loginSchema = z.object({
-  email: z.email(),
+  email,
   password: z.string().min(1).max(128),
 });
-export const emailSchema = z.object({ email: z.email() });
+export const emailSchema = z.object({ email });
 export const resetSchema = z
   .object({ password: passwordSchema, confirmPassword: z.string() })
   .refine((data) => data.password === data.confirmPassword, {

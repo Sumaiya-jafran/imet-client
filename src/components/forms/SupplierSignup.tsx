@@ -87,8 +87,9 @@ export default function SupplierSignup({
         <section className="surface space-y-4 p-6">
           <h1 className="text-section font-semibold">Verify your email</h1>
           <p>
-            If your address is eligible, a verification link has been sent. Your
-            supplier account stays pending until subscription activation.
+            If this address is eligible, you will receive an email shortly.
+            Supplier access requires email verification, activation and
+            administrator approval.
           </p>
           <p>
             After verification, sign in to upload files and complete secure
@@ -109,8 +110,8 @@ export default function SupplierSignup({
               Build your marketplace presence
             </h1>
             <p className="mt-2 text-nav text-secondary">
-              Company details → email verification → subscription activation.
-              Buyers never need a plan.
+              Company details → email verification → activation and admin
+              review. Buyers never need a plan.
             </p>
           </header>
           {error && (

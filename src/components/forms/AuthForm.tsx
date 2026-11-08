@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import PasswordInput from './PasswordInput';
 import { safeReturnUrl } from '@/lib/auth/returnUrl';
-import { signIn, getSession } from 'next-auth/react';
+import { signIn, signOut, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/lib/api/auth.service';
 import { ApiError } from '@/lib/api/client';
@@ -131,6 +131,7 @@ export default function AuthForm({
                   password: values.password,
                   confirmPassword: values.confirmPassword,
                 });
+      if (mode === 'reset-password') await signOut({ redirect: false });
       setMessage(response.message);
       reset();
     } catch (error) {
@@ -175,7 +176,10 @@ export default function AuthForm({
           const error = (errors as Record<string, { message?: string }>)[field];
           return (
             <div key={field}>
-              <label htmlFor={field} className="mb-1 block text-nav font-medium">
+              <label
+                htmlFor={field}
+                className="mb-1 block text-nav font-medium"
+              >
                 {labels[field]}
               </label>
               <Input
@@ -203,7 +207,10 @@ export default function AuthForm({
                 disabled={isSubmitting}
               />
               {error && (
-                <p id={`${field}-error`} className="mt-1 text-nav text-danger-foreground">
+                <p
+                  id={`${field}-error`}
+                  className="mt-1 text-nav text-danger-foreground"
+                >
                   {error.message}
                 </p>
               )}
