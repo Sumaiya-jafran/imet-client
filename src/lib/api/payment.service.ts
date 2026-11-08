@@ -10,12 +10,23 @@ export const paymentApi = {
     account: { displayName: string; email: string; password: string },
     profile: SupplierProfileInput,
     planId: string,
-  ) =>
-    apiClient.post(
-      '/auth/register-supplier',
-      { ...account, profile, planId },
-      { signal: AbortSignal.timeout(25000) },
-    ),
+    files?: { logo?: File; document?: File },
+  ) => {
+    const data = { ...account, profile, planId };
+    if (!files?.logo && !files?.document)
+      return apiClient.post('/auth/register-supplier', data, {
+        signal: AbortSignal.timeout(25000),
+      });
+    const body = new FormData();
+    body.set('data', JSON.stringify(data));
+    if (files.logo) body.set('logo', files.logo);
+    if (files.document) body.set('document', files.document);
+    return apiClient.request('/auth/register-supplier', {
+      method: 'POST',
+      body,
+      signal: AbortSignal.timeout(180000),
+    });
+  },
   onboarding: (token: string) =>
     apiClient.get<Onboarding>('/payments/onboarding', options(token)),
   profile: (

@@ -212,7 +212,7 @@ export default function SupplierSignup({
                   setAccount(undefined);
                   setDone(true);
                 }}
-                submitOverride={async (profile) => {
+                submitOverride={async (profile, files) => {
                   if (
                     !planId ||
                     !plans?.some(
@@ -232,6 +232,7 @@ export default function SupplierSignup({
                     },
                     profile,
                     planId,
+                    files,
                   );
                 }}
               />

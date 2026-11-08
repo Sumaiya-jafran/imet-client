@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import { supplierTypeLabels } from '@/types/supplier';
 import { useEffect, useState } from 'react';
 import { useForm, useFieldArray, useWatch } from 'react-hook-form';
@@ -25,6 +26,7 @@ const labels = {
   website: 'Website URL',
   logoUrl: 'Logo URL',
 };
+export type SignupCompanyFiles = { logo?: File; document?: File };
 export default function SupplierProfileForm({
   token,
   supplier,
@@ -40,8 +42,20 @@ export default function SupplierProfileForm({
   onSave: () => void;
   onCancel?: () => void;
   onTypeChange?: (type: 'LOCAL' | 'INTERNATIONAL') => void;
-  submitOverride?: (body: SupplierProfileInput) => Promise<unknown>;
+  submitOverride?: (
+    body: SupplierProfileInput,
+    files: SignupCompanyFiles,
+  ) => Promise<unknown>;
 }) {
+  const signupUploads = mode === 'application' && !token && !!submitOverride;
+  const [selectedFiles, setSelectedFiles] = useState<SignupCompanyFiles>({});
+  const [logoPreview, setLogoPreview] = useState('');
+  useEffect(
+    () => () => {
+      if (logoPreview) URL.revokeObjectURL(logoPreview);
+    },
+    [logoPreview],
+  );
   const [error, setError] = useState('');
   const [uploading, setUploading] = useState(false);
   const [storage, setStorage] = useState<
@@ -112,7 +126,7 @@ export default function SupplierProfileForm({
   const save = async (body: SupplierProfileInput) => {
     setError('');
     try {
-      if (submitOverride) await submitOverride(body);
+      if (submitOverride) await submitOverride(body, selectedFiles);
       else if (mode === 'admin' && supplier)
         await supplierApi.adminUpdate(token, body, supplier);
       else if (mode === 'owner' && supplier)
@@ -167,6 +181,15 @@ export default function SupplierProfileForm({
       ).includes(file.type)
     ) {
       setError('Choose a supported file up to 10 MB.');
+      return;
+    }
+    if (signupUploads) {
+      if (purpose === 'LOGO') setLogoPreview(URL.createObjectURL(file));
+      setSelectedFiles((current) => ({
+        ...current,
+        [purpose === 'LOGO' ? 'logo' : 'document']: file,
+      }));
+      setError('');
       return;
     }
     setUploading(true);
@@ -305,13 +328,40 @@ export default function SupplierProfileForm({
             id="supplier-logo-file"
             type="file"
             accept="image/jpeg,image/png"
-            disabled={storage !== 'ready'}
+            disabled={!signupUploads && storage !== 'ready'}
             onChange={(e) => {
               void uploadFile('LOGO', e.target.files?.[0]);
               e.target.value = '';
             }}
             className="block w-full text-nav"
           />
+          {signupUploads && selectedFiles.logo && (
+            <div className="mt-3 space-y-2">
+              {/* Local blob preview only; private files are uploaded with registration. */}
+              {logoPreview && (
+                <Image
+                  width={80}
+                  height={80}
+                  unoptimized
+                  src={logoPreview}
+                  alt="Selected company logo"
+                  className="h-20 w-20 rounded border border-border object-contain"
+                />
+              )}
+              <p role="status" className="text-nav">
+                Selected: {selectedFiles.logo.name}
+              </p>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setSelectedFiles((files) => ({ ...files, logo: undefined }));
+                  setLogoPreview('');
+                }}
+              >
+                Remove selected logo
+              </Button>
+            </div>
+          )}
           {logoId && (
             <>
               <SupplierAssetFile
@@ -331,7 +381,13 @@ export default function SupplierProfileForm({
               </Button>
             </>
           )}
-          {storage !== 'ready' && (
+          {signupUploads && (
+            <p className="mt-2 text-nav text-secondary">
+              Select your logo now. It uploads securely when you submit the
+              application.
+            </p>
+          )}
+          {!signupUploads && storage !== 'ready' && (
             <p role="status" className="mt-2 text-nav">
               {storage === 'missing'
                 ? token
@@ -409,7 +465,10 @@ export default function SupplierProfileForm({
               <input
                 type="file"
                 accept="application/pdf,image/jpeg,image/png"
-                disabled={storage !== 'ready' || documents.fields.length >= 20}
+                disabled={
+                  (!signupUploads && storage !== 'ready') ||
+                  documents.fields.length >= 20
+                }
                 className="mt-2 block w-full"
                 onChange={(e) => {
                   void uploadFile('DOCUMENT', e.target.files?.[0]);
@@ -417,6 +476,31 @@ export default function SupplierProfileForm({
                 }}
               />
             </label>
+          )}
+          {signupUploads && (
+            <p className="text-nav text-secondary">
+              Select one verification file for this application. You can replace
+              it before submitting; additional files can be added after
+              verification.
+            </p>
+          )}
+          {signupUploads && selectedFiles.document && (
+            <div className="my-3 space-y-2 rounded border border-border p-3">
+              <p role="status" className="break-words text-nav">
+                Selected: {selectedFiles.document.name}
+              </p>
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  setSelectedFiles((files) => ({
+                    ...files,
+                    document: undefined,
+                  }))
+                }
+              >
+                Remove selected document
+              </Button>
+            </div>
           )}
           {documents.fields.map((field, index) => (
             <div
