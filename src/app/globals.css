@@ -756,3 +756,16 @@ body {
     gap: 16px;
   }
 }
+
+/* Signup owns the full auth grid; keep other authentication pages compact. */
+.auth-layout:has(.signup-form) {
+  display: block;
+  width: 100%;
+  max-width: none;
+}
+.auth-layout:has(.signup-form) .auth-intro { display: none; }
+.signup-form { width: 100%; }
+.signup-form > .surface { width: 100%; max-width: none; }
+@media (min-width: 1024px) {
+  .auth-layout:has(.signup-form) { width: 70%; padding-inline: 0; }
+}

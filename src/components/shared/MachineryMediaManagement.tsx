@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Button from '@/components/buttons/Button';
+import YouTubeVideo from './YouTubeVideo';
 import LoadingState from './LoadingState';
 import EmptyState from './EmptyState';
 import { mediaApi } from '@/lib/api/media.service';
@@ -21,8 +22,13 @@ export default function MachineryMediaManagement({
   name: string;
   onClose: () => void;
 }) {
+  const [selectedType, setSelectedType] = useState<
+    'MODEL_3D' | 'VIEW_360' | 'VIDEO'
+  >('MODEL_3D');
   const [data, setData] = useState<{
       configured: boolean;
+      videoConfigured: boolean;
+      videoPrivacy: 'private' | 'unlisted';
       media: MachineryMedia[];
     }>(),
     [loading, setLoading] = useState(true),
@@ -75,8 +81,10 @@ export default function MachineryMediaManagement({
       setError('Choose a media file.');
       return;
     }
-    if (file.size > (type === 'MODEL_3D' ? 25 : 10) * 1024 * 1024) {
-      setError('GLB files must be at most 25 MB; panoramas at most 10 MB.');
+    if (file.size > (type === 'VIEW_360' ? 10 : 25) * 1024 * 1024) {
+      setError(
+        'GLB and video files must be at most 25 MB; panoramas at most 10 MB.',
+      );
       return;
     }
     setBusy(true);
@@ -85,8 +93,9 @@ export default function MachineryMediaManagement({
     try {
       await mediaApi.upload(token, machineId, body);
       form.reset();
+      setSelectedType('MODEL_3D');
       setNotice(
-        'Media uploaded. It appears publicly only while this machine is visible in the catalogue.',
+        'Media uploaded. Machine visibility controls marketplace access; YouTube privacy also controls video playback.',
       );
       reload();
     } catch (e) {
@@ -120,7 +129,18 @@ export default function MachineryMediaManagement({
     setError('');
     try {
       const blob = await mediaApi.preview(token, item.id);
-      setPreview({ item, url: URL.createObjectURL(blob) });
+      const url =
+        item.type === 'VIDEO'
+          ? JSON.parse(await blob.text()).videoUrl
+          : URL.createObjectURL(blob);
+      if (
+        item.type === 'VIDEO' &&
+        !/^https:\/\/www\.youtube-nocookie\.com\/embed\/[a-zA-Z0-9_-]{11}$/.test(
+          url,
+        )
+      )
+        throw new Error('Invalid video reference');
+      setPreview({ item, url });
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Preview unavailable');
     } finally {
@@ -134,7 +154,9 @@ export default function MachineryMediaManagement({
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-section font-semibold">3D & 360° media</h2>
+          <h2 className="text-section font-semibold">
+            Machine videos, 3D & 360° media
+          </h2>
           <p className="break-words text-nav text-secondary">{name}</p>
         </div>
         <Button variant="secondary" disabled={busy} onClick={onClose}>
@@ -143,10 +165,10 @@ export default function MachineryMediaManagement({
       </div>
       <p className="text-nav text-secondary">
         Up to 5 advanced assets. Upload self-contained static GLB 2.0 models (25
-        MB) or 2:1 JPEG/PNG panoramas (10 MB, up to 8192×4096). Models must
-        embed all textures and use no compression extensions. Existing machinery
-        images remain the fallback. Remove these files before deleting the
-        machine.
+        MB), MP4/WebM videos (25 MB) or 2:1 JPEG/PNG panoramas (10 MB, up to
+        8192×4096). Models must embed all textures and use no compression
+        extensions. Existing machinery images remain the fallback. Remove these
+        files before deleting the machine.
       </p>
       {error && (
         <div
@@ -180,11 +202,16 @@ export default function MachineryMediaManagement({
                 role="status"
                 className="rounded-lg border border-warning/25 bg-warning/5 p-3 text-nav text-warning-foreground"
               >
-                Bunny Storage is not configured on the backend. Add the storage
-                zone and access key securely in environment settings to enable
+                Cloudinary is not configured on the backend. Ask the
+                administrator to configure image and file storage to enable
                 uploads.
               </p>
             )}
+            <p className="text-nav text-secondary">
+              {data.videoConfigured
+                ? `Videos upload to the marketplace YouTube channel as ${data.videoPrivacy}. Private videos require viewer invitations; unlisted links can be shared outside this site.`
+                : 'YouTube uploads are unavailable until the administrator authorizes the marketplace channel.'}
+            </p>
             <form
               onSubmit={upload}
               className="grid items-end gap-3 rounded-lg bg-background p-4 sm:grid-cols-2"
@@ -199,10 +226,17 @@ export default function MachineryMediaManagement({
                 <select
                   id="media-type"
                   name="type"
+                  value={selectedType}
+                  onChange={(event) =>
+                    setSelectedType(event.target.value as typeof selectedType)
+                  }
                   className="mt-1 w-full rounded-lg border p-2"
                 >
                   <option value="MODEL_3D">3D model — GLB</option>
                   <option value="VIEW_360">360° panorama — JPEG/PNG</option>
+                  <option value="VIDEO" disabled={!data.videoConfigured}>
+                    Video — MP4/WebM (YouTube)
+                  </option>
                 </select>
               </div>
               <div>
@@ -216,7 +250,7 @@ export default function MachineryMediaManagement({
                   id="media-title"
                   name="title"
                   required
-                  maxLength={150}
+                  maxLength={selectedType === 'VIDEO' ? 100 : 150}
                   className="mt-1 w-full rounded-lg border p-2"
                 />
               </div>
@@ -231,14 +265,26 @@ export default function MachineryMediaManagement({
                   id="media-file"
                   name="file"
                   type="file"
-                  accept=".glb,.jpg,.jpeg,.png"
+                  accept={
+                    selectedType === 'VIDEO'
+                      ? '.mp4,.webm'
+                      : selectedType === 'MODEL_3D'
+                        ? '.glb'
+                        : '.jpg,.jpeg,.png'
+                  }
                   required
                   className="mt-1 w-full text-nav"
                 />
               </div>
               <Button
                 type="submit"
-                disabled={busy || !data.configured || data.media.length >= 5}
+                disabled={
+                  busy ||
+                  !(selectedType === 'VIDEO'
+                    ? data.videoConfigured
+                    : data.configured) ||
+                  data.media.length >= 5
+                }
               >
                 {busy ? 'Working…' : 'Upload media'}
               </Button>
@@ -252,7 +298,11 @@ export default function MachineryMediaManagement({
                   <div className="min-w-0">
                     <h3 className="break-words font-semibold">{item.title}</h3>
                     <p className="text-nav text-secondary">
-                      {item.type === 'MODEL_3D' ? '3D model' : '360° panorama'}{' '}
+                      {item.type === 'VIDEO'
+                        ? 'YouTube video'
+                        : item.type === 'MODEL_3D'
+                          ? '3D model'
+                          : '360° panorama'}{' '}
                       · {(item.fileSize / (1024 * 1024)).toFixed(1)} MB
                       {item.state === 'DELETING'
                         ? ' · Removal pending — retry'
@@ -299,13 +349,17 @@ export default function MachineryMediaManagement({
               Close preview
             </Button>
           </div>
-          <Viewer
-            key={preview.url}
-            source={preview.url}
-            type={preview.item.type}
-            title={preview.item.title}
-            onError={previewFailed}
-          />
+          {preview.item.type === 'VIDEO' ? (
+            <YouTubeVideo source={preview.url} title={preview.item.title} />
+          ) : (
+            <Viewer
+              key={preview.url}
+              source={preview.url}
+              type={preview.item.type}
+              title={preview.item.title}
+              onError={previewFailed}
+            />
+          )}
         </div>
       )}
     </section>

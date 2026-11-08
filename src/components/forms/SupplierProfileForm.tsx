@@ -335,7 +335,7 @@ export default function SupplierProfileForm({
             <p role="status" className="mt-2 text-nav">
               {storage === 'missing'
                 ? token
-                  ? 'Uploads require Bunny Storage configuration on the server.'
+                  ? 'Uploads require Cloudinary configuration on the server.'
                   : 'Verify your account and sign in to upload your company files.'
                 : storage === 'loading'
                   ? 'Checking upload availability…'

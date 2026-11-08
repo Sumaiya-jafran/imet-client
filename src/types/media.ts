@@ -1,6 +1,6 @@
 export interface MachineryMedia {
   id: string;
-  type: 'MODEL_3D' | 'VIEW_360';
+  type: 'MODEL_3D' | 'VIEW_360' | 'VIDEO';
   title: string;
   fileType: string;
   fileSize: number;

@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import dynamic from 'next/dynamic';
 import MachineImage from '@/components/cards/MachineImage';
 import Button from '@/components/buttons/Button';
+import YouTubeVideo from './YouTubeVideo';
 import LoadingState from './LoadingState';
 import type { MachineImage as ImageData } from '@/types/catalogue';
 import type { MachineryMedia } from '@/types/media';
@@ -28,13 +29,17 @@ export default function MachineryMediaGallery({
   return (
     <section aria-label="Machinery media" className="min-w-0 space-y-3">
       {selected && !failed ? (
-        <AdvancedMediaViewer
-          key={`${selected.id}-${attempt}`}
-          source={mediaUrl(selected.id)}
-          type={selected.type}
-          title={selected.title}
-          onError={handleError}
-        />
+        selected.type === 'VIDEO' ? (
+          <YouTubeVideo source={mediaUrl(selected.id)} title={selected.title} />
+        ) : (
+          <AdvancedMediaViewer
+            key={`${selected.id}-${attempt}`}
+            source={mediaUrl(selected.id)}
+            type={selected.type}
+            title={selected.title}
+            onError={handleError}
+          />
+        )
       ) : (
         <MachineImage image={images[photo]} alt={name} />
       )}
@@ -80,8 +85,12 @@ export default function MachineryMediaGallery({
                 setFailed(false);
               }}
             >
-              {item.type === 'MODEL_3D' ? '3D model' : '360° view'} ·{' '}
-              {item.title}
+              {item.type === 'VIDEO'
+                ? 'Video'
+                : item.type === 'MODEL_3D'
+                  ? '3D model'
+                  : '360° view'}{' '}
+              · {item.title}
             </Button>
           ))}
         </div>

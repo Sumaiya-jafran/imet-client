@@ -6,10 +6,15 @@ export const mediaUrl = (id: string) =>
 const headers = (token: string) => ({ Authorization: `Bearer ${token}` });
 export const mediaApi = {
   list: (token: string, machineId: string, signal?: AbortSignal) =>
-    apiClient.get<{ configured: boolean; media: MachineryMedia[] }>(
-      `/catalogue/machines/${machineId}/media`,
-      { headers: headers(token), signal },
-    ),
+    apiClient.get<{
+      configured: boolean;
+      videoConfigured: boolean;
+      videoPrivacy: 'private' | 'unlisted';
+      media: MachineryMedia[];
+    }>(`/catalogue/machines/${machineId}/media`, {
+      headers: headers(token),
+      signal,
+    }),
   upload: (token: string, machineId: string, data: FormData) =>
     apiClient.request<MachineryMedia>(
       `/catalogue/machines/${machineId}/media`,
@@ -17,7 +22,7 @@ export const mediaApi = {
         method: 'POST',
         headers: headers(token),
         body: data,
-        signal: AbortSignal.timeout(60000),
+        signal: AbortSignal.timeout(150000),
       },
     ),
   remove: (token: string, id: string) =>

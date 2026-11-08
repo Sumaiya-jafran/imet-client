@@ -11,9 +11,9 @@ export default function AuthLayout({
       <main
         id="main-content"
         tabIndex={-1}
-        className="mx-auto grid min-h-[calc(100vh-85px)] max-w-6xl items-center gap-10 px-4 py-10 outline-none sm:px-6 lg:grid-cols-2 lg:gap-16 lg:py-16"
+        className="auth-layout mx-auto grid min-h-[calc(100vh-85px)] max-w-6xl items-center gap-10 px-4 py-10 outline-none sm:px-6 lg:grid-cols-2 lg:gap-16 lg:py-16"
       >
-        <aside className="hidden lg:block">
+        <aside className="auth-intro hidden lg:block">
           <span className="eyebrow">Your industry. Connected.</span>
           <h2 className="mt-4 max-w-md text-page font-bold leading-tight">
             A workspace for

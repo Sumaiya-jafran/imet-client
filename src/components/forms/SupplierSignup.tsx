@@ -55,7 +55,7 @@ export default function SupplierSignup({
     };
   }, [supplier, attempt]);
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-6 p-4 sm:p-8">
+    <div className="signup-form mx-auto w-full space-y-6">
       <p className="text-nav text-secondary">
         Already registered?{' '}
         <Link

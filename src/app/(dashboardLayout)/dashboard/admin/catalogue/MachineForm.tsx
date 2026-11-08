@@ -476,7 +476,8 @@ export default function MachineForm({
                 </label>
                 <p className="mt-1 text-meta text-secondary">
                   JPEG or PNG, up to 10 MB. Add a meaningful description and
-                  arrange images below.
+                  arrange images below. After saving the machine, choose Manage
+                  media to upload a YouTube video, 3D model or panorama.
                 </p>
                 <input
                   id="machine-image-file"
@@ -507,9 +508,9 @@ export default function MachineForm({
                     role="status"
                     className="mt-2 text-nav text-warning-foreground"
                   >
-                    Uploads are unavailable until Bunny storage is configured on
-                    the server. Existing images and URL editing remain
-                    available.
+                    Uploads are unavailable until Cloudinary storage is
+                    configured on the server. Existing images and URL editing
+                    remain available.
                   </p>
                 )}
                 {storage === 'error' && (
