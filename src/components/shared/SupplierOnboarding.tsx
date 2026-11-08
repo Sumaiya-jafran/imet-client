@@ -10,7 +10,7 @@ import SupplierProfileForm from '@/components/forms/SupplierProfileForm';
 import { paymentApi } from '@/lib/api/payment.service';
 import type { Onboarding } from '@/types/payment';
 export default function SupplierOnboarding() {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const token = session?.accessToken;
   const [data, setData] = useState<Onboarding>();
   const [error, setError] = useState('');
@@ -63,12 +63,19 @@ export default function SupplierOnboarding() {
       new Date(t.startsAt) <= new Date() &&
       new Date(t.endsAt) > new Date(),
   );
+  const selectedTerm = data?.supplier.subscriptions.find(
+    (term) => term.isCurrent && term.state === 'PENDING',
+  );
+  const selectedPlan = data?.plans.find(
+    (plan) => plan.id === selectedTerm?.planId,
+  );
+  const availablePlans = selectedPlan ? [selectedPlan] : (data?.plans ?? []);
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:px-8">
       <PageHeader
         eyebrow="Supplier account"
         title="Activate your marketplace presence"
-        description="Choose a plan, complete secure checkout and wait for backend payment verification. An administrator can also activate your account with an audited manual term."
+        description="Verify your email to activate a free plan without a payment method. Paid plans activate only after a successful, verified payment through secure checkout."
       />
       {error && (
         <p
@@ -94,9 +101,9 @@ export default function SupplierOnboarding() {
             </div>
             {data.supplier.status === 'PENDING' && (
               <p className="mt-3 text-nav">
-                Your supplier application awaits administrator approval. Payment
-                activation does not approve your storefront or allow
-                publication.
+                Your account activation and storefront review are separate. An
+                administrator reviews your supplier profile before public
+                listings can be published.
               </p>
             )}
             {data.supplier.status === 'PENDING' && (
@@ -176,21 +183,23 @@ export default function SupplierOnboarding() {
             <>
               {!data.onlineAvailable && (
                 <p role="status" className="surface p-4">
-                  Online activation is currently unavailable. Contact Machinmate
-                  for manual activation.
+                  Online payment is currently unavailable for paid plans. Free
+                  plans do not require payment and remain available.
                 </p>
               )}
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {data.plans.map((plan) => (
+                {availablePlans.map((plan) => (
                   <section
                     key={plan.id}
                     className="surface flex flex-col gap-4 p-5"
                   >
                     <h2 className="text-card font-semibold">{plan.name}</h2>
                     <p className="text-section font-semibold">
-                      {plan.price}{' '}
+                      {Number(plan.price) === 0 ? 'Free' : plan.price}{' '}
                       <span className="text-nav text-muted-foreground">
-                        {plan.currency}
+                        {Number(plan.price) === 0
+                          ? 'No payment method required'
+                          : plan.currency}
                       </span>
                     </p>
                     <p className="text-nav text-secondary">
@@ -204,14 +213,20 @@ export default function SupplierOnboarding() {
                     <Button
                       disabled={
                         busy ||
-                        !data.onlineAvailable ||
-                        !data.currencies.includes(plan.currency) ||
-                        Number(plan.price) <= 0
+                        (Number(plan.price) > 0 &&
+                          (!data.onlineAvailable ||
+                            !data.currencies.includes(plan.currency)))
                       }
                       onClick={async () => {
                         setBusy(true);
                         setError('');
                         try {
+                          if (Number(plan.price) === 0) {
+                            await paymentApi.activateFree(token, plan.id);
+                            await update();
+                            setAttempt((n) => n + 1);
+                            return;
+                          }
                           const keyName = `imet-checkout-${data.supplier.id}-${plan.id}`;
                           let key = sessionStorage.getItem(keyName);
                           if (!key) {
@@ -239,15 +254,18 @@ export default function SupplierOnboarding() {
                       }}
                     >
                       {busy
-                        ? 'Preparing checkout…'
-                        : 'Activate with SSLCOMMERZ'}
+                        ? 'Please wait…'
+                        : Number(plan.price) === 0
+                          ? 'Activate free plan'
+                          : 'Continue to secure payment'}
                     </Button>
-                    {(!data.currencies.includes(plan.currency) ||
-                      Number(plan.price) <= 0) && (
-                      <p className="text-meta text-muted-foreground">
-                        Contact Machinmate for manual activation of this plan.
-                      </p>
-                    )}
+                    {Number(plan.price) > 0 &&
+                      !data.currencies.includes(plan.currency) && (
+                        <p className="text-meta text-muted-foreground">
+                          Contact Machinmate about payment support for this
+                          currency.
+                        </p>
+                      )}
                   </section>
                 ))}
               </div>

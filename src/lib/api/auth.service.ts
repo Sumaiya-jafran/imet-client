@@ -17,7 +17,11 @@ import type { CurrentUser } from '@/types/auth';
 export const authService = {
   register: (body: { email: string; displayName: string; password: string }) =>
     apiClient.post('/auth/register', body),
-  verify: (token: string) => apiClient.post('/auth/verify-user', { token }),
+  verify: (token: string) =>
+    apiClient.post<{ nextPath: '/subscription' | '/dashboard/account' }>(
+      '/auth/verify-user',
+      { token },
+    ),
   resend: (email: string) =>
     apiClient.post('/auth/resend-verification', { email }),
   forgot: (email: string) => apiClient.post('/auth/forgot-password', { email }),

@@ -83,12 +83,15 @@ export default function SupplierActivationPanel({
           Activate account manually
         </Button>
       </header>
-      {current?.activationMethod && (
+      {(current?.activationMethod ||
+        (current?.activatedAt && Number(current.price) === 0)) && (
         <p className="text-nav">
           Activated via{' '}
           {current.activationMethod === 'PAYMENT'
             ? 'verified payment'
-            : 'administrator'}
+            : current.activationMethod === 'ADMIN_MANUAL'
+              ? 'administrator'
+              : 'email verification on a free plan'}
           {current.activatedAt &&
             ` on ${new Date(current.activatedAt).toLocaleString()}`}
           . {current.activationReason && `Reason: ${current.activationReason}`}
@@ -134,7 +137,9 @@ export default function SupplierActivationPanel({
               {payments.map((p) => (
                 <tr key={p.id} className="border-t">
                   <td className="p-3">
-                    <span className="font-sans text-meta">{p.transactionId}</span>
+                    <span className="font-sans text-meta">
+                      {p.transactionId}
+                    </span>
                     <br />
                     {p.subscription.planName}
                   </td>
@@ -196,7 +201,10 @@ export default function SupplierActivationPanel({
             }
           }}
         >
-          <h2 id="manual-activation-title" className="text-section font-semibold">
+          <h2
+            id="manual-activation-title"
+            className="text-section font-semibold"
+          >
             Confirm manual account activation
           </h2>
           <p className="text-nav text-secondary">

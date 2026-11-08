@@ -88,12 +88,13 @@ export default function SupplierSignup({
           <h1 className="text-section font-semibold">Verify your email</h1>
           <p>
             If this address is eligible, you will receive an email shortly.
-            Supplier access requires email verification, activation and
-            administrator approval.
+            Free-plan accounts activate after email verification with no payment
+            method. Paid-plan accounts activate after verification and
+            successful payment.
           </p>
           <p>
-            After verification, sign in to upload files and complete secure
-            checkout.
+            After verification, sign in to continue. Only paid plans require
+            secure checkout.
           </p>
           <Link
             className="font-semibold text-secondary"
@@ -110,8 +111,8 @@ export default function SupplierSignup({
               Build your marketplace presence
             </h1>
             <p className="mt-2 text-nav text-secondary">
-              Company details → email verification → activation and admin
-              review. Buyers never need a plan.
+              Company details → verify email → account active on a free plan, or
+              complete payment on a paid plan. Buyers never need a plan.
             </p>
           </header>
           {error && (
@@ -189,8 +190,11 @@ export default function SupplierSignup({
                     ?.filter((p) => p.eligibleTypes.includes(supplierType))
                     .map((p) => (
                       <option value={p.id} key={p.id}>
-                        {p.name} · {p.price} {p.currency} · {p.durationDays}{' '}
-                        days
+                        {p.name} ·{' '}
+                        {Number(p.price) === 0
+                          ? 'Free — no payment method'
+                          : `${p.price} ${p.currency}`}{' '}
+                        · {p.durationDays} days
                       </option>
                     ))}
                 </select>

@@ -27,6 +27,8 @@ export const paymentApi = {
       signal: AbortSignal.timeout(180000),
     });
   },
+  activateFree: (token: string, planId: string) =>
+    apiClient.post('/payments/activate-free', { planId }, options(token)),
   onboarding: (token: string) =>
     apiClient.get<Onboarding>('/payments/onboarding', options(token)),
   profile: (

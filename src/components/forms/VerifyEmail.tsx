@@ -5,6 +5,7 @@ import Button from '@/components/buttons/Button';
 import Link from 'next/link';
 export default function VerifyEmail({ token }: { token?: string }) {
   const [message, setMessage] = useState('');
+  const [nextPath, setNextPath] = useState('/dashboard/account');
   const [failure, setFailure] = useState('');
   const [busy, setBusy] = useState(false);
   const invalidLink = !/^[a-f0-9]{64}$/.test(token || '');
@@ -14,6 +15,7 @@ export default function VerifyEmail({ token }: { token?: string }) {
     try {
       const result = await authService.verify(token!);
       setMessage(result.message);
+      if (result.data?.nextPath) setNextPath(result.data.nextPath);
     } catch (error) {
       setFailure(
         error instanceof Error ? error.message : 'Verification failed',
@@ -47,7 +49,9 @@ export default function VerifyEmail({ token }: { token?: string }) {
         </Button>
       )}
       <nav className="flex flex-wrap gap-4 border-t border-surface-muted pt-4 text-meta font-medium text-secondary">
-        <Link href="/auth/signin">Sign in</Link>
+        <Link href={`/auth/signin?callbackUrl=${encodeURIComponent(nextPath)}`}>
+          Sign in to continue
+        </Link>
         <Link href="/auth/resend-verification">Request a new link</Link>
       </nav>
     </section>
