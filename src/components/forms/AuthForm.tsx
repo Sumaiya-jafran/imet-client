@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import PasswordInput from './PasswordInput';
+import { googleErrorMessage } from '@/lib/auth/errors';
 import { safeReturnUrl } from '@/lib/auth/returnUrl';
 import { signIn, signOut, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -60,13 +61,7 @@ export default function AuthForm({
     setError,
   } = useForm<Values>({ resolver: zodResolver(schema) });
   const [message, setMessage] = useState('');
-  const [failure, setFailure] = useState(
-    oauthError
-      ? oauthError === 'AccountLinkRequired'
-        ? 'Sign in with your password, then link Google in account settings.'
-        : 'Google sign-in failed. Try again or use email and password.'
-      : '',
-  );
+  const [failure, setFailure] = useState(googleErrorMessage(oauthError));
   const [googleBusy, setGoogleBusy] = useState(false);
   const router = useRouter();
   const fields =

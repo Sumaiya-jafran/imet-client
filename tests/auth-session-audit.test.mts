@@ -159,3 +159,72 @@ test('Google OAuth keeps state, PKCE and nonce checks; profile data alone cannot
   } as never);
   assert.equal(result, '/auth/signin?error=GoogleCredential');
 });
+
+test('Google exchange keeps one account and application session when linking succeeds', async (t) => {
+  const { googleSession } = await import('../src/lib/auth/options');
+  const calls: { url: string; authorization: string | null; body: unknown }[] =
+    [];
+  t.mock.method(globalThis, 'fetch', async (url, options) => {
+    calls.push({
+      url: String(url),
+      authorization: new Headers(options?.headers).get('Authorization'),
+      body: JSON.parse(String(options?.body)),
+    });
+    return String(url).endsWith('/link')
+      ? Response.json({ success: true })
+      : Response.json({ success: true, data: auth });
+  });
+  const result = await googleSession(
+    'signed-provider-token',
+    'existing-account-access',
+  );
+  assert.deepEqual(result, auth);
+  assert.equal(calls.length, 2);
+  assert.equal(calls[0].authorization, 'Bearer existing-account-access');
+  assert.equal(calls[1].authorization, null);
+  assert.ok(
+    calls.every(
+      (call) => Object.keys(call.body as object).join() === 'idToken',
+    ),
+  );
+});
+
+test('Google exchange distinguishes linking, disabled accounts, limits and infrastructure failures', async (t) => {
+  const { googleSession } = await import('../src/lib/auth/options');
+  t.mock.method(console, 'warn', () => {});
+  for (const [status, expected] of [
+    [409, 'AccountLinkRequired'],
+    [403, 'GoogleAccountUnavailable'],
+    [401, 'GoogleCredential'],
+    [429, 'GoogleRateLimit'],
+    [503, 'GoogleUnavailable'],
+  ] as const) {
+    t.mock.method(
+      globalThis,
+      'fetch',
+      async () => new Response(null, { status }),
+    );
+    assert.equal(await googleSession('signed-provider-token'), expected);
+  }
+  let calls = 0;
+  t.mock.method(globalThis, 'fetch', async () => {
+    calls++;
+    return new Response(null, { status: 403 });
+  });
+  assert.equal(
+    await googleSession('signed-provider-token', 'wrong-account-access'),
+    'GoogleLink',
+  );
+  assert.equal(
+    calls,
+    1,
+    'a denied link must not continue into another account',
+  );
+  t.mock.method(globalThis, 'fetch', async () => {
+    throw new Error('network');
+  });
+  assert.equal(
+    await googleSession('signed-provider-token'),
+    'GoogleUnavailable',
+  );
+});

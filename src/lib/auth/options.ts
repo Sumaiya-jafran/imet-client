@@ -34,6 +34,73 @@ async function refreshToken(token: string): Promise<AuthResponse> {
   setTimeout(() => refreshes.delete(token), 5000).unref();
   return promise;
 }
+// Exchanges only the provider's signed ID token; frontend profile fields are never trusted.
+export async function googleSession(
+  idToken: string,
+  accessToken?: string,
+): Promise<AuthResponse | string> {
+  let stage = 'sign-in';
+  try {
+    if (accessToken) {
+      stage = 'link';
+      const linked = await fetch(`${backendApiUrl}/auth/google/link`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ idToken }),
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!linked.ok) {
+        console.warn('[auth] Google exchange rejected', {
+          stage,
+          status: linked.status,
+        });
+        return linked.status === 429
+          ? 'GoogleRateLimit'
+          : linked.status >= 500
+            ? 'GoogleUnavailable'
+            : 'GoogleLink';
+      }
+    }
+    stage = 'sign-in';
+    const response = await fetch(`${backendApiUrl}/auth/google`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!response.ok) {
+      console.warn('[auth] Google exchange rejected', {
+        stage,
+        status: response.status,
+      });
+      return response.status === 409
+        ? 'AccountLinkRequired'
+        : response.status === 403
+          ? 'GoogleAccountUnavailable'
+          : response.status === 429
+            ? 'GoogleRateLimit'
+            : response.status >= 500
+              ? 'GoogleUnavailable'
+              : 'GoogleCredential';
+    }
+    const body = await response.json();
+    if (
+      !body.success ||
+      !body.data?.user?.id ||
+      !body.data.accessToken ||
+      !body.data.refreshToken
+    )
+      throw new Error('Invalid authentication response');
+    return body.data as AuthResponse;
+  } catch {
+    // Never log provider credentials, profile data, response bodies or session tokens.
+    console.warn('[auth] Google exchange unavailable', { stage });
+    return 'GoogleUnavailable';
+  }
+}
 export const authOptions: NextAuthOptions = {
   secret,
   providers: [
@@ -88,30 +155,11 @@ export const authOptions: NextAuthOptions = {
       if (!account.id_token) return '/auth/signin?error=GoogleCredential';
       try {
         const current = await getServerSession(authOptions);
-        if (current?.accessToken && !current.error) {
-          const linked = await fetch(`${backendApiUrl}/auth/google/link`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${current.accessToken}`,
-            },
-            body: JSON.stringify({ idToken: account.id_token }),
-            signal: AbortSignal.timeout(15000),
-          });
-          if (!linked.ok) return '/auth/signin?error=GoogleLink';
-        }
-        const response = await fetch(`${backendApiUrl}/auth/google`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ idToken: account.id_token }),
-          signal: AbortSignal.timeout(15000),
-        });
-        if (!response.ok)
-          return response.status === 409
-            ? '/auth/signin?error=AccountLinkRequired'
-            : '/auth/signin?error=GoogleCredential';
-        const body = await response.json();
-        const auth = body.data as AuthResponse;
+        const auth = await googleSession(
+          account.id_token,
+          current?.error ? undefined : current?.accessToken,
+        );
+        if (typeof auth === 'string') return `/auth/signin?error=${auth}`;
         Object.assign(user, {
           id: auth.user.id,
           name: auth.user.displayName,
@@ -123,7 +171,8 @@ export const authOptions: NextAuthOptions = {
         });
         return true;
       } catch {
-        return '/auth/signin?error=GoogleCredential';
+        console.warn('[auth] Google session lookup failed');
+        return '/auth/signin?error=GoogleUnavailable';
       }
     },
     async jwt({ token, user, trigger }) {

@@ -30,3 +30,13 @@ Set NEXTAUTH_URL to the actual HTTPS production origin and NEXTAUTH_SECRET to a 
 Enable Google with GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Next.js, matching GOOGLE_CLIENT_ID in the backend. Register the exact `<NEXTAUTH_URL>/api/auth/callback/google` URI in a Google Web application client; configure consent/scopes and authorized test accounts. Validate the real flow in staging before calling Google integration verified.
 
 Changed files: `.env.example`, `src/lib/auth/options.ts`, `src/lib/schema-validations/auth.schema.ts`, `src/components/forms/AuthForm.tsx`, `src/components/forms/SupplierSignup.tsx`, `tests/auth-session-audit.test.mts`, `tests/auth-validation-audit.test.mjs`, this document.
+
+## Follow-up: Google plus password on one account
+
+Email/password accounts connect Google from Account settings while signed in, using the same verified email. Google-created accounts use the new **Set or reset your password by email** link and verified recovery; both methods then address the same user. No email-only automatic linking or duplicate account creation introduced.
+
+Google callback exchange errors now distinguish account linking, account restrictions, rate limits and service outages. Provider certificate outages return backend 503 rather than invalid credential 401. Logs contain only stage/status; errors never display arbitrary query text. The live screenshot's root cause remains **BLOCKED**, pending its `error=` value and sanitized deployed server evidence. This workspace has no Google credentials.
+
+Executed follow-up: **PASS** 9 callback tests, 1 error-message test, frontend lint/type-check/build, backend 13 focused Google/gap tests and backend lint/typecheck/build; real desktop browser auth scenario with recovery link and error guidance **PASS**. Actual Google OAuth remains **BLOCKED**, not proven by controlled signed-token or callback tests. See the backend audit for configuration and diagnostic steps.
+
+Additional files: `src/lib/auth/errors.ts`, `tests/auth-google-errors.test.mjs`, `src/app/(dashboardLayout)/dashboard/account/AccountPanel.tsx`; updated existing callbacks/form/tests. No schema or dependency changes.

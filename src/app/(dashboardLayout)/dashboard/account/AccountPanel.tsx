@@ -236,8 +236,9 @@ export default function AccountPanel() {
             </div>
           )}
           <p className="my-3 text-nav text-secondary">
-            Google-only accounts can use Forgot password to set a password. To
-            link Google, use the same verified email as this account.
+            Use Google and email/password for the same account. Connect Google
+            using the same verified email. If you signed up with Google, set a
+            password using the secure email link below.
           </p>
           <Button
             variant="secondary"
@@ -254,6 +255,12 @@ export default function AccountPanel() {
           >
             Link / sign in with Google
           </Button>
+          <Link
+            href="/auth/forgot-password"
+            className="mt-3 block text-nav font-medium text-secondary underline"
+          >
+            Set or reset your password by email
+          </Link>
           <div className="mt-3 flex flex-wrap gap-3">
             <Button
               variant="secondary"
