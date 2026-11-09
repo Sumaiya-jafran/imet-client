@@ -1,4 +1,6 @@
 'use client';
+import type { PaymentRegion } from '@/config/payment-regions';
+import { paymentRegionSchema } from '@/lib/schema-validations/supplier.schema';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,6 +26,7 @@ export default function SupplierSignup({
   googleEnabled: boolean;
 }) {
   const [supplier, setSupplier] = useState(initialSupplier);
+  const [paymentRegion, setPaymentRegion] = useState<PaymentRegion>();
   const [account, setAccount] = useState<z.infer<typeof signupSchema>>();
   const [plans, setPlans] =
     useState<Omit<SubscriptionPlan, 'isActive' | 'updatedAt'>[]>();
@@ -206,6 +209,8 @@ export default function SupplierSignup({
                 </p>
               )}
               <SupplierProfileForm
+                initialPaymentRegion={paymentRegion}
+                onPaymentRegionChange={setPaymentRegion}
                 onTypeChange={(type) => {
                   setSupplierType(type);
                   setPlanId('');
@@ -234,7 +239,12 @@ export default function SupplierSignup({
                       email: account.email,
                       password: account.password,
                     },
-                    profile,
+                    {
+                      ...profile,
+                      paymentRegion: paymentRegionSchema.parse(
+                        profile.paymentRegion,
+                      ),
+                    },
                     planId,
                     files,
                   );

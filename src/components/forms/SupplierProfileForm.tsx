@@ -1,5 +1,7 @@
 'use client';
 import Image from 'next/image';
+import PaymentRegionField from './PaymentRegionField';
+import type { PaymentRegion } from '@/config/payment-regions';
 import { supplierTypeLabels } from '@/types/supplier';
 import { useEffect, useState } from 'react';
 import { useForm, useFieldArray, useWatch } from 'react-hook-form';
@@ -9,7 +11,10 @@ import SupplierAssetFile from '@/components/shared/SupplierAssetFile';
 import { ApiError } from '@/lib/api/client';
 import type { FieldPath } from 'react-hook-form';
 import Button from '@/components/buttons/Button';
-import { supplierSchema } from '@/lib/schema-validations/supplier.schema';
+import {
+  supplierSchema,
+  supplierRegistrationSchema,
+} from '@/lib/schema-validations/supplier.schema';
 import { supplierApi } from '@/lib/api/supplier.service';
 import type { SupplierProfile, SupplierProfileInput } from '@/types/supplier';
 const labels = {
@@ -35,8 +40,12 @@ export default function SupplierProfileForm({
   onCancel,
   submitOverride,
   onTypeChange,
+  initialPaymentRegion,
+  onPaymentRegionChange,
 }: {
   token: string;
+  initialPaymentRegion?: PaymentRegion;
+  onPaymentRegionChange?: (value: PaymentRegion) => void;
   supplier?: SupplierProfile;
   mode: 'application' | 'owner' | 'admin';
   onSave: () => void;
@@ -86,7 +95,9 @@ export default function SupplierProfileForm({
     setError: setFieldError,
     formState: { errors, isSubmitting },
   } = useForm<SupplierProfileInput>({
-    resolver: zodResolver(supplierSchema),
+    resolver: zodResolver(
+      supplier ? supplierSchema : supplierRegistrationSchema,
+    ),
     defaultValues: supplier
       ? {
           companyName: supplier.companyName,
@@ -99,6 +110,7 @@ export default function SupplierProfileForm({
           address: supplier.address,
           city: supplier.city,
           country: supplier.country,
+          paymentRegion: supplier.paymentRegion,
           registrationNumber: supplier.registrationNumber,
           website: supplier.website,
           logoUrl: supplier.logoUrl,
@@ -115,6 +127,7 @@ export default function SupplierProfileForm({
           address: '',
           city: '',
           country: '',
+          paymentRegion: initialPaymentRegion,
           registrationNumber: null,
           website: null,
           logoUrl: null,
@@ -152,6 +165,7 @@ export default function SupplierProfileForm({
               'address',
               'city',
               'country',
+              'paymentRegion',
               'registrationNumber',
               'website',
               'logoUrl',
@@ -166,6 +180,7 @@ export default function SupplierProfileForm({
     }
   };
   const logoId = useWatch({ control, name: 'logoAssetId' });
+  const paymentRegion = useWatch({ control, name: 'paymentRegion' });
   const uploadFile = async (
     purpose: 'LOGO' | 'DOCUMENT',
     file: File | undefined,
@@ -316,6 +331,20 @@ export default function SupplierProfileForm({
             </div>
           );
         })}
+        <PaymentRegionField
+          inputRef={register('paymentRegion').ref}
+          value={paymentRegion}
+          required={!supplier}
+          disabled={mode === 'owner'}
+          error={errors.paymentRegion?.message}
+          onChange={(region) => {
+            setValue('paymentRegion', region, {
+              shouldDirty: true,
+              shouldValidate: true,
+            });
+            onPaymentRegionChange?.(region);
+          }}
+        />
         <section className="rounded-xl border border-dashed border-border-strong bg-background p-4 md:col-span-2">
           <label htmlFor="supplier-logo-file" className="font-semibold">
             Upload company logo

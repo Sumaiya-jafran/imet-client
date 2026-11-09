@@ -1,3 +1,4 @@
+import type { PaymentRegion } from '@/config/payment-regions';
 import type { Pagination } from './api';
 export type SupplierType = 'LOCAL' | 'INTERNATIONAL';
 export const supplierTypeLabels: Record<SupplierType, string> = {
@@ -22,11 +23,15 @@ export interface SupplierProfileInput {
   address: string;
   city: string;
   country: string;
+  paymentRegion?: PaymentRegion | null;
   registrationNumber: string | null;
   website: string | null;
   logoUrl: string | null;
   logoAssetId?: string | null;
   documents: { name: string; url: string; assetId?: string }[];
+}
+export interface SupplierRegistrationInput extends SupplierProfileInput {
+  paymentRegion: PaymentRegion;
 }
 export type PlanVisibility = 'HIDDEN' | 'STANDARD' | 'FEATURED';
 // Commercial terms shared by a plan and the subscription created from it.
@@ -69,6 +74,7 @@ export interface SupplierSubscription extends PlanEntitlements {
   updatedAt: string;
 }
 export interface SupplierProfile extends SupplierProfileInput {
+  paymentRegion: PaymentRegion | null;
   slug: string;
   user?: { id: string; status: string; isEmailVerified: boolean };
   id: string;

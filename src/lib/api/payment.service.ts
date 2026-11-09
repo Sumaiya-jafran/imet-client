@@ -1,6 +1,10 @@
 import { apiClient } from './client';
 import type { Payment, Onboarding, AdminPayment } from '@/types/payment';
-import type { SupplierProfile, SupplierProfileInput } from '@/types/supplier';
+import type {
+  SupplierProfile,
+  SupplierProfileInput,
+  SupplierRegistrationInput,
+} from '@/types/supplier';
 const options = (token: string) => ({
   headers: { Authorization: `Bearer ${token}` },
   signal: AbortSignal.timeout(25000),
@@ -8,7 +12,7 @@ const options = (token: string) => ({
 export const paymentApi = {
   register: (
     account: { displayName: string; email: string; password: string },
-    profile: SupplierProfileInput,
+    profile: SupplierRegistrationInput,
     planId: string,
     files?: { logo?: File; document?: File },
   ) => {

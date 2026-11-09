@@ -1,4 +1,13 @@
 import { z } from 'zod';
+export const paymentRegionValues = [
+  'BANGLADESH',
+  'CHINA',
+  'INTERNATIONAL',
+] as const;
+export type PaymentRegion = (typeof paymentRegionValues)[number];
+export const paymentRegionSchema = z.enum(paymentRegionValues, {
+  error: 'Select where you will be making your payments from',
+});
 const text = (max: number) => z.string().trim().min(1, 'Required').max(max);
 const url = z
   .url()
@@ -38,6 +47,7 @@ export const supplierSchema = z.object({
   address: text(2000),
   city: text(100),
   country: text(100),
+  paymentRegion: paymentRegionSchema.nullable().optional(),
   registrationNumber: text(150).nullable(),
   website: url.nullable(),
   logoUrl: z
@@ -60,6 +70,16 @@ export const supplierSchema = z.object({
     )
     .max(20),
 });
+export const supplierRegistrationSchema = supplierSchema.superRefine(
+  (profile, ctx) => {
+    if (!profile.paymentRegion)
+      ctx.addIssue({
+        code: 'custom',
+        path: ['paymentRegion'],
+        message: 'Select where you will be making your payments from',
+      });
+  },
+);
 export const planSchema = z.object({
   name: text(100),
   eligibleTypes: z
