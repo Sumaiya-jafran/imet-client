@@ -20,6 +20,11 @@ export default function SupplierDashboard() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   useEffect(() => {
+    const refresh = () => setRevision((n) => n + 1);
+    window.addEventListener('focus', refresh);
+    return () => window.removeEventListener('focus', refresh);
+  }, []);
+  useEffect(() => {
     if (!token || session?.error) return;
     let active = true;
     Promise.all([supplierApi.own(token), supplierApi.plans(token)])

@@ -29,9 +29,9 @@ const request = <T>(
     body: JSON.stringify(body),
   });
 export const supplierApi = {
-  publicPlans: () =>
+  publicPlans: (homepage = false) =>
     apiClient.get<Omit<SubscriptionPlan, 'isActive' | 'updatedAt'>[]>(
-      '/subscriptions/plans',
+      `/subscriptions/plans${homepage ? '?homepage=true' : ''}`,
       { signal: AbortSignal.timeout(10000) },
     ),
   own: (token: string) =>

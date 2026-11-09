@@ -385,7 +385,7 @@ export async function HomeReviews() {
 export async function HomePlans() {
   let plans;
   try {
-    const r = await supplierApi.publicPlans();
+    const r = await supplierApi.publicPlans(true);
     if (!r.data) throw new Error();
     plans = r.data;
   } catch {
@@ -401,7 +401,7 @@ export async function HomePlans() {
         <SectionHeading
           eyebrow="For suppliers & manufacturers"
           title="List your machinery on Machinmate"
-          description="Plans are set by Machinmate administrators. Free plans need no payment. Online payments activate after verification; manual payments require administrator review. Buyers never need a subscription."
+          description="Plans are set by Machinmate administrators. Free plans need no payment. Online payments activate after verification; offline payments are recorded and confirmed by Machinmate administrators. Buyers never need a subscription."
           href="/dashboard/supplier"
           label="Become a supplier"
         />

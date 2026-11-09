@@ -58,12 +58,16 @@ export interface PlanInput extends PlanEntitlements {
   isFree?: boolean;
   isPublic?: boolean;
   sortOrder?: number;
+  showOnHomepage?: boolean;
   name: string;
   eligibleTypes: SupplierType[];
   durationDays: number;
   isActive: boolean;
 }
 export interface SubscriptionPlan extends PlanInput {
+  archivedAt?: string | null;
+  canDelete?: boolean;
+  deletionReason?: string | null;
   id: string;
   updatedAt: string;
 }

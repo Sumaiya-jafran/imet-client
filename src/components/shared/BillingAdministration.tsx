@@ -1,4 +1,5 @@
 'use client';
+import RecordOfflinePayment from '@/components/forms/RecordOfflinePayment';
 import { useEffect, useState } from 'react';
 import Button from '@/components/buttons/Button';
 import SupplierAssetFile from './SupplierAssetFile';
@@ -7,6 +8,13 @@ import type { ManualPaymentMethod } from '@/types/payment';
 type Row = {
   id: string;
   provider: string;
+  offlineMethod?: string | null;
+  internalNotes?: string | null;
+  overrideReason?: string | null;
+  recordedBy?: { displayName: string; id: string } | null;
+  paidAt?: string | null;
+  createdAt?: string;
+
   amount: string;
   currency: string;
   status: string;
@@ -15,6 +23,10 @@ type Row = {
   decisionReason: string | null;
   subscription: {
     planName: string;
+    startsAt?: string;
+    endsAt?: string;
+    activatedAt?: string | null;
+    isScheduled?: boolean;
     supplier: { companyName: string; id: string };
   };
 };
@@ -29,7 +41,13 @@ type Term = {
   endsAt: string;
   supplier: { id: string; companyName: string };
 };
-export default function BillingAdministration({ token }: { token: string }) {
+export default function BillingAdministration({
+  token,
+  onChanged,
+}: {
+  token: string;
+  onChanged?: () => void;
+}) {
   const [methods, setMethods] = useState<ManualPaymentMethod[]>([]);
   const [payments, setPayments] = useState<{
     rows: Row[];
@@ -40,6 +58,8 @@ export default function BillingAdministration({ token }: { token: string }) {
   const [revision, setRevision] = useState(0);
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
+  const [provider, setProvider] = useState('');
+  const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
   const [supplierId, setSupplierId] = useState('');
   const [planId, setPlanId] = useState('');
@@ -61,10 +81,14 @@ export default function BillingAdministration({ token }: { token: string }) {
     const options = { headers: { Authorization: `Bearer ${token}` } };
     const q = new URLSearchParams({ page: String(page) });
     if (status) q.set('status', status);
+    if (provider) q.set('provider', provider);
+    if (search) q.set('search', search);
     if (supplierId) q.set('supplierId', supplierId);
     if (planId) q.set('planId', planId);
     const tq = new URLSearchParams(q);
     tq.delete('status');
+    tq.delete('provider');
+    tq.delete('search');
     if (state) tq.set('state', state);
     Promise.all([
       apiClient.get<ManualPaymentMethod[]>(
@@ -94,7 +118,17 @@ export default function BillingAdministration({ token }: { token: string }) {
     return () => {
       live = false;
     };
-  }, [token, revision, page, status, supplierId, planId, state]);
+  }, [
+    token,
+    revision,
+    page,
+    status,
+    supplierId,
+    planId,
+    state,
+    provider,
+    search,
+  ]);
   const reset = () => {
     setEditing(undefined);
     setName('');
@@ -122,6 +156,13 @@ export default function BillingAdministration({ token }: { token: string }) {
   };
   return (
     <section className="space-y-5 border-t border-border pt-6">
+      <RecordOfflinePayment
+        token={token}
+        onRecorded={() => {
+          setRevision((n) => n + 1);
+          onChanged?.();
+        }}
+      />
       <h2 className="text-section font-semibold">
         Payments &amp; subscription history
       </h2>
@@ -130,114 +171,147 @@ export default function BillingAdministration({ token }: { token: string }) {
           {error}
         </p>
       )}
-      <form
-        className="surface grid gap-4 p-5 sm:grid-cols-2"
-        onSubmit={async (e) => {
-          e.preventDefault();
-          setBusy(true);
-          try {
-            await apiClient.request(
-              `/admin/billing/manual-methods${editing ? `/${editing.id}` : ''}`,
-              {
-                method: editing ? 'PUT' : 'POST',
-                headers: { Authorization: `Bearer ${token}` },
-                body: JSON.stringify({
-                  name,
-                  instructions,
-                  currencies: currencies
-                    .split(',')
-                    .map((c) => c.trim().toUpperCase())
-                    .filter(Boolean),
-                  proofRequired: proof,
-                  isActive: active,
-                  ...(editing ? { updatedAt: editing.updatedAt } : {}),
-                }),
-              },
-            );
-            reset();
-            setRevision((n) => n + 1);
-          } catch (e) {
-            setError(e instanceof Error ? e.message : 'Save failed');
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        <h3 className="font-semibold sm:col-span-2">
-          {editing ? 'Edit' : 'Create'} manual payment method
-        </h3>
-        <label>
-          Name
-          <input
-            required
-            maxLength={100}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1 w-full"
-          />
-        </label>
-        <label>
-          Currency codes (comma separated)
-          <input
-            required
-            value={currencies}
-            onChange={(e) => setCurrencies(e.target.value)}
-            className="mt-1 w-full"
-          />
-        </label>
-        <label className="sm:col-span-2">
-          Instructions
-          <textarea
-            required
-            minLength={10}
-            maxLength={4000}
-            value={instructions}
-            onChange={(e) => setInstructions(e.target.value)}
-            className="mt-1 w-full"
-          />
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={proof}
-            onChange={(e) => setProof(e.target.checked)}
-          />{' '}
-          Require private proof
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={active}
-            onChange={(e) => setActive(e.target.checked)}
-          />{' '}
-          Available
-        </label>
-        <Button type="submit" disabled={busy}>
-          Save method
-        </Button>
-        <Button variant="secondary" onClick={reset}>
-          Clear editor
-        </Button>
-      </form>
-      <div className="flex flex-wrap gap-3">
-        {methods.map((m) => (
-          <Button
-            key={m.id}
-            variant="secondary"
-            onClick={() => {
-              setEditing(m);
-              setName(m.name);
-              setInstructions(m.instructions);
-              setCurrencies(m.currencies.join(','));
-              setProof(m.proofRequired);
-              setActive(m.isActive);
-            }}
-          >
-            {m.name} · {m.isActive ? 'Active' : 'Inactive'}
+      <details>
+        <summary className="cursor-pointer font-semibold">
+          Legacy manual-payment method settings
+        </summary>
+        <form
+          className="surface grid gap-4 p-5 sm:grid-cols-2"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            setBusy(true);
+            try {
+              await apiClient.request(
+                `/admin/billing/manual-methods${editing ? `/${editing.id}` : ''}`,
+                {
+                  method: editing ? 'PUT' : 'POST',
+                  headers: { Authorization: `Bearer ${token}` },
+                  body: JSON.stringify({
+                    name,
+                    instructions,
+                    currencies: currencies
+                      .split(',')
+                      .map((c) => c.trim().toUpperCase())
+                      .filter(Boolean),
+                    proofRequired: proof,
+                    isActive: active,
+                    ...(editing ? { updatedAt: editing.updatedAt } : {}),
+                  }),
+                },
+              );
+              reset();
+              setRevision((n) => n + 1);
+            } catch (e) {
+              setError(e instanceof Error ? e.message : 'Save failed');
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          <h3 className="font-semibold sm:col-span-2">
+            {editing ? 'Edit' : 'Create'} manual payment method
+          </h3>
+          <label>
+            Name
+            <input
+              required
+              maxLength={100}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="mt-1 w-full"
+            />
+          </label>
+          <label>
+            Currency codes (comma separated)
+            <input
+              required
+              value={currencies}
+              onChange={(e) => setCurrencies(e.target.value)}
+              className="mt-1 w-full"
+            />
+          </label>
+          <label className="sm:col-span-2">
+            Instructions
+            <textarea
+              required
+              minLength={10}
+              maxLength={4000}
+              value={instructions}
+              onChange={(e) => setInstructions(e.target.value)}
+              className="mt-1 w-full"
+            />
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={proof}
+              onChange={(e) => setProof(e.target.checked)}
+            />{' '}
+            Require private proof
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={active}
+              onChange={(e) => setActive(e.target.checked)}
+            />{' '}
+            Available
+          </label>
+          <Button type="submit" disabled={busy}>
+            Save method
           </Button>
-        ))}
-      </div>
+          <Button variant="secondary" onClick={reset}>
+            Clear editor
+          </Button>
+        </form>
+        <div className="flex flex-wrap gap-3">
+          {methods.map((m) => (
+            <Button
+              key={m.id}
+              variant="secondary"
+              onClick={() => {
+                setEditing(m);
+                setName(m.name);
+                setInstructions(m.instructions);
+                setCurrencies(m.currencies.join(','));
+                setProof(m.proofRequired);
+                setActive(m.isActive);
+              }}
+            >
+              {m.name} · {m.isActive ? 'Active' : 'Inactive'}
+            </Button>
+          ))}
+        </div>
+      </details>
       <div className="grid gap-3 sm:grid-cols-2">
+        <label>
+          Payment source
+          <select
+            value={provider}
+            onChange={(e) => {
+              setProvider(e.target.value);
+              setPage(1);
+            }}
+            className="mt-1 w-full"
+          >
+            <option value="">All payments</option>
+            <option value="OFFLINE">Admin-recorded offline payments</option>
+            <option value="SSLCOMMERZ">Online SSLCOMMERZ</option>
+            <option value="MANUAL">Legacy manual submissions</option>
+          </select>
+        </label>
+        <label>
+          Search payments (business or reference)
+          <input
+            maxLength={200}
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            className="mt-1 w-full"
+          />
+        </label>
         <label>
           Payment status
           <select
@@ -322,6 +396,41 @@ export default function BillingAdministration({ token }: { token: string }) {
               {p.id} · Reference: {p.paymentReference ?? '—'}
             </p>
             <p>{p.decisionReason}</p>
+            {p.provider === 'OFFLINE' && (
+              <dl className="space-y-1 text-nav">
+                <div>Method: {p.offlineMethod}</div>
+                <div>
+                  Payment received:{' '}
+                  {p.paidAt ? new Date(p.paidAt).toLocaleString() : '—'}
+                </div>
+                <div>
+                  Recorded by: {p.recordedBy?.displayName} ·{' '}
+                  {p.createdAt ? new Date(p.createdAt).toLocaleString() : ''}
+                </div>
+                <div>
+                  Activated:{' '}
+                  {p.subscription.activatedAt
+                    ? new Date(p.subscription.activatedAt).toLocaleString()
+                    : '—'}{' '}
+                  ·{' '}
+                  {p.subscription.isScheduled ? 'Scheduled' : 'Current/history'}
+                </div>
+                <div>
+                  Period:{' '}
+                  {p.subscription.startsAt
+                    ? new Date(p.subscription.startsAt).toLocaleString()
+                    : ''}{' '}
+                  –{' '}
+                  {p.subscription.endsAt
+                    ? new Date(p.subscription.endsAt).toLocaleString()
+                    : ''}
+                </div>
+                <div className="whitespace-pre-wrap">
+                  Internal notes: {p.internalNotes || 'None'}
+                </div>
+                <div>Override reason: {p.overrideReason ?? 'None'}</div>
+              </dl>
+            )}
             {p.proofAssetId && (
               <Button
                 variant="secondary"
@@ -347,18 +456,19 @@ export default function BillingAdministration({ token }: { token: string }) {
                 Review manual payment
               </Button>
             )}
-            {p.provider === 'MANUAL' && p.status === 'PAID' && (
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setRefund(p.id);
-                  setRefundReference('');
-                  setReason('');
-                }}
-              >
-                Record completed manual refund
-              </Button>
-            )}
+            {['MANUAL', 'OFFLINE'].includes(p.provider) &&
+              p.status === 'PAID' && (
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setRefund(p.id);
+                    setRefundReference('');
+                    setReason('');
+                  }}
+                >
+                  Record completed manual refund
+                </Button>
+              )}
             {refund === p.id && (
               <form
                 className="space-y-3"

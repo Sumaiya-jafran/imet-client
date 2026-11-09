@@ -90,6 +90,7 @@ export const planSchema = z.object({
   features: z.array(z.string().trim().min(1).max(200)).max(50).optional(),
   isFree: z.boolean().optional(),
   isPublic: z.boolean().optional(),
+  showOnHomepage: z.boolean().optional(),
   sortOrder: z.number().int().min(0).max(10000).optional(),
   name: text(100),
   eligibleTypes: z

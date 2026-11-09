@@ -17,7 +17,9 @@ export interface ManualPaymentMethod {
   updatedAt: string;
 }
 export interface Payment {
-  provider: 'SSLCOMMERZ' | 'MANUAL';
+  provider: 'SSLCOMMERZ' | 'MANUAL' | 'OFFLINE';
+  offlineMethod?: string | null;
+  proofAssetId?: string | null;
   manualInstructions: string | null;
   paymentReference: string | null;
   decisionReason: string | null;

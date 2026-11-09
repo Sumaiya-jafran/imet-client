@@ -1,4 +1,5 @@
 'use client';
+import SupplierAssetFile from './SupplierAssetFile';
 import { useCallback, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -18,7 +19,7 @@ const labels = {
   ],
   PAID: [
     'Payment verified',
-    'Your payment was verified and the subscription was activated.',
+    'Your payment was verified. The subscription start and expiry dates below determine when this plan is available.',
   ],
   REVIEW: [
     'Payment requires review',
@@ -139,7 +140,42 @@ export default function SubscriptionPaymentStatus({ id }: { id: string }) {
                 {payment.transactionId}
               </dd>
             </div>
+            <div>
+              <dt className="text-meta text-muted-foreground">
+                Subscription starts
+              </dt>
+              <dd className="mt-1 font-semibold">
+                {new Date(payment.startsAt).toLocaleString()}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-meta text-muted-foreground">
+                Subscription expires
+              </dt>
+              <dd className="mt-1 font-semibold">
+                {new Date(payment.endsAt).toLocaleString()}
+              </dd>
+            </div>
           </dl>
+          {payment.provider === 'OFFLINE' && (
+            <div className="space-y-2">
+              <p>Offline payment confirmed by Machinmate.</p>
+              <p>
+                Method: {payment.offlineMethod} · Payment received:{' '}
+                {payment.paidAt
+                  ? new Date(payment.paidAt).toLocaleString()
+                  : '—'}
+              </p>
+              <p>Reference: {payment.paymentReference ?? 'Not provided'}</p>
+              {payment.proofAssetId && (
+                <SupplierAssetFile
+                  token={token}
+                  assetId={payment.proofAssetId}
+                  name="Payment receipt"
+                />
+              )}
+            </div>
+          )}
           {payment.provider === 'MANUAL' && (
             <div className="space-y-2">
               <p>Manual payment: administrator verification required.</p>
@@ -155,8 +191,10 @@ export default function SubscriptionPaymentStatus({ id }: { id: string }) {
           )}
           {payment.status === 'PAID' && (
             <p className="text-nav">
-              Current subscription: {payment.subscriptionStatus}. Payment
-              history remains available after expiry.
+              Purchased period: {payment.subscriptionStatus}.{' '}
+              {new Date(payment.startsAt) > new Date()
+                ? 'Your current subscription continues until this scheduled period starts.'
+                : 'Payment history remains available after expiry.'}
             </p>
           )}
         </>

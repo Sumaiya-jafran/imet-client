@@ -22,6 +22,11 @@ export default function SupplierOnboarding({
   const [edit, setEdit] = useState(false);
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
+    const refresh = () => setAttempt((n) => n + 1);
+    window.addEventListener('focus', refresh);
+    return () => window.removeEventListener('focus', refresh);
+  }, []);
+  useEffect(() => {
     if (!token) return;
     let active = true;
     paymentApi
@@ -312,7 +317,11 @@ export default function SupplierOnboarding({
                       {p.planName}
                     </Link>
                     <span>
-                      {p.amount} {p.currency} · {p.status}
+                      {p.amount} {p.currency} · {p.status}{' '}
+                      {p.offlineMethod ? ` · ${p.offlineMethod}` : ''}{' '}
+                      {p.paidAt
+                        ? ` · ${new Date(p.paidAt).toLocaleDateString()}`
+                        : ''}
                     </span>
                   </li>
                 ))}

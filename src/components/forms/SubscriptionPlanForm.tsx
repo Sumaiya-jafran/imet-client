@@ -41,6 +41,7 @@ export default function SubscriptionPlanForm({
           features: plan.features,
           isFree: plan.isFree,
           isPublic: plan.isPublic,
+          showOnHomepage: plan.showOnHomepage,
           sortOrder: plan.sortOrder,
           name: plan.name,
           eligibleTypes: plan.eligibleTypes,
@@ -67,6 +68,7 @@ export default function SubscriptionPlanForm({
           features: [],
           isFree: false,
           isPublic: true,
+          showOnHomepage: true,
           sortOrder: 0,
           name: '',
           eligibleTypes: [],
@@ -108,7 +110,6 @@ export default function SubscriptionPlanForm({
     }
   };
   const labels = {
-    sortOrder: 'Display order',
     sparePartsLimit: 'Spare parts limit (future)',
     serviceLimit: 'Service limit (future)',
     featuredLimit: 'Featured listing allowance',
@@ -121,7 +122,6 @@ export default function SubscriptionPlanForm({
     specificationLimit: 'Specifications per machine',
   };
   const numeric = [
-    'sortOrder',
     'sparePartsLimit',
     'serviceLimit',
     'featuredLimit',
@@ -201,6 +201,10 @@ export default function SubscriptionPlanForm({
         <label>
           <input type="checkbox" {...register('isFree')} /> Designated Free plan
           (zero price, active, public, both supplier types)
+        </label>
+        <label>
+          <input type="checkbox" {...register('showOnHomepage')} /> Show on
+          homepage pricing
         </label>
         <label>
           <input type="checkbox" {...register('isPublic')} /> Show on public

@@ -1,5 +1,7 @@
 # M3 frontend implementation
 
+> See [the M3 offline/plan-management extension](m3-offline-plan-management.md) for the current admin-operated offline workflow and plan controls.
+
 The complete audit, database migration, subscription policy, API/security details, environment requirements, test results, file inventory, sandbox instructions, limitations, and deployment checklist are in the server report:
 
 https://github.com/Sumaiya-jafran/imet-server/blob/feat/m3-subscriptions/docs/m3-subscriptions.md

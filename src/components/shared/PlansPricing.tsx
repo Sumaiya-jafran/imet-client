@@ -51,8 +51,8 @@ export default function PlansPricing() {
       <h1 className="text-page font-bold">Plans &amp; Pricing</h1>
       <p>
         Choose the capacity your business needs. Online payments activate
-        automatically after verification. Manual payments require review.
-        Supplier approval is separate.
+        automatically after verification. Offline payments are recorded and
+        confirmed by administrators. Supplier approval is separate.
       </p>
       {error && <p role="alert">{error}</p>}
       {!plans && !error && <p role="status">Loading plans…</p>}
