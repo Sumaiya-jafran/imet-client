@@ -58,6 +58,12 @@ export default function SupplierDashboard() {
       >
         Manage subscription / secure activation
       </Link>
+      <Link
+        href="/plans"
+        className="inline-block font-semibold text-secondary underline"
+      >
+        Upgrade / Plans &amp; Pricing
+      </Link>
       <PageHeader
         title="Supplier account"
         eyebrow="Company workspace"

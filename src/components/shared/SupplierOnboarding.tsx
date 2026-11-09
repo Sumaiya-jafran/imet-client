@@ -1,4 +1,5 @@
 'use client';
+import PlanCheckout from './PlanCheckout';
 import { supplierTypeLabels } from '@/types/supplier';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
@@ -9,12 +10,15 @@ import PageHeader from './PageHeader';
 import SupplierProfileForm from '@/components/forms/SupplierProfileForm';
 import { paymentApi } from '@/lib/api/payment.service';
 import type { Onboarding } from '@/types/payment';
-export default function SupplierOnboarding() {
+export default function SupplierOnboarding({
+  initialPlan,
+}: {
+  initialPlan?: string;
+}) {
   const { data: session, status, update } = useSession();
   const token = session?.accessToken;
   const [data, setData] = useState<Onboarding>();
   const [error, setError] = useState('');
-  const [busy, setBusy] = useState(false);
   const [edit, setEdit] = useState(false);
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
@@ -69,9 +73,16 @@ export default function SupplierOnboarding() {
   const selectedPlan = data?.plans.find(
     (plan) => plan.id === selectedTerm?.planId,
   );
-  const availablePlans = selectedPlan ? [selectedPlan] : (data?.plans ?? []);
+  const availablePlans = initialPlan
+    ? (data?.plans ?? []).filter((p) => p.id === initialPlan)
+    : selectedPlan
+      ? [selectedPlan]
+      : (data?.plans ?? []);
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:px-8">
+      <Link href="/plans" className="font-semibold text-secondary underline">
+        Plans &amp; Pricing
+      </Link>
       <PageHeader
         eyebrow="Supplier account"
         title="Activate your marketplace presence"
@@ -114,6 +125,15 @@ export default function SupplierOnboarding() {
               >
                 Edit company / upload files
               </Button>
+            )}
+            {initialPlan && !availablePlans.length && (
+              <p role="status" className="surface p-5">
+                This plan is unavailable or does not match your supplier type.{' '}
+                <Link href="/plans" className="underline">
+                  Choose an available plan
+                </Link>
+                .
+              </p>
             )}
             {active && (
               <Link
@@ -179,7 +199,47 @@ export default function SupplierOnboarding() {
               </Link>
             </section>
           )}
-          {!active && !pending && !review && (
+          {active && (
+            <section className="surface space-y-3 p-5">
+              <h2 className="text-card font-semibold">{active.planName}</h2>
+              <p>
+                {active.state} ·{' '}
+                {new Date(active.startsAt).toLocaleDateString()} –{' '}
+                {new Date(active.endsAt).toLocaleDateString()}
+              </p>
+              <p>
+                Machinery usage: {data.usage.machinery} / {active.listingLimit}.
+                RFQ access: {active.rfqEnabled ? 'Included' : 'Not included'}
+              </p>
+              <Link
+                href="/plans"
+                className="font-semibold text-secondary underline"
+              >
+                {Number(active.price) === 0 ? 'Upgrade' : 'Change plan / renew'}
+              </Link>
+            </section>
+          )}
+          <section className="surface space-y-2 p-5">
+            <h2 className="font-semibold">Subscription history</h2>
+            {data.supplier.subscriptions.map((t) => (
+              <p key={t.id} className="text-nav">
+                {t.planName} ·{' '}
+                {t.isCurrent
+                  ? 'Current'
+                  : t.isScheduled
+                    ? 'Scheduled'
+                    : 'History'}{' '}
+                · {t.state} · {new Date(t.startsAt).toLocaleDateString()} –{' '}
+                {new Date(t.endsAt).toLocaleDateString()}
+                {!t.isCurrent &&
+                t.state === 'ACTIVE' &&
+                new Date(t.startsAt) > new Date()
+                  ? ' · Scheduled'
+                  : ''}
+              </p>
+            ))}
+          </section>
+          {!pending && !review && (!active || initialPlan) && (
             <>
               {!data.onlineAvailable && (
                 <p role="status" className="surface p-4">
@@ -210,55 +270,15 @@ export default function SupplierOnboarding() {
                         : 'RFQ access not included'}{' '}
                       · {plan.visibility.toLowerCase()} visibility
                     </p>
-                    <Button
-                      disabled={
-                        busy ||
-                        (Number(plan.price) > 0 &&
-                          (!data.onlineAvailable ||
-                            !data.currencies.includes(plan.currency)))
-                      }
-                      onClick={async () => {
-                        setBusy(true);
-                        setError('');
-                        try {
-                          if (Number(plan.price) === 0) {
-                            await paymentApi.activateFree(token, plan.id);
-                            await update();
-                            setAttempt((n) => n + 1);
-                            return;
-                          }
-                          const keyName = `imet-checkout-${data.supplier.id}-${plan.id}`;
-                          let key = sessionStorage.getItem(keyName);
-                          if (!key) {
-                            key = crypto.randomUUID();
-                            sessionStorage.setItem(keyName, key);
-                          }
-                          const payment = (
-                            await paymentApi.checkout(token, plan.id, key)
-                          ).data!;
-                          if (payment.status !== 'PENDING')
-                            sessionStorage.removeItem(keyName);
-                          window.location.assign(
-                            payment.gatewayUrl ?? `/payments/${payment.id}`,
-                          );
-                        } catch (e) {
-                          setError(
-                            e instanceof Error
-                              ? e.message
-                              : 'Checkout unavailable',
-                          );
-                          setAttempt((n) => n + 1);
-                        } finally {
-                          setBusy(false);
-                        }
+                    <PlanCheckout
+                      token={token}
+                      plan={plan}
+                      data={data}
+                      onDone={() => {
+                        void update();
+                        setAttempt((n) => n + 1);
                       }}
-                    >
-                      {busy
-                        ? 'Please wait…'
-                        : Number(plan.price) === 0
-                          ? 'Activate free plan'
-                          : 'Continue to secure payment'}
-                    </Button>
+                    />
                     {Number(plan.price) > 0 &&
                       !data.currencies.includes(plan.currency) && (
                         <p className="text-meta text-muted-foreground">

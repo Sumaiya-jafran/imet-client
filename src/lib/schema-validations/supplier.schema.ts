@@ -81,6 +81,16 @@ export const supplierRegistrationSchema = supplierSchema.superRefine(
   },
 );
 export const planSchema = z.object({
+  description: z.string().trim().max(2000).optional(),
+  billingInterval: z.enum(['MONTHLY', 'ANNUAL', 'CUSTOM']).optional(),
+  sparePartsLimit: z.number().int().min(0).max(100000).optional(),
+  serviceLimit: z.number().int().min(0).max(100000).optional(),
+  featuredLimit: z.number().int().min(0).max(100000).optional(),
+  hiddenPriceAllowed: z.boolean().optional(),
+  features: z.array(z.string().trim().min(1).max(200)).max(50).optional(),
+  isFree: z.boolean().optional(),
+  isPublic: z.boolean().optional(),
+  sortOrder: z.number().int().min(0).max(10000).optional(),
   name: text(100),
   eligibleTypes: z
     .array(z.enum(['LOCAL', 'INTERNATIONAL']))

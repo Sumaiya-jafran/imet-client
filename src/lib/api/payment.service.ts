@@ -15,8 +15,9 @@ export const paymentApi = {
     profile: SupplierRegistrationInput,
     planId: string,
     files?: { logo?: File; document?: File },
+    paymentMethod?: string,
   ) => {
-    const data = { ...account, profile, planId };
+    const data = { ...account, profile, planId, paymentMethod };
     if (!files?.logo && !files?.document)
       return apiClient.post('/auth/register-supplier', data, {
         signal: AbortSignal.timeout(25000),

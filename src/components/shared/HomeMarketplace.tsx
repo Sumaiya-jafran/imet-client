@@ -2,7 +2,14 @@ import { supplierTypeLabels, supplierTypePluralLabels } from '@/types/supplier';
 import TranslatedText from '@/components/shared/TranslatedText';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { ArrowUpRight, ArrowRight, BadgeCheck, Check, MapPin, Quote } from 'lucide-react';
+import {
+  ArrowUpRight,
+  ArrowRight,
+  BadgeCheck,
+  Check,
+  MapPin,
+  Quote,
+} from 'lucide-react';
 import { catalogueApi } from '@/lib/api/catalogue.service';
 import { supplierApi } from '@/lib/api/supplier.service';
 import { reviewApi } from '@/lib/api/review.service';
@@ -14,11 +21,27 @@ import Badge from './Badge';
 import Reveal from './Reveal';
 import { cn } from '@/lib/utils';
 
-export function Container({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn('mx-auto max-w-7xl px-4 sm:px-6 lg:px-8', className)}>{children}</div>;
+export function Container({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn('mx-auto max-w-7xl px-4 sm:px-6 lg:px-8', className)}>
+      {children}
+    </div>
+  );
 }
 
-export function Eyebrow({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
+export function Eyebrow({
+  children,
+  dark = false,
+}: {
+  children: ReactNode;
+  dark?: boolean;
+}) {
   return (
     <p
       className={cn(
@@ -26,7 +49,10 @@ export function Eyebrow({ children, dark = false }: { children: ReactNode; dark?
         dark ? 'text-accent' : 'text-secondary',
       )}
     >
-      <span className={cn('h-px w-8', dark ? 'bg-accent' : 'bg-accent')} aria-hidden="true" />
+      <span
+        className={cn('h-px w-8', dark ? 'bg-accent' : 'bg-accent')}
+        aria-hidden="true"
+      />
       {children}
     </p>
   );
@@ -60,7 +86,12 @@ export function SectionHeading({
           {title}
         </h2>
         {description && (
-          <p className={cn('mt-4 text-body leading-7', dark ? 'text-border-strong' : 'text-secondary')}>
+          <p
+            className={cn(
+              'mt-4 text-body leading-7',
+              dark ? 'text-border-strong' : 'text-secondary',
+            )}
+          >
             {description}
           </p>
         )}
@@ -155,7 +186,10 @@ export async function HomeMachinery() {
     return <SectionError label="Machinery catalogue" />;
   }
   return (
-    <section aria-label="Latest machinery" className="border-y border-border bg-surface py-20 lg:py-28">
+    <section
+      aria-label="Latest machinery"
+      className="border-y border-border bg-surface py-20 lg:py-28"
+    >
       <Container>
         <SectionHeading
           eyebrow="Latest in the catalogue"
@@ -217,7 +251,10 @@ export async function HomeSuppliers() {
                     <Badge>{supplierTypeLabels[s.type]}</Badge>
                   </div>
                   <h3 className="mt-5 break-words font-sans text-section font-bold">
-                    <Link href={`/suppliers/${s.slug ?? s.id}`} className="hover:text-secondary">
+                    <Link
+                      href={`/suppliers/${s.slug ?? s.id}`}
+                      className="hover:text-secondary"
+                    >
                       {s.companyName}
                     </Link>
                   </h3>
@@ -233,7 +270,11 @@ export async function HomeSuppliers() {
                   )}
                   <p className="mt-4 line-clamp-3 break-words text-nav leading-6 text-secondary">
                     <TranslatedText
-                      resource={{ type: 'SUPPLIER', id: s.id, field: 'DESCRIPTION' }}
+                      resource={{
+                        type: 'SUPPLIER',
+                        id: s.id,
+                        field: 'DESCRIPTION',
+                      }}
                       original={s.description}
                     />
                   </p>
@@ -242,7 +283,11 @@ export async function HomeSuppliers() {
                     className="mt-auto inline-flex items-center gap-2 pt-6 text-nav font-semibold text-primary"
                   >
                     View company
-                    <ArrowRight size={15} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
+                    <ArrowRight
+                      size={15}
+                      aria-hidden="true"
+                      className="transition-transform group-hover:translate-x-1"
+                    />
                   </Link>
                 </article>
               </Reveal>
@@ -269,7 +314,10 @@ export async function HomeReviews() {
     return <SectionError label="Buyer reviews" />;
   }
   return (
-    <section aria-label="Recent buyer reviews" className="border-t border-border bg-surface py-20 lg:py-28">
+    <section
+      aria-label="Recent buyer reviews"
+      className="border-t border-border bg-surface py-20 lg:py-28"
+    >
       <Container>
         <SectionHeading
           eyebrow="Purchase-backed feedback"
@@ -281,7 +329,11 @@ export async function HomeReviews() {
             {reviews.map((r, i) => (
               <Reveal key={r.id} delay={i * 100} className="flex">
                 <figure className="relative flex w-full min-w-0 flex-col border-l-4 border-accent bg-background p-7">
-                  <Quote size={36} aria-hidden="true" className="absolute right-6 top-6 text-border" />
+                  <Quote
+                    size={36}
+                    aria-hidden="true"
+                    className="absolute right-6 top-6 text-border"
+                  />
                   <RatingStars rating={r.rating} />
                   <blockquote className="mt-5 line-clamp-6 whitespace-pre-wrap break-words text-body leading-7 text-primary">
                     <TranslatedText
@@ -290,14 +342,24 @@ export async function HomeReviews() {
                     />
                   </blockquote>
                   <figcaption className="mt-auto border-t border-border pt-5">
-                    <p className="break-words font-sans font-bold text-primary">{r.author.displayName}</p>
+                    <p className="break-words font-sans font-bold text-primary">
+                      {r.author.displayName}
+                    </p>
                     <Link
                       className="mt-1 block break-words text-meta text-secondary underline underline-offset-2 hover:text-secondary"
-                      href={r.machine ? `/machinery/${r.machine.slug}` : `/suppliers/${r.supplier!.id}`}
+                      href={
+                        r.machine
+                          ? `/machinery/${r.machine.slug}`
+                          : `/suppliers/${r.supplier!.id}`
+                      }
                     >
                       {r.machine ? (
                         <TranslatedText
-                          resource={{ type: 'MACHINERY', id: r.machine.id, field: 'NAME' }}
+                          resource={{
+                            type: 'MACHINERY',
+                            id: r.machine.id,
+                            field: 'NAME',
+                          }}
                           original={r.machine.name}
                         />
                       ) : (
@@ -330,12 +392,16 @@ export async function HomePlans() {
     return <SectionError label="Supplier subscription plans" />;
   }
   return (
-    <section id="supplier-plans" aria-label="Supplier subscription plans" className="scroll-mt-24 py-20 lg:py-28">
+    <section
+      id="supplier-plans"
+      aria-label="Supplier subscription plans"
+      className="scroll-mt-24 py-20 lg:py-28"
+    >
       <Container>
         <SectionHeading
           eyebrow="For suppliers & manufacturers"
           title="List your machinery on Machinmate"
-          description="Plans are set by Machinmate administrators. Activate through verified SSLCOMMERZ checkout or an audited administrator action. Buyers never need a subscription."
+          description="Plans are set by Machinmate administrators. Free plans need no payment. Online payments activate after verification; manual payments require administrator review. Buyers never need a subscription."
           href="/dashboard/supplier"
           label="Become a supplier"
         />
@@ -346,7 +412,9 @@ export async function HomePlans() {
               const features = [
                 `${p.listingLimit} machinery listings`,
                 `${p.imageLimit} images and ${p.specificationLimit} specifications per listing`,
-                p.canPublishMachinery ? 'Machinery publication included' : 'Machinery publication not included',
+                p.canPublishMachinery
+                  ? 'Machinery publication included'
+                  : 'Machinery publication not included',
                 p.rfqEnabled
                   ? `${p.leadLimitPerMonth === null ? 'Unlimited' : p.leadLimitPerMonth} eligible leads per month`
                   : 'RFQ responses not included',
@@ -360,7 +428,9 @@ export async function HomePlans() {
                   <article
                     className={cn(
                       'flex w-full min-w-0 flex-col border p-7',
-                      featured ? 'border-primary bg-primary text-inverse' : 'border-border bg-surface',
+                      featured
+                        ? 'border-primary bg-primary text-inverse'
+                        : 'border-border bg-surface',
                     )}
                   >
                     <div className="flex flex-wrap gap-2">
@@ -368,25 +438,55 @@ export async function HomePlans() {
                         <Badge key={t}>{supplierTypePluralLabels[t]}</Badge>
                       ))}
                     </div>
-                    <h3 className={cn('mt-5 break-words font-sans text-section font-bold', featured && 'text-inverse')}>
+                    <h3
+                      className={cn(
+                        'mt-5 break-words font-sans text-section font-bold',
+                        featured && 'text-inverse',
+                      )}
+                    >
                       {p.name}
                     </h3>
                     <p className="mt-4 break-words font-sans text-page font-bold tracking-tight">
                       {p.price}{' '}
-                      <span className={cn('text-nav font-medium', featured ? 'text-border-strong' : 'text-muted-foreground')}>
+                      <span
+                        className={cn(
+                          'text-nav font-medium',
+                          featured
+                            ? 'text-border-strong'
+                            : 'text-muted-foreground',
+                        )}
+                      >
                         {p.currency}
                       </span>
                     </p>
-                    <p className={cn('mt-1 text-meta', featured ? 'text-border-strong' : 'text-muted-foreground')}>
+                    <p
+                      className={cn(
+                        'mt-1 text-meta',
+                        featured
+                          ? 'text-border-strong'
+                          : 'text-muted-foreground',
+                      )}
+                    >
                       {p.durationDays} days · Supplier subscription
                     </p>
-                    <ul className={cn('my-6 space-y-3 border-t pt-6', featured ? 'border-surface/15' : 'border-surface-muted')}>
+                    <ul
+                      className={cn(
+                        'my-6 space-y-3 border-t pt-6',
+                        featured ? 'border-surface/15' : 'border-surface-muted',
+                      )}
+                    >
                       {features.map((f) => (
-                        <li key={f} className="flex items-start gap-2.5 text-nav">
+                        <li
+                          key={f}
+                          className="flex items-start gap-2.5 text-nav"
+                        >
                           <Check
                             size={16}
                             aria-hidden="true"
-                            className={cn('mt-0.5 shrink-0', featured ? 'text-accent' : 'text-secondary')}
+                            className={cn(
+                              'mt-0.5 shrink-0',
+                              featured ? 'text-accent' : 'text-secondary',
+                            )}
                           />
                           <span className="break-words">{f}</span>
                         </li>

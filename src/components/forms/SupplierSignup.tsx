@@ -1,4 +1,5 @@
 'use client';
+import { apiClient } from '@/lib/api/client';
 import type { PaymentRegion } from '@/config/payment-regions';
 import { paymentRegionSchema } from '@/lib/schema-validations/supplier.schema';
 import { useEffect, useState } from 'react';
@@ -31,6 +32,27 @@ export default function SupplierSignup({
   const [plans, setPlans] =
     useState<Omit<SubscriptionPlan, 'isActive' | 'updatedAt'>[]>();
   const [planId, setPlanId] = useState(initialPlan ?? '');
+  const [planConfirmed, setPlanConfirmed] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentOptions, setPaymentOptions] = useState<{
+    onlineAvailable: boolean;
+    currencies: string[];
+    manualMethods: { id: string; name: string; currencies: string[] }[];
+  }>();
+  useEffect(() => {
+    if (!supplier) return;
+    let live = true;
+    apiClient
+      .get<NonNullable<typeof paymentOptions>>('/subscriptions/payment-options')
+      .then((r) => {
+        if (live) setPaymentOptions(r.data);
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [supplier]);
+  const selectedPlan = plans?.find((p) => p.id === planId);
   const [supplierType, setSupplierType] = useState<SupplierType>('LOCAL');
   const [error, setError] = useState('');
   const [attempt, setAttempt] = useState(0);
@@ -129,7 +151,129 @@ export default function SupplierSignup({
               </Button>
             </div>
           )}
-          {!account ? (
+          {!planConfirmed ? (
+            <div className="space-y-4">
+              <h2 className="text-card font-semibold">
+                Step 1 · Choose your plan
+              </h2>
+              <label className="block">
+                Business type
+                <select
+                  className="mt-1 w-full"
+                  value={supplierType}
+                  onChange={(e) => {
+                    setSupplierType(e.target.value as SupplierType);
+                    setPlanId('');
+                    setPaymentMethod('');
+                  }}
+                >
+                  <option value="LOCAL">Local supplier / dealer</option>
+                  <option value="INTERNATIONAL">
+                    International manufacturer
+                  </option>
+                </select>
+              </label>{' '}
+              <label className="block text-nav font-medium">
+                Choose an administrator-defined plan
+                <select
+                  required
+                  className="mt-1 w-full rounded-lg border p-3"
+                  value={planId}
+                  onChange={(e) => {
+                    setPlanId(e.target.value);
+                    setPaymentMethod('');
+                  }}
+                >
+                  <option value="">
+                    {plans ? 'Select a plan' : 'Loading plans…'}
+                  </option>
+                  {plans
+                    ?.filter((p) => p.eligibleTypes.includes(supplierType))
+                    .map((p) => (
+                      <option value={p.id} key={p.id}>
+                        {p.name} ·{' '}
+                        {Number(p.price) === 0
+                          ? 'Free — no payment method'
+                          : `${p.price} ${p.currency}`}{' '}
+                        · {p.durationDays} days
+                      </option>
+                    ))}
+                </select>
+              </label>
+              {plans?.length === 0 && (
+                <p role="status">
+                  No active plans are available. Contact Machinmate to arrange
+                  supplier onboarding.
+                </p>
+              )}
+              {selectedPlan && (
+                <p>
+                  {selectedPlan.price} {selectedPlan.currency} ·{' '}
+                  {selectedPlan.billingInterval ?? 'CUSTOM'} ·{' '}
+                  {selectedPlan.durationDays} days
+                </p>
+              )}
+              {selectedPlan && Number(selectedPlan.price) > 0 && (
+                <label className="block">
+                  Payment method
+                  <select
+                    required
+                    className="mt-1 w-full"
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                  >
+                    <option value="">Choose a payment method</option>
+                    {paymentOptions?.onlineAvailable &&
+                      paymentOptions.currencies.includes(
+                        selectedPlan.currency,
+                      ) && (
+                        <option value="SSLCOMMERZ">
+                          SSLCOMMERZ secure checkout
+                        </option>
+                      )}
+                    {paymentOptions?.manualMethods
+                      .filter((m) =>
+                        m.currencies.includes(selectedPlan.currency),
+                      )
+                      .map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.name} (manual verification)
+                        </option>
+                      ))}
+                  </select>
+                  <p className="mt-2 text-meta">
+                    Payment is completed after email verification. Manual
+                    payments require a reference and proof according to the
+                    selected method.
+                  </p>
+                </label>
+              )}
+              {selectedPlan &&
+                Number(selectedPlan.price) > 0 &&
+                paymentOptions &&
+                !(
+                  paymentOptions.onlineAvailable &&
+                  paymentOptions.currencies.includes(selectedPlan.currency)
+                ) &&
+                !paymentOptions.manualMethods.some((m) =>
+                  m.currencies.includes(selectedPlan.currency),
+                ) && (
+                  <p role="status" className="text-nav text-muted">
+                    No payment method is currently available for this currency.
+                    Choose the Free plan or contact Machinmate.
+                  </p>
+                )}
+              <Button
+                disabled={
+                  !selectedPlan ||
+                  (Number(selectedPlan.price) > 0 && !paymentMethod)
+                }
+                onClick={() => setPlanConfirmed(true)}
+              >
+                Continue to account details
+              </Button>
+            </div>
+          ) : !account ? (
             <form
               onSubmit={form.handleSubmit(setAccount)}
               className="space-y-4"
@@ -175,45 +319,29 @@ export default function SupplierSignup({
             </form>
           ) : (
             <>
+              <p className="font-semibold">
+                Selected plan: {selectedPlan?.name} · {selectedPlan?.price}{' '}
+                {selectedPlan?.currency}
+              </p>
+              <Button
+                variant="secondary"
+                onClick={() => setPlanConfirmed(false)}
+              >
+                Change plan
+              </Button>
               <Button variant="ghost" onClick={() => setAccount(undefined)}>
                 Edit account details
               </Button>
-              <label className="block text-nav font-medium">
-                Choose an administrator-defined plan
-                <select
-                  required
-                  className="mt-1 w-full rounded-lg border p-3"
-                  value={planId}
-                  onChange={(e) => setPlanId(e.target.value)}
-                >
-                  <option value="">
-                    {plans ? 'Select a plan' : 'Loading plans…'}
-                  </option>
-                  {plans
-                    ?.filter((p) => p.eligibleTypes.includes(supplierType))
-                    .map((p) => (
-                      <option value={p.id} key={p.id}>
-                        {p.name} ·{' '}
-                        {Number(p.price) === 0
-                          ? 'Free — no payment method'
-                          : `${p.price} ${p.currency}`}{' '}
-                        · {p.durationDays} days
-                      </option>
-                    ))}
-                </select>
-              </label>
-              {plans?.length === 0 && (
-                <p role="status">
-                  No active plans are available. Contact Machinmate to arrange
-                  supplier onboarding.
-                </p>
-              )}
               <SupplierProfileForm
+                initialSupplierType={supplierType}
                 initialPaymentRegion={paymentRegion}
                 onPaymentRegionChange={setPaymentRegion}
                 onTypeChange={(type) => {
                   setSupplierType(type);
-                  setPlanId('');
+                  if (!selectedPlan?.eligibleTypes.includes(type)) {
+                    setPlanId('');
+                    setPlanConfirmed(false);
+                  }
                 }}
                 token=""
                 mode="application"
@@ -247,6 +375,7 @@ export default function SupplierSignup({
                     },
                     planId,
                     files,
+                    Number(selectedPlan?.price) > 0 ? paymentMethod : undefined,
                   );
                 }}
               />

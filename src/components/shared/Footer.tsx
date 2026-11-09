@@ -15,7 +15,7 @@ const columns = [
   {
     title: 'For suppliers',
     links: [
-      { href: '/#supplier-plans', label: 'Marketplace plans' },
+      { href: '/plans', label: 'Marketplace plans' },
       { href: '/dashboard/supplier', label: 'Become a supplier' },
     ],
   },
@@ -41,7 +41,8 @@ export default function Footer() {
             <span className="flex size-9 items-center justify-center bg-accent text-foreground">
               <Factory size={19} aria-hidden="true" />
             </span>
-            Machinmate <span className="text-nav font-medium text-subtle">Machinery</span>
+            Machinmate{' '}
+            <span className="text-nav font-medium text-subtle">Machinery</span>
           </Link>
           <p className="mt-5 max-w-xs text-nav leading-6 text-subtle">
             An industrial machinery marketplace connecting buyers with local

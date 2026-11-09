@@ -1,7 +1,26 @@
 import type { SupplierProfile, SubscriptionPlan } from './supplier';
 export type PaymentStatus =
-  'PENDING' | 'PAID' | 'FAILED' | 'CANCELLED' | 'EXPIRED' | 'REVIEW';
+  | 'REFUNDED'
+  | 'PENDING'
+  | 'PAID'
+  | 'FAILED'
+  | 'CANCELLED'
+  | 'EXPIRED'
+  | 'REVIEW';
+export interface ManualPaymentMethod {
+  id: string;
+  name: string;
+  instructions: string;
+  currencies: string[];
+  proofRequired: boolean;
+  isActive: boolean;
+  updatedAt: string;
+}
 export interface Payment {
+  provider: 'SSLCOMMERZ' | 'MANUAL';
+  manualInstructions: string | null;
+  paymentReference: string | null;
+  decisionReason: string | null;
   id: string;
   transactionId: string;
   amount: string;
@@ -21,6 +40,8 @@ export interface Payment {
   activationMethod: 'PAYMENT' | 'ADMIN_MANUAL' | null;
 }
 export interface Onboarding {
+  manualMethods: ManualPaymentMethod[];
+  usage: { machinery: number };
   supplier: SupplierProfile;
   plans: SubscriptionPlan[];
   payments: Payment[];

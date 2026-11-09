@@ -36,6 +36,13 @@ export interface SupplierRegistrationInput extends SupplierProfileInput {
 export type PlanVisibility = 'HIDDEN' | 'STANDARD' | 'FEATURED';
 // Commercial terms shared by a plan and the subscription created from it.
 export interface PlanEntitlements {
+  description?: string;
+  billingInterval?: 'MONTHLY' | 'ANNUAL' | 'CUSTOM';
+  sparePartsLimit?: number;
+  serviceLimit?: number;
+  featuredLimit?: number;
+  hiddenPriceAllowed?: boolean;
+  features?: string[];
   price: string;
   currency: string;
   listingLimit: number;
@@ -48,6 +55,9 @@ export interface PlanEntitlements {
   visibility: PlanVisibility;
 }
 export interface PlanInput extends PlanEntitlements {
+  isFree?: boolean;
+  isPublic?: boolean;
+  sortOrder?: number;
   name: string;
   eligibleTypes: SupplierType[];
   durationDays: number;
@@ -58,12 +68,14 @@ export interface SubscriptionPlan extends PlanInput {
   updatedAt: string;
 }
 export interface SupplierSubscription extends PlanEntitlements {
+  selectedPaymentMethod?: string | null;
   id: string;
   planId: string;
   supplierType: SupplierType;
   planName: string;
   isCurrent: boolean;
-  state: 'PENDING' | 'ACTIVE' | 'SUSPENDED' | 'CANCELLED';
+  isScheduled?: boolean;
+  state: 'PENDING' | 'ACTIVE' | 'SUSPENDED' | 'CANCELLED' | 'EXPIRED';
   activationMethod?: 'PAYMENT' | 'ADMIN_MANUAL' | null;
   activatedAt?: string | null;
   activatedById?: string | null;

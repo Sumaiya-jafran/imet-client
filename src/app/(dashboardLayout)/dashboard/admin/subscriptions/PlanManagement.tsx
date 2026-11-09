@@ -1,4 +1,5 @@
 'use client';
+import BillingAdministration from '@/components/shared/BillingAdministration';
 import LoadingState from '@/components/shared/LoadingState';
 import Badge from '@/components/shared/Badge';
 import EmptyState from '@/components/shared/EmptyState';
@@ -151,6 +152,7 @@ export default function PlanManagement() {
           )}
         </>
       )}
+      <BillingAdministration token={token} />
     </div>
   );
 }

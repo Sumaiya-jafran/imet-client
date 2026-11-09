@@ -41,9 +41,11 @@ export default function SupplierProfileForm({
   submitOverride,
   onTypeChange,
   initialPaymentRegion,
+  initialSupplierType,
   onPaymentRegionChange,
 }: {
   token: string;
+  initialSupplierType?: 'LOCAL' | 'INTERNATIONAL';
   initialPaymentRegion?: PaymentRegion;
   onPaymentRegionChange?: (value: PaymentRegion) => void;
   supplier?: SupplierProfile;
@@ -119,7 +121,7 @@ export default function SupplierProfileForm({
         }
       : {
           companyName: '',
-          type: 'LOCAL',
+          type: initialSupplierType ?? 'LOCAL',
           description: '',
           contactName: '',
           businessEmail: '',

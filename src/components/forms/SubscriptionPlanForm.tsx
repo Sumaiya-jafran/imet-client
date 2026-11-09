@@ -20,6 +20,9 @@ export default function SubscriptionPlanForm({
   onCancel: () => void;
 }) {
   const [error, setError] = useState('');
+  const [featuresText, setFeaturesText] = useState(
+    plan?.features?.join('\n') ?? '',
+  );
   const {
     register,
     handleSubmit,
@@ -29,6 +32,16 @@ export default function SubscriptionPlanForm({
     resolver: zodResolver(planSchema),
     defaultValues: plan
       ? {
+          description: plan.description,
+          billingInterval: plan.billingInterval,
+          sparePartsLimit: plan.sparePartsLimit,
+          serviceLimit: plan.serviceLimit,
+          featuredLimit: plan.featuredLimit,
+          hiddenPriceAllowed: plan.hiddenPriceAllowed,
+          features: plan.features,
+          isFree: plan.isFree,
+          isPublic: plan.isPublic,
+          sortOrder: plan.sortOrder,
           name: plan.name,
           eligibleTypes: plan.eligibleTypes,
           durationDays: plan.durationDays,
@@ -45,6 +58,16 @@ export default function SubscriptionPlanForm({
           isActive: plan.isActive,
         }
       : {
+          description: '',
+          billingInterval: 'CUSTOM',
+          sparePartsLimit: 0,
+          serviceLimit: 0,
+          featuredLimit: 0,
+          hiddenPriceAllowed: false,
+          features: [],
+          isFree: false,
+          isPublic: true,
+          sortOrder: 0,
           name: '',
           eligibleTypes: [],
           price: '',
@@ -60,7 +83,17 @@ export default function SubscriptionPlanForm({
   const save = async (body: PlanInput) => {
     setError('');
     try {
-      await supplierApi.savePlan(token, body, plan);
+      await supplierApi.savePlan(
+        token,
+        {
+          ...body,
+          features: featuresText
+            .split('\n')
+            .map((v) => v.trim())
+            .filter(Boolean),
+        },
+        plan,
+      );
       onSave();
     } catch (e) {
       if (e instanceof ApiError && e.response.errors)
@@ -75,6 +108,10 @@ export default function SubscriptionPlanForm({
     }
   };
   const labels = {
+    sortOrder: 'Display order',
+    sparePartsLimit: 'Spare parts limit (future)',
+    serviceLimit: 'Service limit (future)',
+    featuredLimit: 'Featured listing allowance',
     name: 'Plan name',
     durationDays: 'Duration (days)',
     price: 'Subscription price',
@@ -84,6 +121,10 @@ export default function SubscriptionPlanForm({
     specificationLimit: 'Specifications per machine',
   };
   const numeric = [
+    'sortOrder',
+    'sparePartsLimit',
+    'serviceLimit',
+    'featuredLimit',
     'durationDays',
     'listingLimit',
     'imageLimit',
@@ -127,13 +168,48 @@ export default function SubscriptionPlanForm({
                 className="mt-1 w-full rounded border bg-surface p-2"
               />
               {errors[field] && (
-                <p id={`plan-${field}-error`} className="text-danger-foreground">
+                <p
+                  id={`plan-${field}-error`}
+                  className="text-danger-foreground"
+                >
                   {errors[field]?.message}
                 </p>
               )}
             </div>
           );
         })}
+        <label>
+          Description
+          <textarea {...register('description')} className="mt-1 w-full" />
+        </label>
+        <label>
+          Billing interval
+          <select {...register('billingInterval')} className="mt-1 w-full">
+            <option value="CUSTOM">Custom period</option>
+            <option value="MONTHLY">Monthly</option>
+            <option value="ANNUAL">Annual</option>
+          </select>
+        </label>
+        <label>
+          Features (one per line)
+          <textarea
+            value={featuresText}
+            onChange={(e) => setFeaturesText(e.target.value)}
+            className="mt-1 w-full"
+          />
+        </label>
+        <label>
+          <input type="checkbox" {...register('isFree')} /> Designated Free plan
+          (zero price, active, public, both supplier types)
+        </label>
+        <label>
+          <input type="checkbox" {...register('isPublic')} /> Show on public
+          pricing page
+        </label>
+        <label>
+          <input type="checkbox" {...register('hiddenPriceAllowed')} /> Allow
+          hidden product prices (future product-price support)
+        </label>
         <fieldset className="rounded-lg border border-border bg-background p-4 sm:col-span-2">
           <legend className="font-medium">Eligible supplier types</legend>
           <label className="mt-2 block">
@@ -153,7 +229,9 @@ export default function SubscriptionPlanForm({
             International manufacturers
           </label>
           {errors.eligibleTypes && (
-            <p className="text-danger-foreground">{errors.eligibleTypes.message}</p>
+            <p className="text-danger-foreground">
+              {errors.eligibleTypes.message}
+            </p>
           )}
         </fieldset>
         <label className="block">
@@ -182,7 +260,9 @@ export default function SubscriptionPlanForm({
             className="mt-1 w-full"
           />
           {errors.leadLimitPerMonth && (
-            <p className="text-danger-foreground">{errors.leadLimitPerMonth.message}</p>
+            <p className="text-danger-foreground">
+              {errors.leadLimitPerMonth.message}
+            </p>
           )}
         </div>
         <label className="block">

@@ -6,7 +6,11 @@ export const supplierAssetsApi = {
       headers: { Authorization: `Bearer ${token}` },
       signal: AbortSignal.timeout(10000),
     }),
-  upload: (token: string, purpose: 'LOGO' | 'DOCUMENT', file: File) => {
+  upload: (
+    token: string,
+    purpose: 'LOGO' | 'DOCUMENT' | 'PAYMENT_PROOF',
+    file: File,
+  ) => {
     const body = new FormData();
     body.append('file', file);
     return apiClient.request<{
