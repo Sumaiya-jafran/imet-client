@@ -1,196 +1,159 @@
 import Link from 'next/link';
-import {
-  ArrowLeft,
-  ArrowRight,
-  Search,
-  SlidersHorizontal,
-  X,
-} from 'lucide-react';
 import PageHeader from '@/components/shared/PageHeader';
 import EmptyState from '@/components/shared/EmptyState';
-import { z } from 'zod';
-import { catalogueApi } from '@/lib/api/catalogue.service';
 import MachineCard from '@/components/cards/MachineCard';
+import { catalogueApi } from '@/lib/api/catalogue.service';
+import { catalogueSearchSchema } from '@/lib/catalogue-search';
 export const metadata = {
-  title: 'Machinery catalogue | Machinmate',
+  title: 'Machinery marketplace | Machinmate',
   description:
-    'Explore industrial machinery and technical specifications. Prices available on request.',
+    'Find machinery from approved suppliers. Compare fixed prices and contact eligible suppliers directly.',
 };
-const filters = z.object({
-  q: z.string().trim().max(100).default(''),
-  supplier: z.uuid().optional(),
-  category: z
-    .string()
-    .max(120)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
-    .optional(),
-  page: z.coerce.number().int().min(1).max(10000).default(1),
-});
 export default async function CataloguePage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const raw = await searchParams;
-  const parsed = filters.safeParse({
-    q: raw.q,
-    category: raw.category || undefined,
-    supplier: raw.supplier,
-    page: raw.page,
-  });
+  const normalized = Object.fromEntries(
+    Object.keys(catalogueSearchSchema.shape).map((k) => [
+      k,
+      raw[k] === '' ? undefined : raw[k],
+    ]),
+  );
+  const parsed = catalogueSearchSchema.safeParse(normalized);
   if (!parsed.success)
     return (
       <EmptyState
         title="Check your catalogue filters"
-        description="Use a search of up to 100 characters, a valid category or supplier, and a page number between 1 and 10,000."
+        description={parsed.error.issues.map((i) => i.message).join(' ')}
       >
-        <Link className="secondary-link" href="/machinery">
+        <Link href="/machinery" className="underline">
           Reset filters
         </Link>
       </EmptyState>
     );
-  const { q, category, supplier, page } = parsed.data;
-  const query = new URLSearchParams({ page: String(page), limit: '12' });
-  if (supplier) query.set('supplier', supplier);
-  if (q) query.set('q', q);
-  if (category) query.set('category', category);
-  const [result, categoryResult] = await Promise.all([
+  const filters = parsed.data,
+    query = new URLSearchParams({ limit: '12' });
+  for (const [k, v] of Object.entries(filters))
+    if (v !== undefined && v !== '') query.set(k, String(v));
+  const [result, categories] = await Promise.all([
     catalogueApi.list(query),
-    catalogueApi.categories().then(
-      (categories) => ({ categories, unavailable: false }),
-      () => ({ categories: [], unavailable: true }),
-    ),
+    catalogueApi.categories(),
   ]);
-  const { categories, unavailable: categoriesUnavailable } = categoryResult;
-  const outOfRange =
-    page > result.pagination.totalPages && result.pagination.total > 0;
-  const removeFilter = (key: string) => {
-    const params = new URLSearchParams(query);
-    params.delete('limit');
-    params.delete('page');
-    params.delete(key);
-    return `/machinery?${params}`;
+  const href = (page: number) => {
+    const q = new URLSearchParams(query);
+    q.delete('limit');
+    q.set('page', String(page));
+    return `/machinery?${q}`;
   };
-  const href = (target: number) => {
-    const params = new URLSearchParams(query);
-    params.delete('limit');
-    params.set('page', String(target));
-    return `/machinery?${params}`;
-  };
+  const select = (
+    name: keyof typeof filters,
+    label: string,
+    options: { value: string; label: string }[],
+  ) => (
+    <label className="min-w-0 text-nav font-medium">
+      {label}
+      <select
+        name={name}
+        defaultValue={String(filters[name] ?? '')}
+        className="mt-1 w-full"
+      >
+        <option value="">All</option>
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+  const text = (name: keyof typeof filters, label: string, max = 200) => (
+    <label className="min-w-0 text-nav font-medium">
+      {label}
+      <input
+        name={name}
+        defaultValue={String(filters[name] ?? '')}
+        maxLength={max}
+        className="mt-1 w-full"
+      />
+    </label>
+  );
+  const roots = categories.filter((c) => !c.parentId),
+    subs = categories.filter(
+      (c) =>
+        c.parentId &&
+        (!filters.category || c.parent?.slug === filters.category),
+    );
   return (
     <section>
       <PageHeader
-        eyebrow="Equipment directory"
-        title="Machinery catalogue"
-        description="Find equipment for your next production line. Explore specifications and request a private quote."
-        actions={
-          <span className="rounded-full border border-border bg-surface px-3 py-2 text-meta font-medium text-primary">
-            Industrial equipment · Price on request
-          </span>
-        }
+        eyebrow="Machinery marketplace"
+        title="Machines"
+        description="Discover machinery from approved suppliers. Compare fixed prices or contact a supplier directly."
       />
       <form
         action="/machinery"
-        className="filter-bar my-6 grid gap-4 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_auto]"
+        className="surface my-6 grid min-w-0 gap-4 p-5 sm:grid-cols-2 xl:grid-cols-4"
       >
-        {supplier && <input type="hidden" name="supplier" value={supplier} />}
-        <label className="min-w-0 text-nav font-medium">
-          <span className="flex items-center gap-2">
-            <Search size={15} aria-hidden="true" /> Search machinery
-          </span>
-          <input
-            name="q"
-            type="search"
-            maxLength={100}
-            defaultValue={q}
-            placeholder="Name, manufacturer or model"
-            className="mt-2 w-full rounded border border-border-strong bg-surface p-3"
-          />
-        </label>
-        <label className="min-w-0 text-nav font-medium">
-          <span className="flex items-center gap-2">
-            <SlidersHorizontal size={15} aria-hidden="true" /> Category
-          </span>
-          <select
-            name="category"
-            disabled={categoriesUnavailable}
-            defaultValue={category || ''}
-            className="mt-2 w-full rounded border border-border-strong bg-surface p-3"
-          >
-            <option value="">All categories</option>
-            {category && !categories.some((c) => c.slug === category) && (
-              <option value={category}>Unavailable category</option>
-            )}
-            {categories.map((c) => (
-              <option key={c.slug} value={c.slug}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button className="action-link self-end">Search</button>
-        {categoriesUnavailable && category && (
-          <input type="hidden" name="category" value={category} />
+        {filters.supplier && (
+          <input type="hidden" name="supplier" value={filters.supplier} />
         )}
-      </form>
-      {categoriesUnavailable && (
-        <p
-          role="status"
-          className="mb-4 rounded-lg border border-warning/25 bg-warning/5 p-3 text-nav text-warning-foreground"
-        >
-          Category filters could not load. You can still search machinery.{' '}
-          <Link className="font-semibold underline" href={href(page)}>
-            Retry category filters
-          </Link>
+        {text('q', 'Search machinery', 100)}
+        {select(
+          'category',
+          'Category',
+          roots.map((c) => ({ value: c.slug, label: c.name })),
+        )}
+        {select(
+          'subcategory',
+          'Subcategory',
+          subs.map((c) => ({
+            value: c.slug,
+            label: `${c.parent?.name ?? ''} / ${c.name}`,
+          })),
+        )}
+        {text('brand', 'Brand / manufacturer')}
+        {select('condition', 'Condition', [
+          { value: 'NEW', label: 'New' },
+          { value: 'USED', label: 'Used' },
+          { value: 'REFURBISHED', label: 'Refurbished' },
+        ])}
+        {text('supplierName', 'Supplier name')}
+        {text('country', 'Supplier country or city', 100)}
+        {select('pricingMode', 'Pricing mode', [
+          { value: 'FIXED_PRICE', label: 'Fixed price' },
+          { value: 'CONTACT_FOR_PRICE', label: 'Contact for Price' },
+        ])}
+        {text('currency', 'Currency (ISO code)', 3)}
+        {text('minPrice', 'Minimum fixed price', 17)}
+        {text('maxPrice', 'Maximum fixed price', 17)}
+        {select('sort', 'Sort', [
+          { value: 'newest', label: 'Newest first' },
+          { value: 'oldest', label: 'Oldest first' },
+          { value: 'price_asc', label: 'Price: low to high' },
+          { value: 'price_desc', label: 'Price: high to low' },
+        ])}
+        {text('specLabel', 'Specification label', 100)}
+        {text('specValue', 'Specification contains', 500)}
+        <p className="text-meta text-muted sm:col-span-2">
+          Price ranges and price sorting require a currency and include
+          fixed-price listings only. Contact prices are never used for those
+          comparisons.
         </p>
-      )}
-      {(q || category || supplier) && (
-        <div
-          className="mb-5 flex flex-wrap gap-2"
-          aria-label="Active catalogue filters"
+        <button className="rounded bg-accent px-4 py-2 font-semibold text-foreground">
+          Apply filters
+        </button>
+        <Link
+          href="/machinery"
+          className="self-center font-semibold text-secondary underline"
         >
-          {[
-            q && { key: 'q', label: `Search: ${q}` },
-            category && {
-              key: 'category',
-              label: `Category: ${categories.find((c) => c.slug === category)?.name || category}`,
-            },
-            supplier && { key: 'supplier', label: 'Selected supplier' },
-          ]
-            .filter((item) => !!item)
-            .map((item) => (
-              <Link
-                key={item.key}
-                href={removeFilter(item.key)}
-                aria-label={`Remove ${item.label}`}
-                className="flex max-w-full items-center gap-2 rounded-full border border-border bg-surface px-3 py-2 text-meta text-foreground hover:border-subtle"
-              >
-                <span className="break-words [overflow-wrap:anywhere]">
-                  {item.label}
-                </span>
-                <X size={14} className="shrink-0" aria-hidden="true" />
-              </Link>
-            ))}
-        </div>
-      )}
-      <div className="mb-5 flex flex-wrap justify-between gap-3 text-meta text-secondary">
-        <p role="status">
-          <span className="font-semibold text-primary">
-            {result.pagination.total}{' '}
-            {result.pagination.total === 1 ? 'machine' : 'machines'}
-          </span>
-          {result.machines.length > 0 && (
-            <>
-              {' '}
-              · Showing {(page - 1) * 12 + 1}–
-              {(page - 1) * 12 + result.machines.length}
-            </>
-          )}
-        </p>
-        <Link href="/machinery" className="underline">
           Clear filters
         </Link>
-      </div>
+      </form>
+      <p role="status" className="mb-4 text-nav">
+        {result.pagination.total} publicly available machines
+      </p>
       {result.machines.length ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {result.machines.map((machine) => (
@@ -199,43 +162,32 @@ export default async function CataloguePage({
         </div>
       ) : (
         <EmptyState
-          title={
-            outOfRange ? 'This page has no machinery' : 'No machines found'
-          }
-          description={
-            outOfRange
-              ? 'The catalogue has changed or this page is beyond the available results. Return to the first page with your filters preserved.'
-              : 'Try a different model, manufacturer or category. New machinery appears here when published.'
-          }
+          title="No machines found"
+          description="Try different filters or return to the first page."
         >
-          <Link
-            href={outOfRange ? href(1) : '/machinery'}
-            className="secondary-link"
-          >
-            {outOfRange ? 'Return to first page' : 'Clear filters'}
+          <Link className="underline" href={href(1)}>
+            First page with these filters
           </Link>
         </EmptyState>
       )}
-      {result.pagination.totalPages > 0 && !outOfRange && (
-        <nav
-          aria-label="Catalogue pagination"
-          className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5 text-nav"
-        >
-          {page > 1 && (
-            <Link className="secondary-link" rel="prev" href={href(page - 1)}>
-              <ArrowLeft size={15} aria-hidden="true" /> Previous
-            </Link>
-          )}
-          <span className="text-meta text-secondary">
-            Page {page} of {result.pagination.totalPages}
-          </span>
-          {page < result.pagination.totalPages && (
-            <Link className="secondary-link" rel="next" href={href(page + 1)}>
-              Next <ArrowRight size={15} aria-hidden="true" />
-            </Link>
-          )}
-        </nav>
-      )}
+      <nav
+        aria-label="Catalogue pagination"
+        className="mt-6 flex flex-wrap items-center justify-between gap-4"
+      >
+        {filters.page > 1 && (
+          <Link className="underline" rel="prev" href={href(filters.page - 1)}>
+            Previous
+          </Link>
+        )}
+        <span>
+          Page {filters.page} of {Math.max(1, result.pagination.totalPages)}
+        </span>
+        {filters.page < result.pagination.totalPages && (
+          <Link className="underline" rel="next" href={href(filters.page + 1)}>
+            Next
+          </Link>
+        )}
+      </nav>
     </section>
   );
 }

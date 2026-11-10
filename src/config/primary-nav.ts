@@ -17,13 +17,6 @@ export function primaryLinks(
     ].includes(role),
   );
   const buyer = roles.includes('BUYER');
-  const messages = admin
-    ? '/dashboard/admin/rfqs'
-    : buyer
-      ? '/dashboard/rfqs'
-      : seller
-        ? '/dashboard/leads'
-        : undefined;
   const services = admin
     ? '/dashboard/admin/service-tickets'
     : buyer
@@ -48,11 +41,7 @@ export function primaryLinks(
     },
     {
       label: 'Messages',
-      href: signedIn ? messages : undefined,
-      description:
-        messages && signedIn
-          ? 'Conversations inside your RFQ workspace'
-          : 'RFQ conversations — sign in with an eligible account',
+      description: 'Direct messaging — coming in M6',
     },
     {
       label: 'Account',

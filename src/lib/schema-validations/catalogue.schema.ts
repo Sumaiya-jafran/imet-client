@@ -6,7 +6,11 @@ const slug = (max: number) =>
     'Use lowercase words separated by hyphens',
   );
 export const categorySchema = z
-  .object({ name: text(100), slug: slug(120) })
+  .object({
+    name: text(100),
+    slug: slug(120),
+    parentId: z.uuid().nullable().optional(),
+  })
   .strict();
 export const machineSchema = z
   .object({
@@ -16,7 +20,33 @@ export const machineSchema = z
     manufacturer: text(200),
     model: text(200),
     categoryId: z.uuid('Select a category'),
-    status: z.enum(['DRAFT', 'PUBLISHED']),
+    status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']),
+    condition: z.enum(['NEW', 'USED', 'REFURBISHED']).optional(),
+    manufacturingYear: z
+      .number()
+      .int()
+      .min(1800)
+      .max(new Date().getUTCFullYear() + 1)
+      .nullable()
+      .optional(),
+    countryOfOrigin: text(100).nullable().optional(),
+    pricingMode: z.enum(['FIXED_PRICE', 'CONTACT_FOR_PRICE']).optional(),
+    price: z
+      .string()
+      .regex(/^(0|[1-9]\d{0,13})(\.\d{1,2})?$/)
+      .nullable()
+      .optional(),
+    currency: z
+      .string()
+      .regex(/^[A-Z]{3}$/)
+      .nullable()
+      .optional(),
+    minimumOrderQuantity: z.number().int().min(1).max(1000000000).optional(),
+    warranty: text(2000).nullable().optional(),
+    availability: z
+      .enum(['IN_STOCK', 'MADE_TO_ORDER', 'OUT_OF_STOCK'])
+      .optional(),
+    negotiable: z.boolean().optional(),
     images: z
       .array(
         z

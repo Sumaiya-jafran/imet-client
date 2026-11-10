@@ -54,12 +54,17 @@ export default function DashboardShell({
         {!compact && (
           <span>
             Machinmate
-            <span className="block font-sans text-meta font-medium text-subtle">Workspace</span>
+            <span className="block font-sans text-meta font-medium text-subtle">
+              Workspace
+            </span>
           </span>
         )}
       </Link>
 
-      <nav aria-label="Dashboard navigation" className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain pr-1">
+      <nav
+        aria-label="Dashboard navigation"
+        className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain pr-1"
+      >
         {groups.map((group) => (
           <div key={group.title}>
             {compact ? (
@@ -88,8 +93,16 @@ export default function DashboardShell({
                           : 'text-border-strong hover:bg-surface/5 hover:text-inverse',
                       )}
                     >
-                      <Icon size={18} aria-hidden="true" className={cn('shrink-0', current && 'text-accent')} />
-                      {!compact && <span className="min-w-0 truncate leading-5">{label}</span>}
+                      <Icon
+                        size={18}
+                        aria-hidden="true"
+                        className={cn('shrink-0', current && 'text-accent')}
+                      />
+                      {!compact && (
+                        <span className="min-w-0 truncate leading-5">
+                          {label}
+                        </span>
+                      )}
                     </Link>
                   </li>
                 );
@@ -144,7 +157,11 @@ export default function DashboardShell({
             <PanelLeftOpen size={18} aria-hidden="true" className="shrink-0" />
           ) : (
             <>
-              <PanelLeftClose size={18} aria-hidden="true" className="shrink-0" />
+              <PanelLeftClose
+                size={18}
+                aria-hidden="true"
+                className="shrink-0"
+              />
               <span className="text-meta">Collapse sidebar</span>
             </>
           )}
@@ -173,17 +190,18 @@ export default function DashboardShell({
               </p>
             </div>
             <div className="ml-auto flex min-w-0 items-center gap-3">
-              {/* Hidden on RFQ pages, which carry their own "Create RFQ" action. */}
-              {user.roles.includes('BUYER') && !pathname.startsWith('/dashboard/rfqs') && (
-                <Link
-                  prefetch={false}
-                  href={QUOTE_HREF}
-                  className="hidden min-h-10 items-center gap-2 rounded bg-accent px-4 text-meta font-semibold text-foreground hover:bg-accent-hover sm:inline-flex"
-                >
-                  Request a quote
-                  <ArrowUpRight size={15} aria-hidden="true" />
-                </Link>
-              )}
+              {/* Hidden on RFQ pages, which carry their own "Browse machines" action. */}
+              {user.roles.includes('BUYER') &&
+                !pathname.startsWith('/dashboard/rfqs') && (
+                  <Link
+                    prefetch={false}
+                    href={QUOTE_HREF}
+                    className="hidden min-h-10 items-center gap-2 rounded bg-accent px-4 text-meta font-semibold text-foreground hover:bg-accent-hover sm:inline-flex"
+                  >
+                    Browse machines
+                    <ArrowUpRight size={15} aria-hidden="true" />
+                  </Link>
+                )}
               <div className="hidden md:block">
                 <LanguageSelector />
               </div>

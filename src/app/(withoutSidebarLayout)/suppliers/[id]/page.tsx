@@ -11,10 +11,17 @@ import EmptyState from '@/components/shared/EmptyState';
 import { catalogueApi } from '@/lib/api/catalogue.service';
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ page?: string; q?: string }>;
 }) {
   const { id } = await params;
+  const filter = await searchParams;
+  const page = /^[1-9]\d{0,3}$/.test(filter.page ?? '')
+    ? Number(filter.page)
+    : 1;
+  const q = typeof filter.q === 'string' ? filter.q.slice(0, 100) : '';
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/i.test(id) || id.length > 120) notFound();
   let supplier;
   try {
@@ -26,7 +33,12 @@ export default async function Page({
   }
   if (!supplier) notFound();
   const catalogue = await catalogueApi.list(
-    new URLSearchParams({ supplier: supplier.id, limit: '6' }),
+    new URLSearchParams({
+      supplier: supplier.id,
+      limit: '12',
+      page: String(page),
+      q,
+    }),
   );
   return (
     <article>
@@ -90,8 +102,22 @@ export default async function Page({
           id="supplier-machinery-title"
           className="mb-5 text-section font-semibold"
         >
-          Supplier machinery
+          Supplier machinery · {catalogue.pagination.total} public listings
         </h2>
+        <form className="mb-4 flex flex-wrap gap-2">
+          <label className="flex-1">
+            Search this supplier
+            <input
+              name="q"
+              defaultValue={q}
+              maxLength={100}
+              className="mt-1 w-full"
+            />
+          </label>
+          <button className="self-end rounded bg-accent px-4 py-2 font-semibold text-foreground">
+            Search
+          </button>
+        </form>
         {catalogue.machines.length ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {catalogue.machines.map((machine) => (
@@ -105,6 +131,30 @@ export default async function Page({
           />
         )}
       </section>
+      <nav
+        aria-label="Supplier machinery pagination"
+        className="my-5 flex flex-wrap justify-between gap-3"
+      >
+        {page > 1 && (
+          <Link
+            className="underline"
+            href={`?${new URLSearchParams({ page: String(page - 1), q })}`}
+          >
+            Previous
+          </Link>
+        )}
+        <span>
+          Page {page} of {Math.max(1, catalogue.pagination.totalPages)}
+        </span>
+        {page < catalogue.pagination.totalPages && (
+          <Link
+            className="underline"
+            href={`?${new URLSearchParams({ page: String(page + 1), q })}`}
+          >
+            Next
+          </Link>
+        )}
+      </nav>
       <PublicReviews target="SUPPLIER" targetId={supplier.id} />
     </article>
   );

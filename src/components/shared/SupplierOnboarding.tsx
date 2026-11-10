@@ -214,7 +214,7 @@ export default function SupplierOnboarding({
               </p>
               <p>
                 Machinery usage: {data.usage.machinery} / {active.listingLimit}.
-                RFQ access: {active.rfqEnabled ? 'Included' : 'Not included'}
+
               </p>
               <Link
                 href="/plans"
@@ -270,9 +270,9 @@ export default function SupplierOnboarding({
                     <p className="text-nav text-secondary">
                       {plan.durationDays} days · {plan.listingLimit} listings
                       <br />
-                      {plan.rfqEnabled
-                        ? 'RFQ access included'
-                        : 'RFQ access not included'}{' '}
+                      {plan.hiddenPriceAllowed
+                        ? 'Hidden-price entitlement for eligible paid terms'
+                        : 'Fixed-price listings'}{' '}
                       · {plan.visibility.toLowerCase()} visibility
                     </p>
                     <PlanCheckout

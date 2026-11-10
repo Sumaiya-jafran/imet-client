@@ -1,3 +1,4 @@
+import { formatMachinePrice } from '@/lib/money';
 import TranslatedText from '@/components/shared/TranslatedText';
 import Link from 'next/link';
 import { ArrowUpRight, BadgeCheck } from 'lucide-react';
@@ -28,7 +29,8 @@ export default function MachineCard({ machine }: { machine: MachineSummary }) {
           </Link>
         </h2>
         <p className="mb-4 mt-2 break-words text-meta text-muted-foreground">
-          {machine.manufacturer} · {machine.model}
+          {machine.manufacturer} · {machine.model} ·{' '}
+          {machine.condition ?? 'Condition not specified'}
         </p>
         {machine.supplier && (
           <p className="mb-4 flex items-start gap-1.5 text-meta text-secondary">
@@ -44,12 +46,17 @@ export default function MachineCard({ machine }: { machine: MachineSummary }) {
               href={`/suppliers/${machine.supplier.slug ?? machine.supplier.id}`}
             >
               {machine.supplier.companyName}
+              {machine.supplier.country
+                ? ` · ${machine.supplier.city ?? ''}, ${machine.supplier.country}`
+                : ''}
             </Link>
           </p>
         )}
         <div className="mt-auto flex items-center justify-between border-t border-surface-muted pt-3">
           <span className="text-meta font-semibold text-primary">
-            Price on request
+            {machine.pricingMode === 'CONTACT_FOR_PRICE'
+              ? 'Contact for Price'
+              : formatMachinePrice(machine.price, machine.currency)}
           </span>
           <Link
             href={`/machinery/${machine.slug}`}

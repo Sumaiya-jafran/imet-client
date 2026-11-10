@@ -61,11 +61,11 @@ export default function CatalogueManagement({
         if (active)
           setEntitlement({
             active:
-              profile.data?.status === 'APPROVED' &&
+              ['APPROVED', 'PENDING'].includes(profile.data?.status ?? '') &&
               term?.effectiveStatus === 'ACTIVE' &&
-              term.supplierType === profile.data.type,
+              term.supplierType === profile.data?.type,
             limit: term?.listingLimit ?? 0,
-            used: list.data?.pagination.total ?? 0,
+            used: list.data?.activeCount ?? list.data?.pagination.total ?? 0,
           });
       })
       .catch(() => {
@@ -135,45 +135,17 @@ export default function CatalogueManagement({
     if (
       !token ||
       !window.confirm(
-        `Archive “${machine.name}”? It will become a private draft. Images and specifications are retained.`,
+        `Archive “${machine.name}”? It will become private and release active listing capacity. Images and specifications are retained.`,
       )
     )
       return;
     setBusy(true);
     setError('');
     try {
-      const response = await adminApi.detail(token, machine.id);
-      if (!response.data) throw new Error('Machine unavailable');
-      if (response.data.updatedAt !== machine.updatedAt)
-        throw new Error(
-          'This machine changed. Reload the catalogue before archiving.',
-        );
-      const {
-        name,
-        slug,
-        description,
-        manufacturer,
-        model,
-        categoryId,
-        images,
-        specifications,
-      } = response.data;
-      await adminApi.save(
-        token,
-        {
-          name,
-          slug,
-          description,
-          manufacturer,
-          model,
-          categoryId,
-          images,
-          specifications,
-          status: 'DRAFT',
-        },
-        response.data,
+      await api.status(token, machine.id, 'ARCHIVED', machine.updatedAt);
+      setNotice(
+        'Machine archived privately. Active listing capacity has been released.',
       );
-      setNotice('Machine archived as a private draft.');
       reload();
     } catch (error) {
       setError(
@@ -187,7 +159,7 @@ export default function CatalogueManagement({
     if (
       !token ||
       !window.confirm(
-        `Permanently delete “${machine.name}” and its images/specifications? This cannot be undone. Use Draft to hide it instead.`,
+        `Permanently delete “${machine.name}” and its images/specifications? This cannot be undone. Archive to preserve its history instead.`,
       )
     )
       return;
@@ -322,6 +294,7 @@ export default function CatalogueManagement({
                 <option value="">All statuses</option>
                 <option value="DRAFT">Draft</option>
                 <option value="PUBLISHED">Published</option>
+                <option value="ARCHIVED">Archived</option>
               </select>
             </label>
             <Button type="submit" disabled={loading}>
@@ -345,7 +318,11 @@ export default function CatalogueManagement({
                           {machine.name}
                         </h3>
                         <p className="break-words text-nav text-secondary">
-                          {machine.category.name} ·{' '}
+                          {machine.category.name}{' '}
+                          {machine.supplier
+                            ? ` · ${machine.supplier.companyName} (${machine.supplier.status})`
+                            : ''}{' '}
+                          ·{' '}
                           <Badge
                             tone={
                               machine.status === 'PUBLISHED'
@@ -366,7 +343,38 @@ export default function CatalogueManagement({
                         )}
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {!supplierMode && machine.status === 'PUBLISHED' && (
+                        <Button
+                          variant="secondary"
+                          disabled={busy}
+                          onClick={async () => {
+                            if (!token) return;
+                            setBusy(true);
+                            try {
+                              await api.status(
+                                token,
+                                machine.id,
+                                machine.status === 'PUBLISHED'
+                                  ? 'DRAFT'
+                                  : 'PUBLISHED',
+                                machine.updatedAt,
+                              );
+                              reload();
+                            } catch (e) {
+                              setError(
+                                e instanceof Error
+                                  ? e.message
+                                  : 'Unable to change publication',
+                              );
+                            } finally {
+                              setBusy(false);
+                            }
+                          }}
+                        >
+                          {machine.status === 'PUBLISHED'
+                            ? 'Unpublish'
+                            : 'Publish'}
+                        </Button>
+                        {machine.status !== 'ARCHIVED' && (
                           <Button
                             variant="secondary"
                             disabled={busy}

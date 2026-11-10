@@ -159,6 +159,16 @@ export const supplierApi = {
     }),
 };
 export const supplierCatalogueApi = {
+  status: (
+    token: string,
+    id: string,
+    status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED',
+    updatedAt: string,
+  ) =>
+    request(token, `/supplier/catalogue/machines/${id}/status`, 'PATCH', {
+      status,
+      updatedAt,
+    }),
   categories: (token: string, signal?: AbortSignal) =>
     apiClient.get<AdminCategory[]>('/supplier/catalogue/categories', {
       headers: headers(token),

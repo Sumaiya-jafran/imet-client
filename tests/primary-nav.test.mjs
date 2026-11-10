@@ -23,7 +23,7 @@ test('only genuine destinations are connected, scoped to the signed-in roles', (
       assert.ok(links.every((item) => !item.href.includes('/admin/')));
   }
   assert.equal(link(['BUYER'], 'Services').href, '/dashboard/service-tickets');
-  assert.equal(link(['BUYER'], 'Messages').href, '/dashboard/rfqs');
+  assert.equal(link(['BUYER'], 'Messages').href, undefined);
   for (const role of [
     'LOCAL_SUPPLIER',
     'INTERNATIONAL_MANUFACTURER',
@@ -34,24 +34,21 @@ test('only genuine destinations are connected, scoped to the signed-in roles', (
       link([role], 'Services').href,
       '/dashboard/service-management',
     );
-    assert.equal(link([role], 'Messages').href, '/dashboard/leads');
+    assert.equal(link([role], 'Messages').href, undefined);
   }
   assert.equal(
     link(['ADMIN'], 'Services').href,
     '/dashboard/admin/service-tickets',
   );
-  assert.equal(link(['ADMIN'], 'Messages').href, '/dashboard/admin/rfqs');
+  assert.equal(link(['ADMIN'], 'Messages').href, undefined);
 });
 test('nested routes have exactly one active primary destination', () => {
   for (const [roles, path, expected] of [
     [[], '/', 'Home'],
     [['ADMIN', 'BUYER'], '/dashboard/service-tickets/123', 'Services'],
-    [['BUYER', 'LOCAL_SUPPLIER'], '/dashboard/leads/123', 'Messages'],
     [[], '/machinery/industrial-lathe', 'Machines'],
     [[], '/auth/signup', 'Account'],
-    [['BUYER'], '/dashboard/rfqs/123', 'Messages'],
     [['BUYER'], '/dashboard/service-tickets/123', 'Services'],
-    [['LOCAL_SUPPLIER'], '/dashboard/leads/123', 'Messages'],
     [['ADMIN'], '/dashboard/admin/service-tickets/123', 'Services'],
     [['ADMIN'], '/dashboard/admin/catalogue', 'Account'],
   ]) {

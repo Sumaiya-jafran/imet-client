@@ -28,9 +28,9 @@ export default function CategoryManagement({
     reset,
     setError: setFieldError,
     formState: { errors, isSubmitting },
-  } = useForm<{ name: string; slug: string }>({
+  } = useForm<{ name: string; slug: string; parentId?: string | null }>({
     resolver: zodResolver(categorySchema),
-    defaultValues: { name: '', slug: '' },
+    defaultValues: { parentId: null, name: '', slug: '' },
   });
   const cancel = () => {
     setEditing(undefined);
@@ -38,7 +38,11 @@ export default function CategoryManagement({
     reset({ name: '', slug: '' });
     setError('');
   };
-  const save = async (data: { name: string; slug: string }) => {
+  const save = async (data: {
+    name: string;
+    slug: string;
+    parentId?: string | null;
+  }) => {
     setError('');
     try {
       await catalogueAdminApi.saveCategory(token, data, editingCategory);
@@ -89,8 +93,8 @@ export default function CategoryManagement({
     <section className="surface p-5">
       <h2 className="text-section font-semibold">Categories</h2>
       <p className="my-3 text-nav text-secondary">
-        Categories have one level. Categories containing machines cannot be
-        deleted.
+        Use a top-level category and one subcategory level. Referenced
+        categories cannot be deleted.
       </p>
       {error && (
         <p role="alert" className="mb-4 text-danger-foreground">
@@ -99,6 +103,22 @@ export default function CategoryManagement({
       )}
       <form onSubmit={handleSubmit(save)} noValidate className="space-y-3">
         <fieldset disabled={isSubmitting || deleting} className="space-y-3">
+          <label className="block">
+            Parent category (optional)
+            <select
+              {...register('parentId', { setValueAs: (v) => v || null })}
+              className="mt-1 w-full"
+            >
+              <option value="">Top-level category</option>
+              {categories
+                .filter((c) => !c.parentId && c.id !== editingCategory?.id)
+                .map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+            </select>
+          </label>
           <label className="block font-medium" htmlFor="category-name">
             Category name
           </label>
@@ -172,7 +192,11 @@ export default function CategoryManagement({
                 onClick={() => {
                   setEditing(category.id);
                   setEditingCategory(category);
-                  reset({ name: category.name, slug: category.slug });
+                  reset({
+                    name: category.name,
+                    slug: category.slug,
+                    parentId: category.parentId ?? null,
+                  });
                   setError('');
                 }}
               >

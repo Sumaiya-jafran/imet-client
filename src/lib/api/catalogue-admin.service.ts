@@ -6,6 +6,7 @@ export interface AdminCategory {
   name: string;
   slug: string;
   updatedAt?: string;
+  parentId?: string | null;
   _count?: { machines: number };
 }
 export interface AdminMachine extends MachineInput {
@@ -15,11 +16,13 @@ export interface AdminMachine extends MachineInput {
   updatedAt: string;
 }
 export interface AdminCatalogueResult {
+  activeCount?: number;
   machines: {
     id: string;
     name: string;
     slug: string;
-    status: 'DRAFT' | 'PUBLISHED';
+    status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+    supplier?: { id: string; companyName: string; status: string } | null;
     updatedAt: string;
     category: { name: string };
   }[];
@@ -59,6 +62,17 @@ export const catalogueAdminApi = {
         }),
       },
     ),
+  status: (
+    token: string,
+    id: string,
+    status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED',
+    updatedAt: string,
+  ) =>
+    apiClient.request(`/admin/catalogue/machines/${id}/status`, {
+      method: 'PATCH',
+      headers: headers(token),
+      body: JSON.stringify({ status, updatedAt }),
+    }),
   remove: (token: string, id: string, updatedAt: string) =>
     apiClient.request(`/admin/catalogue/machines/${id}`, {
       method: 'DELETE',
@@ -67,7 +81,7 @@ export const catalogueAdminApi = {
     }),
   saveCategory: (
     token: string,
-    data: { name: string; slug: string },
+    data: { name: string; slug: string; parentId?: string | null },
     category?: AdminCategory,
   ) =>
     apiClient.request<AdminCategory>(

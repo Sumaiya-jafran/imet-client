@@ -23,23 +23,6 @@ export default function Header() {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
 
-  const messagesHref = roles.includes('ADMIN')
-    ? '/dashboard/admin/rfqs'
-    : roles.includes('BUYER')
-      ? '/dashboard/rfqs'
-      : roles.some((r) =>
-            [
-              'LOCAL_SUPPLIER',
-              'INTERNATIONAL_MANUFACTURER',
-              'INDEPENDENT_SELLER',
-              'SALES_PERSON',
-            ].includes(r),
-          )
-        ? '/dashboard/leads'
-        : signedIn
-          ? '/dashboard/account'
-          : '/auth/signin';
-
   const servicesHref = roles.includes('ADMIN')
     ? '/dashboard/admin/service-tickets'
     : roles.includes('BUYER')
@@ -156,7 +139,11 @@ export default function Header() {
               {mobileDrawerOpen ? (
                 <X size={16} aria-hidden="true" className="text-foreground" />
               ) : (
-                <Menu size={16} aria-hidden="true" className="text-foreground" />
+                <Menu
+                  size={16}
+                  aria-hidden="true"
+                  className="text-foreground"
+                />
               )}
             </button>
 
@@ -166,11 +153,7 @@ export default function Header() {
               aria-label="Machinmate home"
               className="flex items-center gap-1.5 font-sans text-body font-bold tracking-tight text-inverse"
             >
-              <Factory
-                size={17}
-                aria-hidden="true"
-                className="text-accent"
-              />
+              <Factory size={17} aria-hidden="true" className="text-accent" />
               <span>Machinmate</span>
             </Link>
 
@@ -187,13 +170,15 @@ export default function Header() {
                   className="absolute right-1.5 top-1.5 size-2 rounded-full bg-accent ring-1 ring-surface"
                 />
               </Link>
-              <Link
-                href={messagesHref}
-                aria-label="RFQ messages and workspace"
-                className="flex size-[34px] items-center justify-center rounded-full bg-surface text-secondary shadow-surface"
+              <button
+                type="button"
+                disabled
+                aria-label="Messaging coming in M6"
+                title="Messaging coming in M6"
+                className="flex size-[34px] items-center justify-center rounded-full bg-surface text-muted opacity-60"
               >
                 <MessageSquare size={15} aria-hidden="true" />
-              </Link>
+              </button>
             </div>
           </div>
 
@@ -248,7 +233,7 @@ export default function Header() {
                   onClick={() => setMobileDrawerOpen(false)}
                   className="rounded-full bg-accent px-3 py-1 text-meta font-bold text-primary"
                 >
-                  + Request a quote
+                  Browse machines
                 </Link>
               </div>
               <div className="mt-3 rounded-lg bg-surface p-2.5 text-foreground">

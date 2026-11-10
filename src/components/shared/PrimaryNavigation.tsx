@@ -124,7 +124,7 @@ export default function PrimaryNavigation({ roles }: { roles?: UserRole[] }) {
     );
   };
 
-  // Mobile 5-slot bottom bar items: Home, Suppliers/Machines, Center + Post RFQ, RFQs/Messages, Account
+  // Mobile 5-slot bottom bar items: Home, Suppliers/Machines, Center + Browse, RFQs/Messages, Account
   const mobileLeftItems = [links[0], links[1]];
   const mobileRightItems = [links[4], links[5]];
 
@@ -165,7 +165,7 @@ export default function PrimaryNavigation({ roles }: { roles?: UserRole[] }) {
             className="primary-nav-cta-pill"
           >
             <Factory size={13} aria-hidden="true" />
-            <span>Request Quote</span>
+            <span>Browse Machines</span>
           </Link>
         </div>
 
@@ -270,13 +270,13 @@ export default function PrimaryNavigation({ roles }: { roles?: UserRole[] }) {
             <Link
               href={QUOTE_HREF}
               prefetch={false}
-              aria-label="Request a quote"
+              aria-label="Browse machines"
               className="primary-nav-mobile-fab"
             >
               <Plus size={22} strokeWidth={2.6} aria-hidden="true" />
             </Link>
             <span className="mt-1 text-meta font-semibold leading-none text-muted-foreground">
-              Post RFQ
+              Browse
             </span>
           </li>
 

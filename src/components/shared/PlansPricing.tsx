@@ -76,7 +76,7 @@ export default function PlansPricing() {
               {p.features?.map((f) => (
                 <li key={f}>{f}</li>
               ))}
-              <li>RFQ access: {p.rfqEnabled ? 'Included' : 'Not included'}</li>
+              <li>{p.hiddenPriceAllowed ? 'Hidden-price entitlement for eligible paid terms' : 'Fixed-price listings'}</li>
             </ul>
             {current === p.id && (
               <p className="font-semibold text-secondary">Current plan</p>

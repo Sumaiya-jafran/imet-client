@@ -1,24 +1,18 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth/options';
-import { authService } from '@/lib/api/auth.service';
-export default async function Layout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const session = await getServerSession(authOptions);
-  if (!session?.accessToken) return null;
-  const response = await authService.me(session.accessToken);
-  if (
-    !response.data?.roles.some((r) =>
-      [
-        'LOCAL_SUPPLIER',
-        'INTERNATIONAL_MANUFACTURER',
-        'INDEPENDENT_SELLER',
-        'SALES_PERSON',
-      ].includes(r),
-    )
-  )
-    return <h1>Access restricted for this workspace</h1>;
-  return children;
+import Link from 'next/link';
+export default function Layout() {
+  return (
+    <section className="surface space-y-4 p-6">
+      <h1 className="text-page font-bold">RFQ workflow retired</h1>
+      <p className="text-muted">
+        Contact suppliers directly from their machinery listings. Historical RFQ
+        records are preserved in the database and authorized read-only APIs.
+      </p>
+      <Link
+        href="/machinery"
+        className="font-semibold text-secondary underline"
+      >
+        Browse machinery
+      </Link>
+    </section>
+  );
 }

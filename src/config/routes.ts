@@ -1,6 +1,4 @@
-// Primary call to action used across public pages and dashboards.
-export const QUOTE_HREF = '/dashboard/rfqs/new';
-export const quoteHref = (machineSlug?: string) =>
-  machineSlug
-    ? `${QUOTE_HREF}?${new URLSearchParams({ machine: machineSlug })}`
-    : QUOTE_HREF;
+// Compatibility aliases for retired RFQ callers; direct buyers to the catalogue.
+export const QUOTE_HREF = '/machinery';
+export const quoteHref = (slug?: string) =>
+  slug ? `/machinery/${encodeURIComponent(slug)}#contact-supplier` : QUOTE_HREF;

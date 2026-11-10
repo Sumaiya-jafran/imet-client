@@ -8,7 +8,7 @@ const columns = [
     links: [
       { href: '/machinery', label: 'Browse machinery' },
       { href: '/suppliers', label: 'Find suppliers' },
-      { href: QUOTE_HREF, label: 'Request a quote' },
+      { href: QUOTE_HREF, label: 'Browse machines' },
       { href: '/#how-it-works', label: 'How it works' },
     ],
   },

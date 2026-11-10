@@ -1,4 +1,5 @@
 'use client';
+import { formatMachinePrice } from '@/lib/money';
 import { supplierApi, supplierCatalogueApi } from '@/lib/api/supplier.service';
 import type { SupplierProfile } from '@/types/supplier';
 import { catalogueImagesApi } from '@/lib/api/catalogue-images.service';
@@ -6,7 +7,7 @@ import CatalogueImagePreview from '@/components/shared/CatalogueImagePreview';
 import { ApiError } from '@/lib/api/client';
 import type { FieldPath } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '@/components/buttons/Button';
 import {
@@ -34,6 +35,7 @@ export default function MachineForm({
   supplierMode?: boolean;
 }) {
   const [error, setError] = useState('');
+  const [hiddenAllowed, setHiddenAllowed] = useState(!supplierMode);
   const [limits, setLimits] = useState({
     images: supplierMode ? 0 : 20,
     specifications: supplierMode ? 0 : 100,
@@ -48,14 +50,18 @@ export default function MachineForm({
           (t) =>
             t.isCurrent &&
             t.effectiveStatus === 'ACTIVE' &&
-            response.data?.status === 'APPROVED' &&
-            t.supplierType === response.data.type,
+            ['APPROVED', 'PENDING'].includes(response.data?.status ?? '') &&
+            t.supplierType === response.data?.type,
         );
-        if (active)
+        if (active) {
+          setHiddenAllowed(
+            !!term?.hiddenPriceAllowed && Number(term.price) > 0,
+          );
           setLimits({
             images: term?.imageLimit ?? 0,
             specifications: term?.specificationLimit ?? 0,
           });
+        }
       })
       .catch(() => {
         if (active)
@@ -97,7 +103,6 @@ export default function MachineForm({
         .adminList(
           token,
           new URLSearchParams({
-            status: 'APPROVED',
             q: supplierQuery,
             limit: '100',
           }),
@@ -124,6 +129,7 @@ export default function MachineForm({
     control,
     handleSubmit,
     getValues,
+    setValue,
     setError: setFieldError,
     formState: { errors, isSubmitting },
   } = useForm<MachineInput>({
@@ -137,6 +143,16 @@ export default function MachineForm({
           model: machine.model,
           categoryId: machine.categoryId,
           status: machine.status,
+          condition: machine.condition ?? 'NEW',
+          manufacturingYear: machine.manufacturingYear ?? null,
+          countryOfOrigin: machine.countryOfOrigin ?? null,
+          pricingMode: machine.pricingMode ?? 'FIXED_PRICE',
+          price: machine.price ?? null,
+          currency: machine.currency ?? null,
+          minimumOrderQuantity: machine.minimumOrderQuantity ?? 1,
+          warranty: machine.warranty ?? null,
+          availability: machine.availability ?? 'IN_STOCK',
+          negotiable: machine.negotiable ?? false,
           images: machine.images,
           specifications: machine.specifications,
         }
@@ -148,10 +164,22 @@ export default function MachineForm({
           model: '',
           categoryId: '',
           status: 'DRAFT',
+          condition: 'NEW',
+          manufacturingYear: null,
+          countryOfOrigin: null,
+          pricingMode: 'FIXED_PRICE',
+          price: null,
+          currency: null,
+          minimumOrderQuantity: 1,
+          warranty: null,
+          availability: 'IN_STOCK',
+          negotiable: false,
           images: [],
           specifications: [],
         },
   });
+  const preview = useWatch({ control });
+  const pricingMode = useWatch({ control, name: 'pricingMode' });
   const images = useFieldArray({ control, name: 'images' });
   const specs = useFieldArray({ control, name: 'specifications' });
   const save = async (data: MachineInput) => {
@@ -229,7 +257,7 @@ export default function MachineForm({
       setError('Choose a JPEG or PNG image up to 10 MB.');
       return;
     }
-    if (images.fields.length >= limits.images) {
+    if (getValues('images').length >= limits.images) {
       setError(`Your current image limit is ${limits.images}.`);
       return;
     }
@@ -298,9 +326,10 @@ export default function MachineForm({
         {machine ? 'Edit machine' : 'Create machine'}
       </h2>
       <p className="my-3 text-nav text-secondary">
-        Drafts are private and can be used to archive a listing. Published
-        listings appear publicly only when their owner and subscription are
-        eligible. Image and specification rows appear in the order shown.
+        Drafts and archived listings are private. Archived listings release
+        active listing capacity. Published listings appear publicly only when
+        their owner and subscription are eligible. Image and specification rows
+        appear in the order shown.
       </p>
       {supplierMode && (
         <p className="mb-3 text-nav text-secondary">
@@ -308,6 +337,41 @@ export default function MachineForm({
           specifications per listing. Subscription eligibility is checked again
           when saving.
         </p>
+      )}
+      {(
+        [
+          'condition',
+          'manufacturingYear',
+          'countryOfOrigin',
+          'pricingMode',
+          'price',
+          'currency',
+          'minimumOrderQuantity',
+          'availability',
+          'warranty',
+        ] as const
+      ).some((key) => errors[key]) && (
+        <ul role="alert" className="mb-4 list-disc pl-5 text-danger-foreground">
+          {(
+            [
+              'condition',
+              'manufacturingYear',
+              'countryOfOrigin',
+              'pricingMode',
+              'price',
+              'currency',
+              'minimumOrderQuantity',
+              'availability',
+              'warranty',
+            ] as const
+          ).map((key) =>
+            errors[key]?.message ? (
+              <li key={key}>
+                {key}: {errors[key]?.message}
+              </li>
+            ) : null,
+          )}
+        </ul>
       )}
       {error && (
         <p role="alert" className="mb-4 text-danger-foreground">
@@ -378,6 +442,23 @@ export default function MachineForm({
               <input
                 id={`machine-${field}`}
                 {...register(field)}
+                readOnly={field === 'slug' && supplierMode && !!machine}
+                onBlur={
+                  field === 'name' && !machine
+                    ? () => {
+                        if (!getValues('slug'))
+                          setValue(
+                            'slug',
+                            getValues('name')
+                              .toLowerCase()
+                              .normalize('NFKD')
+                              .replace(/[^a-z0-9]+/g, '-')
+                              .replace(/^-|-$/g, '')
+                              .slice(0, 220),
+                          );
+                      }
+                    : undefined
+                }
                 className={input}
                 aria-invalid={!!errors[field]}
                 aria-describedby={
@@ -457,10 +538,154 @@ export default function MachineForm({
               {...register('status')}
               className={input}
             >
-              <option value="DRAFT">Draft / archived (private)</option>
+              <option value="DRAFT">Draft (private)</option>
+              <option value="ARCHIVED">Archived (private)</option>
               <option value="PUBLISHED">Published</option>
             </select>
           </div>
+          <label>
+            Condition
+            <select {...register('condition')} className={input}>
+              <option value="NEW">New</option>
+              <option value="USED">Used</option>
+              <option value="REFURBISHED">Refurbished</option>
+            </select>
+          </label>
+          <label>
+            Manufacturing year
+            <input
+              type="number"
+              {...register('manufacturingYear', {
+                setValueAs: (v) => (v === '' || v == null ? null : Number(v)),
+              })}
+              className={input}
+            />
+            {errors.manufacturingYear && (
+              <span role="alert">{errors.manufacturingYear.message}</span>
+            )}
+          </label>
+          <label>
+            Country of origin
+            <input
+              {...register('countryOfOrigin', {
+                setValueAs: (v) => (v === '' ? null : v),
+              })}
+              className={input}
+            />
+          </label>
+          <label>
+            Pricing mode
+            <select
+              {...register('pricingMode')}
+              onChange={(e) => {
+                setValue(
+                  'pricingMode',
+                  e.target.value as 'FIXED_PRICE' | 'CONTACT_FOR_PRICE',
+                );
+                if (supplierMode && e.target.value === 'CONTACT_FOR_PRICE') {
+                  setValue('price', null);
+                  setValue('currency', null);
+                }
+              }}
+              className={input}
+            >
+              <option value="FIXED_PRICE">Fixed price</option>
+              <option value="CONTACT_FOR_PRICE" disabled={!hiddenAllowed}>
+                Contact for Price
+              </option>
+            </select>
+            {!hiddenAllowed && (
+              <p className="text-meta text-muted">
+                A paid plan with hidden-price permission is required for Contact
+                for Price.
+              </p>
+            )}
+          </label>
+          {(pricingMode !== 'CONTACT_FOR_PRICE' || !supplierMode) && (
+            <>
+              <label>
+                {pricingMode === 'CONTACT_FOR_PRICE'
+                  ? 'Internal price (admin only)'
+                  : 'Price'}
+                <input
+                  inputMode="decimal"
+                  {...register('price', {
+                    setValueAs: (v) => (v === '' ? null : v),
+                  })}
+                  className={input}
+                />
+                {errors.price && (
+                  <span role="alert">{errors.price.message}</span>
+                )}
+              </label>
+              <label>
+                Currency (ISO code)
+                <input
+                  maxLength={3}
+                  {...register('currency', {
+                    setValueAs: (v) =>
+                      v === '' ? null : String(v).toUpperCase(),
+                  })}
+                  className={input}
+                />
+                {errors.currency && (
+                  <span role="alert">{errors.currency.message}</span>
+                )}
+              </label>
+            </>
+          )}
+          <label>
+            Minimum order quantity
+            <input
+              type="number"
+              {...register('minimumOrderQuantity', { valueAsNumber: true })}
+              className={input}
+            />
+          </label>
+          <label>
+            Availability
+            <select {...register('availability')} className={input}>
+              <option value="IN_STOCK">In stock</option>
+              <option value="MADE_TO_ORDER">Made to order</option>
+              <option value="OUT_OF_STOCK">Out of stock</option>
+            </select>
+          </label>
+          <label>
+            Warranty information
+            <textarea
+              {...register('warranty', {
+                setValueAs: (v) => (v === '' ? null : v),
+              })}
+              className={input}
+            />
+          </label>
+          <label>
+            <input type="checkbox" {...register('negotiable')} /> Price
+            negotiable
+          </label>
+          <details className="rounded border border-border p-4 md:col-span-2">
+            <summary className="cursor-pointer font-semibold">
+              Preview listing before publishing
+            </summary>
+            <h3 className="mt-3 text-card font-semibold">
+              {preview.name || 'Untitled machine'}
+            </h3>
+            <p>
+              {preview.manufacturer} · {preview.model} · {preview.condition}
+            </p>
+            <p className="my-3 font-semibold">
+              {pricingMode === 'CONTACT_FOR_PRICE'
+                ? 'Contact for Price'
+                : formatMachinePrice(preview.price, preview.currency)}
+            </p>
+            <p className="whitespace-pre-wrap break-words">
+              {preview.description}
+            </p>
+            <p className="mt-2 text-meta">
+              This is a private form preview, not a published page. The first
+              image below is the cover image.
+            </p>
+          </details>
           <section
             aria-label="Machine images"
             className="border-t border-border pt-5 md:col-span-2"
@@ -482,15 +707,18 @@ export default function MachineForm({
                 <input
                   id="machine-image-file"
                   type="file"
+                  multiple
                   accept="image/jpeg,image/png"
                   disabled={
                     storage !== 'ready' || images.fields.length >= limits.images
                   }
                   className="mt-3 block w-full text-nav"
                   onChange={(event) => {
-                    const file = event.target.files?.[0];
+                    const files = Array.from(event.target.files ?? []);
                     event.target.value = '';
-                    void uploadImage(file);
+                    void (async () => {
+                      for (const file of files) await uploadImage(file);
+                    })();
                   }}
                 />
                 {uploading && (
@@ -539,6 +767,9 @@ export default function MachineForm({
                 key={field.id}
                 className="my-3 rounded-lg border border-border bg-background/60 p-4"
               >
+                <p className="mb-2 text-meta font-semibold">
+                  {index === 0 ? 'Cover image' : `Image ${index + 1}`}
+                </p>
                 {field.assetId && (
                   <CatalogueImagePreview
                     supplierMode={supplierMode}
@@ -589,6 +820,13 @@ export default function MachineForm({
                   </p>
                 )}
                 <div className="mt-3 flex flex-wrap gap-3">
+                  <Button
+                    variant="secondary"
+                    disabled={index === 0}
+                    onClick={() => images.move(index, 0)}
+                  >
+                    Set as cover
+                  </Button>
                   <Button
                     variant="secondary"
                     disabled={index === 0}

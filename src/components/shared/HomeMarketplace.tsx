@@ -415,12 +415,9 @@ export async function HomePlans() {
                 p.canPublishMachinery
                   ? 'Machinery publication included'
                   : 'Machinery publication not included',
-                p.rfqEnabled
-                  ? `${p.leadLimitPerMonth === null ? 'Unlimited' : p.leadLimitPerMonth} eligible leads per month`
-                  : 'RFQ responses not included',
-                p.canRevealContacts
-                  ? 'Contact reveal permission, subject to RFQ rules'
-                  : 'Private contact reveal not included',
+                p.hiddenPriceAllowed
+                  ? 'Contact for Price available on eligible paid subscriptions'
+                  : 'Fixed-price listings',
                 `${p.visibility === 'HIDDEN' ? 'Hidden' : featured ? 'Featured' : 'Standard'} marketplace visibility`,
               ];
               return (
