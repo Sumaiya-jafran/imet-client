@@ -112,17 +112,13 @@ export default function SupplierOnboarding({
               <h2 className="font-semibold">{data.supplier.companyName}</h2>
               <p className="mt-1 text-nav text-secondary">
                 {supplierTypeLabels[data.supplier.type]} ·{' '}
-                {active ? 'Active subscription' : 'Activation pending'}
+                {data.supplier.status === 'APPROVED'
+                  ? 'Supplier account created'
+                  : data.supplier.status}{' '}
+                · {active ? 'Active subscription' : 'Subscription inactive'}
               </p>
             </div>
-            {data.supplier.status === 'PENDING' && (
-              <p className="mt-3 text-nav">
-                Your account activation and storefront review are separate. An
-                administrator reviews your supplier profile before public
-                listings can be published.
-              </p>
-            )}
-            {data.supplier.status === 'PENDING' && (
+            {['PENDING', 'APPROVED'].includes(data.supplier.status) && (
               <Button
                 variant="secondary"
                 onClick={() => setEdit((v) => !v)}
@@ -214,7 +210,6 @@ export default function SupplierOnboarding({
               </p>
               <p>
                 Machinery usage: {data.usage.machinery} / {active.listingLimit}.
-
               </p>
               <Link
                 href="/plans"

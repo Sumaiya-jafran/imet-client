@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Factory } from 'lucide-react';
-import { QUOTE_HREF } from '@/config/routes';
+import { MACHINERY_HREF } from '@/config/routes';
 
 const columns = [
   {
@@ -8,7 +8,7 @@ const columns = [
     links: [
       { href: '/machinery', label: 'Browse machinery' },
       { href: '/suppliers', label: 'Find suppliers' },
-      { href: QUOTE_HREF, label: 'Browse machines' },
+      { href: MACHINERY_HREF, label: 'Browse machines' },
       { href: '/#how-it-works', label: 'How it works' },
     ],
   },

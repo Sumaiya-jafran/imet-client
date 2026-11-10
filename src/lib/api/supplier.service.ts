@@ -39,7 +39,7 @@ export const supplierApi = {
       headers: headers(token),
       signal: AbortSignal.timeout(10000),
     }),
-  apply: (token: string, body: SupplierProfileInput) =>
+  apply: (token: string, body: SupplierProfileInput & { planId: string }) =>
     request<SupplierProfile>(token, '/supplier/applications', 'POST', body),
   updateOwn: (
     token: string,

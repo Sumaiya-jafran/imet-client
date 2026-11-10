@@ -58,14 +58,12 @@ export function isPrimaryActive(href: string, pathname: string) {
   if (href === '/dashboard/account')
     return (
       pathname.startsWith('/dashboard') &&
-      !/\/(rfqs|leads|service-tickets|service-management)(\/|$)/.test(pathname)
+      !/\/(service-tickets|service-management)(\/|$)/.test(pathname)
     );
   if (/\/(service-tickets|service-management)$/.test(href))
     return /\/dashboard\/(?:admin\/)?(service-tickets|service-management)(\/|$)/.test(
       pathname,
     );
-  if (/\/(rfqs|leads)$/.test(href))
-    return /\/dashboard\/(?:admin\/)?(rfqs|leads)(\/|$)/.test(pathname);
   if (href === '/auth/signin') return pathname.startsWith('/auth/');
   return pathname === href || pathname.startsWith(`${href}/`);
 }

@@ -16,7 +16,11 @@ import {
   supplierRegistrationSchema,
 } from '@/lib/schema-validations/supplier.schema';
 import { supplierApi } from '@/lib/api/supplier.service';
-import type { SupplierProfile, SupplierProfileInput } from '@/types/supplier';
+import type {
+  SupplierProfile,
+  SupplierProfileInput,
+  SubscriptionPlan,
+} from '@/types/supplier';
 const labels = {
   companyName: 'Company name',
   slug: 'Public storefront slug',
@@ -43,8 +47,10 @@ export default function SupplierProfileForm({
   initialPaymentRegion,
   initialSupplierType,
   onPaymentRegionChange,
+  plans = [],
 }: {
   token: string;
+  plans?: SubscriptionPlan[];
   initialSupplierType?: 'LOCAL' | 'INTERNATIONAL';
   initialPaymentRegion?: PaymentRegion;
   onPaymentRegionChange?: (value: PaymentRegion) => void;
@@ -58,6 +64,7 @@ export default function SupplierProfileForm({
     files: SignupCompanyFiles,
   ) => Promise<unknown>;
 }) {
+  const [planId, setPlanId] = useState('');
   const signupUploads = mode === 'application' && !token && !!submitOverride;
   const [selectedFiles, setSelectedFiles] = useState<SignupCompanyFiles>({});
   const [logoPreview, setLogoPreview] = useState('');
@@ -146,7 +153,16 @@ export default function SupplierProfileForm({
         await supplierApi.adminUpdate(token, body, supplier);
       else if (mode === 'owner' && supplier)
         await supplierApi.updateOwn(token, body, supplier);
-      else await supplierApi.apply(token, body);
+      else {
+        if (
+          !plans.some(
+            (plan) =>
+              plan.id === planId && plan.eligibleTypes.includes(body.type),
+          )
+        )
+          throw new Error('Choose an eligible subscription plan first.');
+        await supplierApi.apply(token, { ...body, planId });
+      }
       setPending(new Set());
       onSave();
     } catch (e) {
@@ -181,6 +197,10 @@ export default function SupplierProfileForm({
       setError(e instanceof Error ? e.message : 'Unable to save profile');
     }
   };
+  const companyType = useWatch({ control, name: 'type' });
+  const selectedPlan = plans.find(
+    (plan) => plan.id === planId && plan.eligibleTypes.includes(companyType),
+  );
   const logoId = useWatch({ control, name: 'logoAssetId' });
   const paymentRegion = useWatch({ control, name: 'paymentRegion' });
   const uploadFile = async (
@@ -252,8 +272,43 @@ export default function SupplierProfileForm({
   return (
     <form onSubmit={handleSubmit(save)} noValidate className="space-y-4">
       <h2 className="text-section font-semibold">
-        {mode === 'application' ? 'Supplier application' : 'Company profile'}
+        {mode === 'application' ? 'Create supplier account' : 'Company profile'}
       </h2>
+      {mode === 'application' && token && !submitOverride && (
+        <fieldset className="rounded border border-border p-4">
+          <legend className="font-semibold">
+            Step 1 · Choose your subscription plan
+          </legend>
+          <label htmlFor="supplier-plan" className="block">
+            Subscription plan
+          </label>
+          <select
+            id="supplier-plan"
+            value={selectedPlan?.id ?? ''}
+            onChange={(e) => setPlanId(e.target.value)}
+            className="mt-2 w-full"
+          >
+            <option value="">Choose a plan</option>
+            {plans
+              .filter((plan) => plan.eligibleTypes.includes(companyType))
+              .map((plan) => (
+                <option key={plan.id} value={plan.id}>
+                  {plan.name} · {plan.price} {plan.currency} ·{' '}
+                  {plan.durationDays} days
+                </option>
+              ))}
+          </select>
+          <p className="mt-2 text-nav text-muted">
+            Free plans activate immediately for verified accounts. Paid plans
+            continue to secure checkout. No supplier approval is required.
+          </p>
+          {!plans.length && (
+            <p role="status">
+              No plans are currently available. Please try again later.
+            </p>
+          )}
+        </fieldset>
+      )}
       <p className="text-nav text-secondary">
         Private business contacts, street address and verification documents are
         visible only to you and administrators. Keep public descriptions free of
@@ -612,8 +667,9 @@ export default function SupplierProfileForm({
         </section>
         {mode === 'owner' && (
           <p className="text-nav text-secondary md:col-span-2">
-            Company identity, location, type and documents require administrator
-            changes. Approval and verification are controlled by administrators.
+            Your account does not require approval. Business verification badges
+            and account moderation are managed by administrators; supplier type
+            changes require support.
           </p>
         )}
         <div className="flex flex-wrap gap-3 border-t border-border pt-4 md:col-span-2">
@@ -621,7 +677,7 @@ export default function SupplierProfileForm({
             {isSubmitting
               ? 'Saving…'
               : mode === 'application'
-                ? 'Submit application'
+                ? 'Create supplier account'
                 : 'Save supplier profile'}
           </Button>
           {onCancel && (

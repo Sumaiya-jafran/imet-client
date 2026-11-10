@@ -21,7 +21,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: 'Machinmate',
   description:
-    'Explore industrial machinery, compare local dealers and international manufacturers, and request quotations on Machinmate.',
+    'Explore industrial machinery, compare local dealers and international manufacturers, and contact suppliers directly on Machinmate.',
 };
 export default function RootLayout({
   children,

@@ -52,7 +52,8 @@ export default function PlansPricing() {
       <p>
         Choose the capacity your business needs. Online payments activate
         automatically after verification. Offline payments are recorded and
-        confirmed by administrators. Supplier approval is separate.
+        confirmed by administrators. Supplier accounts do not require admin
+        approval.
       </p>
       {error && <p role="alert">{error}</p>}
       {!plans && !error && <p role="status">Loading plans…</p>}
@@ -76,7 +77,11 @@ export default function PlansPricing() {
               {p.features?.map((f) => (
                 <li key={f}>{f}</li>
               ))}
-              <li>{p.hiddenPriceAllowed ? 'Hidden-price entitlement for eligible paid terms' : 'Fixed-price listings'}</li>
+              <li>
+                {p.hiddenPriceAllowed
+                  ? 'Hidden-price entitlement for eligible paid terms'
+                  : 'Fixed-price listings'}
+              </li>
             </ul>
             {current === p.id && (
               <p className="font-semibold text-secondary">Current plan</p>

@@ -14,20 +14,16 @@ const labels: Record<string, string> = {
   suppliers: 'Supplier profiles',
   supplierTypes: 'Supplier types',
   subscriptions: 'Current subscription terms',
-  rfqs: 'RFQs',
-  opportunities: 'Sales opportunities',
   sales: 'Sale records',
   reviews: 'Reviews',
   service: 'Service tickets',
   warranty: 'Warranty assessments',
-  rfqEmails: 'RFQ email intents',
   serviceEmails: 'Service email intents',
 };
 const activityKeys = [
   'users',
   'machinery',
   'suppliers',
-  'rfqs',
   'sales',
   'reviews',
   'service',
@@ -251,52 +247,54 @@ export default function AnalyticsWorkspace({
                   accounts.
                 </p>
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  {Object.entries(overview.current).map(([key, group]) => (
-                    <section
-                      key={key}
-                      className="surface p-4"
-                      aria-label={labels[key] ?? key}
-                    >
-                      <h2 className="text-nav font-semibold text-secondary">
-                        {labels[key] ?? key}
-                      </h2>
-                      <p className="mt-2 text-page font-semibold tracking-tight text-primary">
-                        {group.total.toLocaleString()}
-                      </p>
-                      <dl className="mt-3 space-y-2 text-meta">
-                        {Object.entries(group.counts)
-                          .sort(([a], [b]) => a.localeCompare(b))
-                          .map(([status, count]) => (
-                            <div
-                              key={status}
-                              className="flex justify-between gap-3"
-                            >
-                              <dt>{humanize(status)}</dt>
-                              <dd className="font-semibold tabular-nums">
-                                {count.toLocaleString()}
-                              </dd>
-                            </div>
-                          ))}
-                      </dl>
-                      {!group.total && (
-                        <p className="mt-3 text-meta text-muted-foreground">
-                          No records yet.
+                  {Object.entries(overview.current)
+                    .filter(([key]) => key in labels)
+                    .map(([key, group]) => (
+                      <section
+                        key={key}
+                        className="surface p-4"
+                        aria-label={labels[key] ?? key}
+                      >
+                        <h2 className="text-nav font-semibold text-secondary">
+                          {labels[key] ?? key}
+                        </h2>
+                        <p className="mt-2 text-page font-semibold tracking-tight text-primary">
+                          {group.total.toLocaleString()}
                         </p>
-                      )}
-                      {key === 'userRoles' && (
-                        <p className="mt-3 text-meta text-muted-foreground">
-                          Accounts may have multiple roles. This total counts
-                          assignments.
-                        </p>
-                      )}
-                      {key.endsWith('Emails') && (
-                        <p className="mt-3 text-meta text-muted-foreground">
-                          Sent means accepted by the email provider, not
-                          confirmed inbox delivery.
-                        </p>
-                      )}
-                    </section>
-                  ))}
+                        <dl className="mt-3 space-y-2 text-meta">
+                          {Object.entries(group.counts)
+                            .sort(([a], [b]) => a.localeCompare(b))
+                            .map(([status, count]) => (
+                              <div
+                                key={status}
+                                className="flex justify-between gap-3"
+                              >
+                                <dt>{humanize(status)}</dt>
+                                <dd className="font-semibold tabular-nums">
+                                  {count.toLocaleString()}
+                                </dd>
+                              </div>
+                            ))}
+                        </dl>
+                        {!group.total && (
+                          <p className="mt-3 text-meta text-muted-foreground">
+                            No records yet.
+                          </p>
+                        )}
+                        {key === 'userRoles' && (
+                          <p className="mt-3 text-meta text-muted-foreground">
+                            Accounts may have multiple roles. This total counts
+                            assignments.
+                          </p>
+                        )}
+                        {key.endsWith('Emails') && (
+                          <p className="mt-3 text-meta text-muted-foreground">
+                            Sent means accepted by the email provider, not
+                            confirmed inbox delivery.
+                          </p>
+                        )}
+                      </section>
+                    ))}
                 </div>
                 <section className="surface min-w-0 p-4">
                   <h2 className="font-semibold">Daily creation activity</h2>

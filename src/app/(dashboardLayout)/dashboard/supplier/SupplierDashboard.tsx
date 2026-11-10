@@ -4,6 +4,7 @@ import LoadingState from '@/components/shared/LoadingState';
 import Badge from '@/components/shared/Badge';
 import PageHeader from '@/components/shared/PageHeader';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Button from '@/components/buttons/Button';
@@ -11,7 +12,8 @@ import SupplierProfileForm from '@/components/forms/SupplierProfileForm';
 import { supplierApi } from '@/lib/api/supplier.service';
 import type { SupplierProfile, SubscriptionPlan } from '@/types/supplier';
 export default function SupplierDashboard() {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
+  const router = useRouter();
   const token = session?.accessToken;
   const [supplier, setSupplier] = useState<SupplierProfile | null>();
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
@@ -84,20 +86,19 @@ export default function SupplierDashboard() {
       )}
       {loading ? (
         <LoadingState label="Loading supplier account…" />
-      ) : !supplier || supplier.status === 'REJECTED' ? (
+      ) : !supplier ? (
         <section className="surface p-5">
-          {supplier?.reviewNote && (
-            <p role="status" className="mb-4">
-              Application rejected: {supplier.reviewNote}. Update your
-              application and resubmit.
-            </p>
-          )}
           <SupplierProfileForm
-            key={supplier?.updatedAt ?? 'new'}
+            key="new"
             token={token}
-            supplier={supplier ?? undefined}
             mode="application"
-            onSave={reload}
+            plans={plans}
+            onSave={() => {
+              void update().then(() => {
+                reload();
+                router.push('/subscription');
+              });
+            }}
           />
         </section>
       ) : (
@@ -105,32 +106,29 @@ export default function SupplierDashboard() {
           <section className="surface p-5">
             <h2 className="text-card font-semibold">{supplier.companyName}</h2>
             <p className="mt-3">
-              Application status:{' '}
+              Account status:{' '}
               <Badge
                 tone={supplier.status === 'APPROVED' ? 'success' : 'neutral'}
               >
-                {supplier.status}
+                {supplier.status === 'APPROVED' ? 'Active' : supplier.status}
               </Badge>
             </p>
             <p>
-              Verification: {supplier.isVerified ? 'Verified' : 'Not verified'}
+              Business badge:{' '}
+              {supplier.isVerified
+                ? 'Verified business'
+                : 'Not issued (optional)'}
             </p>
             <p>
               Marketplace visibility:{' '}
-              {supplier.marketplaceVisible
-                ? 'Enabled by admin'
-                : 'Disabled by admin'}
+              {supplier.marketplaceVisible ? 'Enabled' : 'Restricted by admin'}
             </p>
             {supplier.reviewNote && (
               <p className="my-3">Administrator note: {supplier.reviewNote}</p>
             )}
-            {supplier.status === 'PENDING' && (
-              <p className="mt-3 text-secondary">
-                Your application is awaiting administrator review. Your buyer
-                account remains available.
-              </p>
-            )}
-            {['SUSPENDED', 'INACTIVE'].includes(supplier.status) && (
+            {['SUSPENDED', 'INACTIVE', 'REJECTED'].includes(
+              supplier.status,
+            ) && (
               <p className="mt-3 text-warning-foreground">
                 Your storefront is unavailable and machinery management is
                 restricted. Contact the administrator about the review note.
@@ -210,9 +208,9 @@ export default function SupplierDashboard() {
           <section className="surface p-5">
             <h2 className="text-card font-semibold">Subscriptions</h2>
             <p className="my-3 text-nav text-secondary">
-              An approved account and applicable active subscription are
-              required for supplier listings. Activate through verified
-              SSLCOMMERZ checkout or contact an administrator for a manual term.
+              An active account and applicable active subscription are required
+              for supplier listings. Activate through verified SSLCOMMERZ
+              checkout or contact an administrator for a manual term.
             </p>
             {supplier.subscriptions.length ? (
               supplier.subscriptions.map((term) => (
@@ -220,14 +218,6 @@ export default function SupplierDashboard() {
                   key={term.id}
                   className="my-3 rounded-lg border border-border bg-background/60 p-4 text-nav"
                 >
-                  <p className="text-meta text-muted-foreground">
-                    RFQ leads: {term.rfqEnabled ? 'Enabled' : 'Disabled'} ·
-                    Monthly cap: {term.leadLimitPerMonth ?? 'Unlimited'} ·
-                    Contact reveal:{' '}
-                    {term.canRevealContacts
-                      ? 'Allowed after acceptance'
-                      : 'Disabled'}
-                  </p>
                   <h3 className="font-semibold">
                     {term.planName} ·{' '}
                     {term.isCurrent ? 'Current term' : 'Previous term'}
@@ -257,8 +247,8 @@ export default function SupplierDashboard() {
       <section className="surface p-5">
         <h2 className="text-card font-semibold">Available plans</h2>
         <p className="my-3 text-nav text-secondary">
-          Plan prices are supplier subscription fees. No online payments are
-          collected.
+          Plan prices are supplier subscription fees. Free plans require no
+          payment. Paid plans use the available secure checkout methods.
         </p>
         {plans.map((plan) => (
           <article

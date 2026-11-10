@@ -3,27 +3,19 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { salesApi } from '@/lib/api/sales.service';
-import type { PipelineResult, SalesHistory } from '@/types/sales';
+import type { SalesHistory } from '@/types/sales';
 import Button from '@/components/buttons/Button';
 import PageHeader from './PageHeader';
 import Badge from './Badge';
 import LoadingState from './LoadingState';
 import EmptyState from './EmptyState';
-const stages = [
-  'NEW',
-  'QUALIFIED',
-  'QUOTED',
-  'NEGOTIATION',
-  'WON',
-  'LOST',
-] as const;
 const localDate = (value: string) => {
   const date = new Date(value);
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 };
 export default function SalesWorkspace({
   admin = false,
-  records = false,
+
   buyer = false,
 }: {
   admin?: boolean;
@@ -33,7 +25,6 @@ export default function SalesWorkspace({
   const { data: session } = useSession();
   const token = session?.accessToken;
   const [query, setQuery] = useState(new URLSearchParams());
-  const [pipeline, setPipeline] = useState<PipelineResult | null>(null);
   const [history, setHistory] = useState<SalesHistory | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -43,14 +34,11 @@ export default function SalesWorkspace({
     let active = true;
     const q = new URLSearchParams(query);
     if (buyer) q.set('view', 'buyer');
-    const request = records
-      ? salesApi.history(token, q, admin)
-      : salesApi.pipeline(token, q, admin);
+    const request = salesApi.history(token, q, admin);
     request
       .then((r) => {
         if (!active) return;
-        if (records) setHistory(r.data as SalesHistory);
-        else setPipeline(r.data as PipelineResult);
+        setHistory(r.data as SalesHistory);
         setError('');
         setLoading(false);
       })
@@ -65,9 +53,9 @@ export default function SalesWorkspace({
     return () => {
       active = false;
     };
-  }, [token, query, records, buyer, admin, revision]);
+  }, [token, query, buyer, admin, revision]);
   const base = admin ? '/dashboard/admin/sales' : '/dashboard/sales';
-  const pagination = records ? history?.pagination : pipeline?.pagination;
+  const pagination = history?.pagination;
   const apply = (q: URLSearchParams) => {
     setQuery(q);
     setLoading(true);
@@ -82,61 +70,9 @@ export default function SalesWorkspace({
               ? 'Buyer workspace'
               : 'Sales workspace'
         }
-        title={
-          buyer
-            ? 'My purchases'
-            : records
-              ? 'Sales history'
-              : admin
-                ? 'Sales oversight'
-                : 'Sales pipeline'
-        }
-        description={
-          buyer
-            ? 'Accepted quotations recorded as sales. No online payment is collected.'
-            : records
-              ? 'Track recorded, completed and cancelled sales.'
-              : 'Manage your assigned opportunities from qualification to accepted quotation.'
-        }
-        actions={
-          !buyer ? (
-            <Link
-              className="secondary-link"
-              href={records ? base : `${base}/history`}
-            >
-              {records ? 'Sales pipeline' : 'Sales history'}
-            </Link>
-          ) : undefined
-        }
+        title={buyer ? 'My purchases' : 'Sales history'}
+        description="View historical recorded, completed and cancelled purchases."
       />
-      {!records && pipeline && (
-        <section
-          aria-label="Pipeline stages"
-          className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6"
-        >
-          {stages.map((stage) => (
-            <button
-              type="button"
-              key={stage}
-              aria-pressed={query.get('stage') === stage}
-              className={`surface p-4 text-left hover:border-accent/40 ${query.get('stage') === stage ? 'border-accent/50 bg-accent/5' : ''}`}
-              onClick={() => {
-                const q = new URLSearchParams(query);
-                q.set('stage', stage);
-                q.delete('page');
-                apply(q);
-              }}
-            >
-              <span className="text-meta font-semibold tracking-wide text-muted-foreground">
-                {stage}
-              </span>
-              <span className="mt-2 block text-section font-semibold">
-                {pipeline.counts[stage] ?? 0}
-              </span>
-            </button>
-          ))}
-        </section>
-      )}
       <form
         key={query.toString()}
         onSubmit={(e) => {
@@ -159,28 +95,26 @@ export default function SalesWorkspace({
         className="filter-bar grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-4"
       >
         <label>
-          Search RFQs
+          Search historical purchases
           <input
             name="q"
             maxLength={100}
             className="mt-1 w-full"
-            placeholder="Title or RFQ number"
+            placeholder="Historical title or reference"
             defaultValue={query.get('q') ?? ''}
           />
         </label>
         <label>
-          {records ? 'Sale status' : 'Sales stage'}
+          Sale status
           <select
-            name={records ? 'status' : 'stage'}
+            name="status"
             className="mt-1 w-full"
-            defaultValue={query.get(records ? 'status' : 'stage') ?? ''}
+            defaultValue={query.get('status') ?? ''}
           >
-            <option value="">All {records ? 'statuses' : 'stages'}</option>
-            {(records ? ['RECORDED', 'COMPLETED', 'CANCELLED'] : stages).map(
-              (s) => (
-                <option key={s}>{s}</option>
-              ),
-            )}
+            <option value="">All statuses</option>
+            {['RECORDED', 'COMPLETED', 'CANCELLED'].map((s) => (
+              <option key={s}>{s}</option>
+            ))}
           </select>
         </label>
         <label>
@@ -255,122 +189,60 @@ export default function SalesWorkspace({
         !error && (
           <>
             <p className="text-meta text-muted-foreground">
-              {pagination?.total ?? 0}{' '}
-              {records ? 'sale records' : 'opportunities'}
+              {pagination?.total ?? 0} sale records
             </p>
             <div className="space-y-3">
-              {!records &&
-                pipeline?.opportunities.map((o) => (
-                  <article
-                    key={o.id}
-                    className="surface flex flex-wrap items-center justify-between gap-4 p-5"
-                  >
-                    <div className="min-w-0">
-                      <p className="eyebrow">{o.rfq.rfqNumber}</p>
-                      <h2 className="mt-1 break-words font-semibold">
-                        {o.rfq.title}
-                      </h2>
-                      <p className="mt-2 break-words text-meta text-muted-foreground">
-                        {o.rfq.buyer.displayName} · {o.rfq.quantity}{' '}
-                        {o.rfq.unit} · Updated{' '}
-                        {new Date(o.updatedAt).toLocaleDateString()}
-                      </p>
-                      {o.rfq.machine && (
-                        <p className="mt-1 break-words text-meta text-muted-foreground">
-                          Machinery · {o.rfq.machine.name}
-                        </p>
-                      )}
-                      {admin && (
-                        <p className="mt-1 text-meta">
-                          Assigned to {o.ownerName}
-                        </p>
-                      )}
-                      {o.assignmentRemoved && (
-                        <p className="mt-1 text-meta text-warning-foreground">
-                          Assignment removed · History retained
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Badge
-                        tone={
-                          o.stage === 'WON'
-                            ? 'success'
-                            : o.stage === 'LOST'
-                              ? 'warning'
-                              : 'neutral'
-                        }
-                      >
-                        {o.stage}
-                      </Badge>
-                      <Link
-                        prefetch={false}
-                        className="secondary-link"
-                        href={`${base}/${o.id}`}
-                      >
-                        Open opportunity
-                      </Link>
-                    </div>
-                  </article>
-                ))}
-              {records &&
-                history?.records.map((s) => (
-                  <article
-                    key={s.id}
-                    className="surface flex flex-wrap items-center justify-between gap-4 p-5"
-                  >
-                    <div className="min-w-0">
-                      <p className="eyebrow">{s.rfq.rfqNumber}</p>
-                      <h2 className="mt-1 break-words font-semibold">
-                        {s.rfq.title}
-                      </h2>
-                      <p className="mt-2 break-words text-meta text-muted-foreground">
-                        {s.sellerName} · {s.rfq.quantity} {s.rfq.unit}
-                      </p>
-                      <p className="mt-2 break-words font-semibold">
-                        {s.totalAmount} {s.quote.currency}
-                        <span className="ml-2 text-meta font-normal text-muted-foreground">
-                          Quoted total
-                        </span>
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Badge
-                        tone={
-                          s.status === 'COMPLETED'
-                            ? 'success'
-                            : s.status === 'CANCELLED'
-                              ? 'warning'
-                              : 'neutral'
-                        }
-                      >
-                        {s.status}
-                      </Badge>
-                      <Link
-                        prefetch={false}
-                        className="secondary-link"
-                        href={
-                          buyer
-                            ? `/dashboard/purchases/${s.id}`
-                            : `${base}/history/${s.id}`
-                        }
-                      >
-                        View sale
-                      </Link>
-                    </div>
-                  </article>
-                ))}
+              {history?.records.map((s) => (
+                <article
+                  key={s.id}
+                  className="surface flex flex-wrap items-center justify-between gap-4 p-5"
+                >
+                  <div className="min-w-0">
+                    <p className="eyebrow">{s.rfq.rfqNumber}</p>
+                    <h2 className="mt-1 break-words font-semibold">
+                      {s.rfq.title}
+                    </h2>
+                    <p className="mt-2 break-words text-meta text-muted-foreground">
+                      {s.sellerName} · {s.rfq.quantity} {s.rfq.unit}
+                    </p>
+                    <p className="mt-2 break-words font-semibold">
+                      {s.totalAmount} {s.quote.currency}
+                      <span className="ml-2 text-meta font-normal text-muted-foreground">
+                        Quoted total
+                      </span>
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Badge
+                      tone={
+                        s.status === 'COMPLETED'
+                          ? 'success'
+                          : s.status === 'CANCELLED'
+                            ? 'warning'
+                            : 'neutral'
+                      }
+                    >
+                      {s.status}
+                    </Badge>
+                    <Link
+                      prefetch={false}
+                      className="secondary-link"
+                      href={
+                        buyer
+                          ? `/dashboard/purchases/${s.id}`
+                          : `${base}/history/${s.id}`
+                      }
+                    >
+                      View sale
+                    </Link>
+                  </div>
+                </article>
+              ))}
             </div>
             {pagination?.total === 0 && (
               <EmptyState
-                title={
-                  records ? 'No sale records found' : 'No opportunities found'
-                }
-                description={
-                  records
-                    ? 'An accepted quote can be recorded by its seller or an administrator.'
-                    : 'Eligible M5 leads appear here automatically. Try clearing filters or review your leads inbox.'
-                }
+                title="No historical sale records found"
+                description="Existing purchase records appear here."
               />
             )}{' '}
             {pagination && pagination.total > 0 && (

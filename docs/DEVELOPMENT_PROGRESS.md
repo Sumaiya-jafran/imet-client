@@ -66,3 +66,74 @@ Deployment: review backend migration and authoritative ownership before release;
 - `tests/primary-nav.test.mjs`
 
 Final confirmation: all 80 targeted backend tests also passed in one combined run on the final migration/schema. Final Chromium run passed, including real Redis contact retry deduplication and HTTP 429 on the eleventh enquiry request. The full legacy backend suite remains a separately reported FAIL (completed run: 167 total, 147 passed, 19 failed, 1 skipped); it must not be described as green.
+
+
+## Current policy — supplier self-service and complete RFQ retirement (2026-11-10)
+
+This supersedes older supplier approval instructions above. New supplier accounts do not require administrator approval. Email-verified Free accounts activate without payment; paid subscriptions activate through existing authoritative payment verification. Manual payment proofs still require financial verification. Business badges remain optional and separate from eligibility. Admin suspension, restriction and account moderation remain enforced.
+
+Audit confirmed the public signup already selected a plan first, but the signed-in buyer conversion form did not select/save one, and backend supplier defaults left accounts in PENDING with marketplace visibility disabled after subscription activation. The shared supplier form now begins with an eligible database-driven plan selector, submits planId atomically with company details, refreshes session roles and continues to /subscription. Public signup keeps its existing plan-first journey. Free forms do not show payment methods; paid forms defer checkout to the supported existing payment flow. Profile/onboarding/dashboard/pricing copy no longer requires supplier approval. Admin UI now presents moderation and optional badge controls instead of an application queue.
+
+RFQ, quote and lead route trees/forms/list/detail/API client/validation, pipeline routes/actions, dead RFQ links, plan lead controls/counters, homepage request-sheet marketing and quotation CTAs were removed. Old pages return 404. Generic catalogue links now use MACHINERY_HREF/machineContactHref instead of quote identifiers. Historical purchase pages remain read-only and keep completed-purchase review and service links. Their minimal historical reference types and admin audit history remain; no fake chat or new request workflow was introduced.
+
+Backend migration: 20261110170000_supplier_self_service. It changes supplier defaults, releases existing PENDING profiles, preserves explicit restrictions/badges, grants only supplier roles to active verified eligible users and suppresses unfinished RFQ email intents. RFQ data/relationships are preserved. Protected supplier-status checks, M3 entitlement snapshots and M4 price privacy remain authoritative. See the companion backend DEVELOPMENT_PROGRESS.md for the complete API/migration/security audit.
+
+Deployment: review/apply the new Prisma migration; do NOT reset data. Deploy client/API together. Stop old RFQ workers, run the replacement npm run worker:notifications:prod for existing service notifications, and restart existing email/subscription workers. No new environment variables or gateways were added. Paid checkout still requires actual configured provider credentials; this change does not invent a successful payment.
+
+Validation so far: targeted backend regressions 62 PASS; frontend Node tests 6 PASS. Chromium executed real email/password login, Free and paid plan selection before company details, Free activation without payment, paid pending subscription, removed page 404s and homepage CTA retirement. External gateway calls/storage were mocked where applicable; live Google, merchant sandbox, Cloudinary, YouTube and email delivery were not executed. Final lint/type/build/browser status is recorded below.
+
+Final validation: **PASS** — 62 targeted backend tests, 6 frontend tests, real Chromium Free/paid supplier journeys with loaded content at desktop/tablet/mobile sizes, both repositories' ESLint/TypeScript checks and production builds. The complete legacy backend suite was NOT RUN for this revision; prior full-suite failures are not represented as fixed or green. Old approval/RFQ end-to-end expectations describe retired policy. No production migration or live external provider test was executed. New migration and replacement notification-worker command are required for deployment.
+
+### Files changed in this follow-up
+
+- `docs/DEVELOPMENT_PROGRESS.md`
+- `src/app/(dashboardLayout)/dashboard/admin/leads/layout.tsx`
+- `src/app/(dashboardLayout)/dashboard/admin/leads/page.tsx`
+- `src/app/(dashboardLayout)/dashboard/admin/rfqs/[id]/page.tsx`
+- `src/app/(dashboardLayout)/dashboard/admin/rfqs/layout.tsx`
+- `src/app/(dashboardLayout)/dashboard/admin/rfqs/page.tsx`
+- `src/app/(dashboardLayout)/dashboard/admin/sales/[id]/page.tsx`
+- `src/app/(dashboardLayout)/dashboard/admin/sales/page.tsx`
+- `src/app/(dashboardLayout)/dashboard/admin/subscriptions/PlanManagement.tsx`
+- `src/app/(dashboardLayout)/dashboard/admin/suppliers/SupplierManagement.tsx`
+- `src/app/(dashboardLayout)/dashboard/leads/[id]/page.tsx`
+- `src/app/(dashboardLayout)/dashboard/leads/layout.tsx`
+- `src/app/(dashboardLayout)/dashboard/leads/page.tsx`
+- `src/app/(dashboardLayout)/dashboard/quotes/layout.tsx`
+- `src/app/(dashboardLayout)/dashboard/quotes/page.tsx`
+- `src/app/(dashboardLayout)/dashboard/rfqs/RfqListPanel.tsx`
+- `src/app/(dashboardLayout)/dashboard/rfqs/[id]/page.tsx`
+- `src/app/(dashboardLayout)/dashboard/rfqs/layout.tsx`
+- `src/app/(dashboardLayout)/dashboard/rfqs/new/page.tsx`
+- `src/app/(dashboardLayout)/dashboard/rfqs/page.tsx`
+- `src/app/(dashboardLayout)/dashboard/sales/[id]/page.tsx`
+- `src/app/(dashboardLayout)/dashboard/sales/page.tsx`
+- `src/app/(dashboardLayout)/dashboard/supplier/SupplierDashboard.tsx`
+- `src/app/(home)/page.tsx`
+- `src/app/layout.tsx`
+- `src/components/forms/RecordOfflinePayment.tsx`
+- `src/components/forms/RfqForm.tsx`
+- `src/components/forms/RfqQuoteForm.tsx`
+- `src/components/forms/SubscriptionPlanForm.tsx`
+- `src/components/forms/SupplierProfileForm.tsx`
+- `src/components/forms/SupplierSignup.tsx`
+- `src/components/forms/SupplierSubscriptionForm.tsx`
+- `src/components/shared/AnalyticsWorkspace.tsx`
+- `src/components/shared/DashboardShell.tsx`
+- `src/components/shared/Footer.tsx`
+- `src/components/shared/Header.tsx`
+- `src/components/shared/PlansPricing.tsx`
+- `src/components/shared/PrimaryNavigation.tsx`
+- `src/components/shared/RfqDetailPanel.tsx`
+- `src/components/shared/SaleRecordPanel.tsx`
+- `src/components/shared/SalesOpportunityPanel.tsx`
+- `src/components/shared/SalesWorkspace.tsx`
+- `src/components/shared/SupplierOnboarding.tsx`
+- `src/config/dashboard-nav.ts`
+- `src/config/primary-nav.ts`
+- `src/config/routes.ts`
+- `src/lib/api/rfq.service.ts`
+- `src/lib/api/sales.service.ts`
+- `src/lib/api/supplier.service.ts`
+- `src/lib/schema-validations/rfq.schema.ts`
+- `src/types/rfq.ts`

@@ -15,7 +15,7 @@ import PrimaryNavigation from './PrimaryNavigation';
 import LanguageSelector from './LanguageSelector';
 import type { CurrentUser } from '@/types/auth';
 import { findActive, navGroups } from '@/config/dashboard-nav';
-import { QUOTE_HREF } from '@/config/routes';
+import { MACHINERY_HREF } from '@/config/routes';
 import { cn } from '@/lib/utils';
 
 export default function DashboardShell({
@@ -190,18 +190,16 @@ export default function DashboardShell({
               </p>
             </div>
             <div className="ml-auto flex min-w-0 items-center gap-3">
-              {/* Hidden on RFQ pages, which carry their own "Browse machines" action. */}
-              {user.roles.includes('BUYER') &&
-                !pathname.startsWith('/dashboard/rfqs') && (
-                  <Link
-                    prefetch={false}
-                    href={QUOTE_HREF}
-                    className="hidden min-h-10 items-center gap-2 rounded bg-accent px-4 text-meta font-semibold text-foreground hover:bg-accent-hover sm:inline-flex"
-                  >
-                    Browse machines
-                    <ArrowUpRight size={15} aria-hidden="true" />
-                  </Link>
-                )}
+              {user.roles.includes('BUYER') && (
+                <Link
+                  prefetch={false}
+                  href={MACHINERY_HREF}
+                  className="hidden min-h-10 items-center gap-2 rounded bg-accent px-4 text-meta font-semibold text-foreground hover:bg-accent-hover sm:inline-flex"
+                >
+                  Browse machines
+                  <ArrowUpRight size={15} aria-hidden="true" />
+                </Link>
+              )}
               <div className="hidden md:block">
                 <LanguageSelector />
               </div>

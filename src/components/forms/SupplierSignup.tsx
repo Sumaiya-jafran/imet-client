@@ -136,8 +136,9 @@ export default function SupplierSignup({
               Build your marketplace presence
             </h1>
             <p className="mt-2 text-nav text-secondary">
-              Company details → verify email → account active on a free plan, or
-              complete payment on a paid plan. Buyers never need a plan.
+              Choose a plan → company details → verify email → account active on
+              a free plan, or complete payment on a paid plan. Buyers never need
+              a plan.
             </p>
           </header>
           {error && (

@@ -4,7 +4,7 @@ import {
   primaryLinks,
   type PrimaryLink,
 } from '@/config/primary-nav';
-import { QUOTE_HREF } from '@/config/routes';
+import { MACHINERY_HREF } from '@/config/routes';
 import { cn } from '@/lib/utils';
 import type { UserRole } from '@/types/auth';
 import {
@@ -160,7 +160,7 @@ export default function PrimaryNavigation({ roles }: { roles?: UserRole[] }) {
           </ul>
 
           <Link
-            href={QUOTE_HREF}
+            href={MACHINERY_HREF}
             prefetch={false}
             className="primary-nav-cta-pill"
           >
@@ -268,7 +268,7 @@ export default function PrimaryNavigation({ roles }: { roles?: UserRole[] }) {
           {/* Center Raised Yellow/Amber '+' Action Button */}
           <li className="flex flex-col items-center justify-end">
             <Link
-              href={QUOTE_HREF}
+              href={MACHINERY_HREF}
               prefetch={false}
               aria-label="Browse machines"
               className="primary-nav-mobile-fab"

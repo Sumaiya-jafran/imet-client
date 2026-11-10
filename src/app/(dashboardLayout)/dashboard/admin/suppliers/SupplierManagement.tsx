@@ -64,7 +64,7 @@ function ReviewForm({
       })}
       className="space-y-4 surface p-5"
     >
-      <h2 className="text-section font-semibold">Application review</h2>
+      <h2 className="text-section font-semibold">Account moderation</h2>
       {error && (
         <p role="alert" className="text-danger-foreground">
           {error}
@@ -77,11 +77,9 @@ function ReviewForm({
             {...register('status')}
             className="mt-1 w-full rounded border p-2"
           >
-            {['PENDING', 'APPROVED', 'REJECTED', 'SUSPENDED', 'INACTIVE'].map(
-              (status) => (
-                <option key={status}>{status}</option>
-              ),
-            )}
+            {['APPROVED', 'SUSPENDED', 'INACTIVE'].map((status) => (
+              <option key={status}>{status}</option>
+            ))}
           </select>
         </label>
         <label className="block">
@@ -120,7 +118,7 @@ function ReviewForm({
           </p>
         )}
         <Button type="submit">
-          {isSubmitting ? 'Saving…' : 'Save supplier review'}
+          {isSubmitting ? 'Saving…' : 'Save account changes'}
         </Button>
       </fieldset>
     </form>

@@ -1,5 +1,5 @@
 'use client';
-import { QUOTE_HREF } from '@/config/routes';
+import { MACHINERY_HREF } from '@/config/routes';
 import {
   Bell,
   Factory,
@@ -229,7 +229,7 @@ export default function Header() {
                   Find verified suppliers →
                 </Link>
                 <Link
-                  href={QUOTE_HREF}
+                  href={MACHINERY_HREF}
                   onClick={() => setMobileDrawerOpen(false)}
                   className="rounded-full bg-accent px-3 py-1 text-meta font-bold text-primary"
                 >

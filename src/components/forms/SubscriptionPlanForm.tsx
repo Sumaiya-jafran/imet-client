@@ -243,33 +243,6 @@ export default function SubscriptionPlanForm({
           machinery publication
         </label>
         <label className="block">
-          <input type="checkbox" {...register('rfqEnabled')} /> Legacy RFQ leads (retired)
-        </label>
-        <label className="block">
-          <input type="checkbox" {...register('canRevealContacts')} /> Allow
-          legacy contact reveal after quote acceptance (retired)
-        </label>
-        <div>
-          <label htmlFor="plan-lead-cap" className="block font-medium">
-            Historical RFQ lead limit (workflow retired)
-          </label>
-          <input
-            id="plan-lead-cap"
-            type="number"
-            min="0"
-            step="1"
-            {...register('leadLimitPerMonth', {
-              setValueAs: (v) => (v === '' ? null : Number(v)),
-            })}
-            className="mt-1 w-full"
-          />
-          {errors.leadLimitPerMonth && (
-            <p className="text-danger-foreground">
-              {errors.leadLimitPerMonth.message}
-            </p>
-          )}
-        </div>
-        <label className="block">
           <input type="checkbox" {...register('isActive')} /> Active plan
           (available for assignments)
         </label>

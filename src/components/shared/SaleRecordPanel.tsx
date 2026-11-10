@@ -2,10 +2,7 @@
 import PurchaseReviews from './PurchaseReviews';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { saleCancellationSchema } from '@/lib/schema-validations/sales.schema';
 import { salesApi } from '@/lib/api/sales.service';
 import type { SaleRecord } from '@/types/sales';
 import Button from '@/components/buttons/Button';
@@ -24,19 +21,8 @@ export default function SaleRecordPanel({
   const { data: session } = useSession();
   const token = session?.accessToken;
   const [sale, setSale] = useState<SaleRecord | null>(null);
-  const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const [notice, setNotice] = useState('');
-  const [cancel, setCancel] = useState(false);
   const [revision, setRevision] = useState(0);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<{ reason: string }>({
-    resolver: zodResolver(saleCancellationSchema),
-    defaultValues: { reason: '' },
-  });
   useEffect(() => {
     if (!token) return;
     let active = true;
@@ -56,25 +42,6 @@ export default function SaleRecordPanel({
       active = false;
     };
   }, [token, id, revision]);
-  const update = async (status: 'COMPLETED' | 'CANCELLED', reason?: string) => {
-    if (!token || !sale) return;
-    setBusy(true);
-    setError('');
-    setNotice('');
-    try {
-      await salesApi.saleUpdate(token, sale, status, reason);
-      const r = await salesApi.sale(token, id);
-      setSale(r.data ?? null);
-      setCancel(false);
-      setNotice(
-        status === 'COMPLETED' ? 'Sale marked completed.' : 'Sale cancelled.',
-      );
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Unable to update sale');
-    } finally {
-      setBusy(false);
-    }
-  };
   if (!sale)
     return error ? (
       <div role="alert" className="surface p-5">
@@ -121,25 +88,12 @@ export default function SaleRecordPanel({
         <Link className="secondary-link" href={base}>
           Back to {buyer ? 'purchases' : 'sales history'}
         </Link>
-        {!buyer && (
-          <Link
-            className="secondary-link"
-            href={`${admin ? '/dashboard/admin/sales' : '/dashboard/sales'}/${sale.opportunityId}`}
-          >
-            Open opportunity
-          </Link>
-        )}
-        {(buyer || admin) && (
-          <Link
-            className="secondary-link"
-            href={`${admin ? '/dashboard/admin/rfqs' : '/dashboard/rfqs'}/${sale.rfq.id}`}
-          >
-            Open RFQ
-          </Link>
-        )}
       </div>
       {error && (
-        <p role="alert" className="rounded-lg bg-danger/5 p-3 text-danger-foreground">
+        <p
+          role="alert"
+          className="rounded-lg bg-danger/5 p-3 text-danger-foreground"
+        >
           {error}
           <button
             type="button"
@@ -148,14 +102,6 @@ export default function SaleRecordPanel({
           >
             Reload current record
           </button>
-        </p>
-      )}
-      {notice && (
-        <p
-          role="status"
-          className="rounded-lg bg-success/5 p-3 text-success-foreground"
-        >
-          {notice}
         </p>
       )}
       {!buyer && sale.readOnlyReason && (
@@ -215,63 +161,10 @@ export default function SaleRecordPanel({
           </p>
         )}
       </section>
-      {!buyer && sale.status === 'RECORDED' && (
-        <section className="surface space-y-4 p-5">
-          <h2 className="font-semibold">Manage sale record</h2>
-          <p className="text-meta text-muted-foreground">
-            Completion and cancellation are final record states. These actions
-            do not change the accepted quotation or process a payment. Supplier
-            changes require an active RFQ subscription.
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <Button
-              disabled={busy || !sale.canEdit}
-              onClick={() => void update('COMPLETED')}
-            >
-              Mark sale completed
-            </Button>
-            <Button
-              variant="danger"
-              disabled={busy || !sale.canEdit}
-              onClick={() => setCancel(!cancel)}
-            >
-              Cancel sale
-            </Button>
-          </div>
-          {cancel && (
-            <form
-              className="space-y-3"
-              onSubmit={handleSubmit((data) =>
-                update('CANCELLED', data.reason),
-              )}
-            >
-              <label htmlFor="sale-cancellation" className="block font-medium">
-                Cancellation reason (visible to the buyer)
-              </label>
-              <textarea
-                id="sale-cancellation"
-                maxLength={2000}
-                rows={3}
-                {...register('reason')}
-                className="w-full"
-                aria-invalid={!!errors.reason}
-                aria-describedby="sale-cancellation-error"
-              />
-              <p id="sale-cancellation-error" className="text-meta text-danger-foreground">
-                {errors.reason?.message}
-              </p>
-              <Button
-                type="submit"
-                variant="danger"
-                disabled={busy || !sale.canEdit}
-              >
-                Confirm cancellation
-              </Button>
-            </form>
-          )}
-        </section>
-      )}
       {buyer && sale.status === 'COMPLETED' && <PurchaseReviews saleId={id} />}
+      <p className="text-meta text-muted">
+        Historical purchase record. The quotation workflow has been retired.
+      </p>
     </div>
   );
 }

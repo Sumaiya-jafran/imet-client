@@ -6,7 +6,6 @@ import {
   Headphones,
   History,
   Languages,
-  Layers3,
   Package,
   ScrollText,
   ShieldCheck,
@@ -84,11 +83,6 @@ export function navGroups(roles: UserRole[]): NavGroup[] {
       ...(has(SELLER_ROLES)
         ? [
             {
-              href: '/dashboard/sales',
-              label: 'Sales pipeline',
-              icon: Layers3,
-            },
-            {
               href: '/dashboard/sales/history',
               label: 'Sales history',
               icon: History,
@@ -112,9 +106,9 @@ export function navGroups(roles: UserRole[]): NavGroup[] {
           icon: BarChart3,
         },
         {
-          href: '/dashboard/admin/sales',
-          label: 'Sales oversight',
-          icon: Layers3,
+          href: '/dashboard/admin/sales/history',
+          label: 'Sales history',
+          icon: History,
         },
         {
           href: '/dashboard/admin/service-tickets',

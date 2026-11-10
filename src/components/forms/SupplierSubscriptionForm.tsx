@@ -108,7 +108,9 @@ export default function SupplierSubscriptionForm({
   };
   return (
     <section className="surface p-5">
-      <h2 className="text-section font-semibold">Manual subscription management</h2>
+      <h2 className="text-section font-semibold">
+        Manual subscription management
+      </h2>
       <p className="my-3 text-nav text-secondary">
         No payment is processed. Assign or renew using current plan terms, or
         extend/suspend/cancel the current term while keeping its assigned
@@ -119,11 +121,6 @@ export default function SupplierSubscriptionForm({
           key={term.id}
           className="my-3 rounded-lg border border-border bg-background/60 p-4"
         >
-          <p className="text-meta text-muted-foreground">
-            RFQ leads: {term.rfqEnabled ? 'Enabled' : 'Disabled'} · Monthly cap:{' '}
-            {term.leadLimitPerMonth ?? 'Unlimited'} · Contact reveal:{' '}
-            {term.canRevealContacts ? 'Allowed after acceptance' : 'Disabled'}
-          </p>
           <p className="font-semibold">
             {term.planName} · {term.isCurrent ? 'Current' : 'Previous'} ·{' '}
             {term.effectiveStatus}
@@ -204,7 +201,10 @@ export default function SupplierSubscriptionForm({
                 ))}
               </select>
               {fieldErrors.planId && (
-                <p id="term-plan-error" className="text-nav text-danger-foreground">
+                <p
+                  id="term-plan-error"
+                  className="text-nav text-danger-foreground"
+                >
                   {fieldErrors.planId}
                 </p>
               )}
@@ -224,7 +224,10 @@ export default function SupplierSubscriptionForm({
             />
           </label>
           {fieldErrors.startsAt && (
-            <p id="term-start-error" className="text-nav text-danger-foreground">
+            <p
+              id="term-start-error"
+              className="text-nav text-danger-foreground"
+            >
               {fieldErrors.startsAt}
             </p>
           )}

@@ -100,7 +100,7 @@ export default function RecordOfflinePayment({
           <p className="text-nav">
             Record funds already received. Your confirmation records a verified
             payment and activates the plan according to the selected transition.
-            Supplier approval remains separate.
+            No supplier approval is required.
           </p>
           {error && (
             <p role="alert" className="text-danger-foreground">
