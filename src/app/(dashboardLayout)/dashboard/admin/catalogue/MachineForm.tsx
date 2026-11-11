@@ -1,4 +1,5 @@
 'use client';
+import { mediaApi } from '@/lib/api/media.service';
 import { formatMachinePrice } from '@/lib/money';
 import { supplierApi, supplierCatalogueApi } from '@/lib/api/supplier.service';
 import type { SupplierProfile } from '@/types/supplier';
@@ -35,6 +36,9 @@ export default function MachineForm({
   supplierMode?: boolean;
 }) {
   const [error, setError] = useState('');
+  const [savedMachine, setSavedMachine] = useState<AdminMachine>();
+  const [videos, setVideos] = useState<File[]>([]);
+  const [videoNotice, setVideoNotice] = useState('');
   const [hiddenAllowed, setHiddenAllowed] = useState(!supplierMode);
   const [limits, setLimits] = useState({
     images: supplierMode ? 0 : 20,
@@ -200,10 +204,39 @@ export default function MachineForm({
       return;
     }
     try {
-      if (supplierMode) await supplierCatalogueApi.save(token, data, machine);
-      else
-        await catalogueAdminApi.save(token, data, machine, supplierId || null);
+      const current = savedMachine ?? machine;
+      const response = supplierMode
+        ? await supplierCatalogueApi.save(token, data, current)
+        : await catalogueAdminApi.save(
+            token,
+            data,
+            current,
+            supplierId || null,
+          );
+      if (!response.data) throw new Error('Save response unavailable');
+      setSavedMachine(response.data);
       setPendingUploads(new Set());
+      // Save first to establish ownership. Never retry an uncertain YouTube upload:
+      // it may already exist on the channel even if the response was lost.
+      const queued = [...videos];
+      for (let index = 0; index < queued.length; index++) {
+        setVideos(queued.slice(index + 1));
+        const body = new FormData();
+        body.set('type', 'VIDEO');
+        body.set('title', `${data.name} — ${queued[index].name}`.slice(0, 100));
+        body.set('file', queued[index]);
+        try {
+          await mediaApi.upload(token, response.data.id, body);
+        } catch (error) {
+          setVideoNotice(
+            'The machine was saved. Check Manage media and the YouTube channel before selecting the failed video again. Uploaded videos will not be retried.',
+          );
+          setError(
+            error instanceof Error ? error.message : 'Video upload failed',
+          );
+          return;
+        }
+      }
       onSave();
     } catch (error) {
       if (
@@ -323,7 +356,7 @@ export default function MachineForm({
   return (
     <section className="surface p-5">
       <h2 className="text-section font-semibold">
-        {machine ? 'Edit machine' : 'Create machine'}
+        {machine || savedMachine ? 'Edit machine' : 'Create machine'}
       </h2>
       <p className="my-3 text-nav text-secondary">
         Drafts and archived listings are private. Archived listings release
@@ -373,10 +406,15 @@ export default function MachineForm({
           )}
         </ul>
       )}
+      {videoNotice && (
+        <p role="status" className="mb-4">
+          {videoNotice}
+        </p>
+      )}
       {error && (
         <p role="alert" className="mb-4 text-danger-foreground">
           {error}{' '}
-          {machine &&
+          {(machine || savedMachine) &&
             'Cancel and reopen the machine to reload its latest version.'}
         </p>
       )}
@@ -624,7 +662,7 @@ export default function MachineForm({
                   maxLength={3}
                   {...register('currency', {
                     setValueAs: (v) =>
-                      v === '' ? null : String(v).toUpperCase(),
+                      v == null || v === '' ? null : String(v).toUpperCase(),
                   })}
                   className={input}
                 />
@@ -687,6 +725,67 @@ export default function MachineForm({
             </p>
           </details>
           <section
+            className="border-t border-border pt-5 md:col-span-2"
+            aria-label="Machine videos"
+          >
+            <label htmlFor="machine-video-files" className="font-semibold">
+              Upload machinery videos
+            </label>
+            <p className="mt-1 text-meta text-secondary">
+              Select MP4 or WebM files, up to 25 MB each. Videos upload to the
+              marketplace YouTube channel after the machine is saved. Up to 5
+              videos, 3D models and panoramas combined per machine. The
+              administrator must authorize YouTube uploads; private videos
+              require viewer invitations.
+            </p>
+            <input
+              id="machine-video-files"
+              type="file"
+              multiple
+              accept="video/mp4,video/webm"
+              className="mt-3 block w-full text-nav"
+              onChange={(event) => {
+                const files = Array.from(event.target.files ?? []);
+                event.target.value = '';
+                if (
+                  files.some(
+                    (file) =>
+                      !['video/mp4', 'video/webm'].includes(file.type) ||
+                      !file.size ||
+                      file.size > 25 * 1024 * 1024,
+                  )
+                ) {
+                  setError('Choose MP4 or WebM videos up to 25 MB each.');
+                  return;
+                }
+                if (videos.length + files.length > 5) {
+                  setError(
+                    'Select at most 5 videos. Existing advanced media also count toward this limit.',
+                  );
+                  return;
+                }
+                setVideos((current) => [...current, ...files]);
+                setError('');
+              }}
+            />
+            {videos.map((file, index) => (
+              <div key={`${file.name}-${index}`} className="mt-2 flex gap-3">
+                <span>{file.name}</span>
+                <button
+                  type="button"
+                  className="underline"
+                  onClick={() =>
+                    setVideos((current) =>
+                      current.filter((_, i) => i !== index),
+                    )
+                  }
+                >
+                  Remove video
+                </button>
+              </div>
+            ))}
+          </section>
+          <section
             aria-label="Machine images"
             className="border-t border-border pt-5 md:col-span-2"
           >
@@ -701,8 +800,8 @@ export default function MachineForm({
                 </label>
                 <p className="mt-1 text-meta text-secondary">
                   JPEG or PNG, up to 10 MB. Add a meaningful description and
-                  arrange images below. After saving the machine, choose Manage
-                  media to upload a YouTube video, 3D model or panorama.
+                  arrange images below. Images are stored in Cloudinary. Select
+                  videos below to upload them to YouTube after saving.
                 </p>
                 <input
                   id="machine-image-file"
@@ -710,7 +809,9 @@ export default function MachineForm({
                   multiple
                   accept="image/jpeg,image/png"
                   disabled={
-                    storage !== 'ready' || images.fields.length >= limits.images
+                    uploading ||
+                    storage !== 'ready' ||
+                    images.fields.length >= limits.images
                   }
                   className="mt-3 block w-full text-nav"
                   onChange={(event) => {

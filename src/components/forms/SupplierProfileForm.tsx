@@ -316,7 +316,7 @@ export default function SupplierProfileForm({
       </p>
       {error && (
         <p role="alert" className="text-danger-foreground">
-          {error} Reload the profile if it changed.
+          {error}
         </p>
       )}
       <fieldset

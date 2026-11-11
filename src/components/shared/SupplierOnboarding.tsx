@@ -20,6 +20,7 @@ export default function SupplierOnboarding({
   const [data, setData] = useState<Onboarding>();
   const [error, setError] = useState('');
   const [edit, setEdit] = useState(false);
+  const [restoring, setRestoring] = useState(false);
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     const refresh = () => setAttempt((n) => n + 1);
@@ -211,6 +212,38 @@ export default function SupplierOnboarding({
               <p>
                 Machinery usage: {data.usage.machinery} / {active.listingLimit}.
               </p>
+              {data.supplier.status === 'PENDING' &&
+                Number(active.price) === 0 &&
+                active.planId && (
+                  <Button
+                    disabled={restoring}
+                    onClick={async () => {
+                      setRestoring(true);
+                      setError('');
+                      try {
+                        await paymentApi.activateFree(token, active.planId!);
+                        await update();
+                        setAttempt((n) => n + 1);
+                      } catch (error) {
+                        setError(
+                          error instanceof Error
+                            ? error.message
+                            : 'Unable to restore supplier access',
+                        );
+                      } finally {
+                        setRestoring(false);
+                      }
+                    }}
+                  >
+                    Restore Free plan machinery access
+                  </Button>
+                )}
+              <Link
+                href="/dashboard/supplier/machinery"
+                className="block font-semibold text-secondary underline"
+              >
+                Upload / manage machinery
+              </Link>
               <Link
                 href="/plans"
                 className="font-semibold text-secondary underline"

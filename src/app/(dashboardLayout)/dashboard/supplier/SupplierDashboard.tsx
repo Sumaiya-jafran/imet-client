@@ -134,7 +134,7 @@ export default function SupplierDashboard() {
                 restricted. Contact the administrator about the review note.
               </p>
             )}
-            {supplier.status === 'APPROVED' && (
+            {['APPROVED', 'PENDING'].includes(supplier.status) && (
               <div className="mt-4 flex flex-wrap gap-4">
                 {supplier.marketplaceVisible &&
                   supplier.subscriptions.some(
@@ -161,7 +161,7 @@ export default function SupplierDashboard() {
                   className="self-center underline"
                   href="/dashboard/supplier/machinery"
                 >
-                  Manage your machinery
+                  Upload / manage machinery
                 </Link>
               </div>
             )}
